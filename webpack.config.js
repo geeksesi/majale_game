@@ -5,11 +5,11 @@ const path = require('path');
 
 module.exports = {
 
-    entry: './src/game.js',
+    entry: './client/src/game.js',
 
     output: {
         path: path.resolve(__dirname, 'build'),
-        publicPath: '/build/',
+        publicPath: '/client/build/',
         filename: 'project.bundle.js'
     },
 
@@ -31,7 +31,7 @@ module.exports = {
     mode : 'development',
     watch: true,
     watchOptions: {
-        ignored: ['assets/*.js', 'node_modules'],
+        ignored: ['client/assets/*.js', 'node_modules'],
         poll: 100,
       }
 
