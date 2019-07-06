@@ -5,8 +5,12 @@
   "license": "MIT",
   "dependencies": {
     "better-sqlite3": "^5.4.0",
+    "express": "^4.17.1",
     "knex": "^0.18.1",
     "mysql": "^2.17.1",
+    "nodemon": "^1.19.1",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0",
     "sqlite3": "^4.0.9"
   },
   "devDependencies": {
@@ -17,8 +21,13 @@
   },
   "scripts": {
     "build": "webpack ",
-    "start": "webpack-dev-server --port=4578",
+    "start": "node index.js",
+    "test": "nodemon index.js",
     "db_up": "knex migrate:up --env production --knexfile server/db/knexfile.js",
     "db_down": "knex migrate:down --env production --knexfile server/db/knexfile.js"
+  },
+  "nodemonConfig": {
+    "watch" : ["server/*", "index.js"],
+    "delay": "2500"
   }
 }
