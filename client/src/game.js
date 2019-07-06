@@ -1,4 +1,5 @@
-// import 'phaser';
+
+
 
 const config = {
 	type: Phaser.CANVAS,
