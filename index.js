@@ -7,7 +7,6 @@ app.use('/', express.static('public_html'))
 
 my_io(server);
 
-console.log("goodbssy")
 server.listen(7856, function() {
     console.log('Server listening at port %d', 7856);
 });
