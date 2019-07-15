@@ -1,9 +1,10 @@
+const { init } = require('./server');
 
-
+init();
 
 const config = {
-	type: Phaser.CANVAS,
-	canvas: document.getElementById('myCanvas'),
+    type: Phaser.CANVAS,
+    canvas: document.getElementById('myCanvas'),
     width: 600,
     height: 1080,
     backgroundColor: 0xefefef,
@@ -12,8 +13,13 @@ const config = {
     //     width: 600,
     //     height: 1080
     // },
-    // scene: [main_menu,play_game]
-    scene: [playGame],
+    // scene: [mainMenu, languageMenu, seasonMenu, wordMenu, playGame]
+    // scene: [mainMenu,  playGame]
+    // scene: [playGame],
+    scene: [languageMenu],
+    // scene: [seasonMenu],
+    // scene: [wordMenu],
+    // scene: [mainMenu],
 };
 
 
@@ -22,7 +28,10 @@ const config = {
 // game.scale.pageAlignHorizontally = true;
 // game.scale.pageAlignVertically   = true;
 
-// import main_menu from './main_menu.js';
+import mainMenu from './mainMenu.js';
+import languageMenu from './languageMenu.js';
+import seasonMenu from './seasonMenu.js';
+import wordMenu from './wordMenu.js';
 import playGame from './playGame.js';
 
 
@@ -36,16 +45,16 @@ function resize() {
         canvas.style.width = width + "px";
         canvas.style.height = (width / ratio) + "px";
         config.width = width;
-		config.height = (width / ratio);
-		let game = new Phaser.Game(config);
+        config.height = (width / ratio);
+        let game = new Phaser.Game(config);
 
         // game.scale.resize(width, (width / ratio));
     } else {
         canvas.style.width = (height * ratio) + "px";
         canvas.style.height = height + "px";
         config.width = (height * ratio);
-		config.height = height;
-		let game = new Phaser.Game(config);
+        config.height = height;
+        let game = new Phaser.Game(config);
 
         // game.scale.resize((height * ratio), height);
     }
