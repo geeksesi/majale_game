@@ -36,7 +36,7 @@ function words_season(season_id, answer_language_id, cb) {
                     .then(answer_word => {
                         question_words[q_word].answer = answer_word[0];
                         if ((count + 1) === question_words.length) {
-                            cb(question_words);
+                            cb({ ok: true, data: question_words });
                         } else {
                             count++;
                         }
