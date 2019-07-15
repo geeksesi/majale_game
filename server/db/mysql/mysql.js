@@ -11,12 +11,12 @@ const db = knex({
     }
 });
 
-function get_sesson(language_id, cb, limit = 10, page = 0) {
+function get_sesson(language_id, cb) {
     db.select('*')
         .from('season')
         .where('language_id', language_id)
-        .limit(limit)
-        .offset(limit * page)
+        // .limit(limit)
+        // .offset(limit * page)
         .then(seasons => { cb({ ok: true, data: seasons }) })
         .catch(e => { cb({ ok: false, error: e }) })
 }
