@@ -16,7 +16,7 @@ const config = {
     // scene: [mainMenu, languageMenu, seasonMenu, wordMenu, playGame]
     // scene: [mainMenu,  playGame]
     // scene: [playGame],
-    scene: [languageMenu, seasonMenu],
+    scene: [languageMenu, seasonMenu, wordMenu, playGame],
     // scene: [seasonMenu],
     // scene: [wordMenu],
     // scene: [mainMenu],

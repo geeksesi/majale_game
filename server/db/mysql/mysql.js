@@ -22,10 +22,11 @@ function get_sesson(language_id, cb) {
 }
 
 function words_season(season_id, answer_language_id, cb) {
-    db.select('parent_id', 'language_id', 'season_sort', 'word')
+    db.select('id', 'parent_id', 'language_id', 'season_sort', 'word', 'status')
         .from('word')
         .where('season_id', season_id)
         .andWhereNot('status', null)
+        .andWhereNot('status', 0)
         .then(question_words => {
             let count = 0;
             Object.keys(question_words).map(q_word => {

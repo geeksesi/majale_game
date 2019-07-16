@@ -56,7 +56,8 @@ class seasonMenu extends Phaser.Scene {
     }
 
     playGame_now(season_id) {
-        console.log(season_id);
+        // console.log(season_id);
+        this.scene.start('wordMenu', { season_id: season_id });
 
     }
 }

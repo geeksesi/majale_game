@@ -1,41 +1,55 @@
+import { get_word } from './server';
+import { resolve } from "upath";
+
 class playGame extends Phaser.Scene {
 
     constructor() {
         super({ key: 'playGame' });
     }
 
+    init(data) {
+        this.season_id = data.season_id;
+        this.word_id = data.word_id;
+        console.log(data)
+    }
     preload() {
 
     }
 
-    create() {
-        // this.words =this.add.group()
-        // this.add.grid(0, 0, 50 * 6, 50 * 5, 50, 50, 0x999999, 1, 0x666666).setOrigin(0);
+    async create() {
+        this.word_data = await get_word(this.season_id);
+        this.question = this.word_data[this.word_id].word
+        this.status = this.word_data[this.word_id].status
+        this.answer = this.word_data[this.word_id].answer.word
+            // this.words =this.add.group()
+            // this.add.grid(0, 0, 50 * 6, 50 * 5, 50, 50, 0x999999, 1, 0x666666).setOrigin(0);
 
         this.graphics = this.add.graphics({ fillStyle: { color: 0x9e9e9e } });
 
         this.till_bg = [];
-        this.words = ["س", "ل", "ا", "م", "خ", "و", "ب", "ی", "چ", "خ", "ب", "ر", "ا", "خ", "و", "ش", "م", "ی", "گ", "ذ", "ر", "ه", "ب", "ب", "م", "ج"];
+        // this.words = ["س", "ل", "ا", "م", "خ", "و", "ب", "ی", "چ", "خ", "ب", "ر", "ا", "خ", "و", "ش", "م", "ی", "گ", "ذ", "ر", "ه", "ب", "ب", "م", "ج"];
+        let table = await this.make_table(this.answer);
+        this.words = table.array;
         this.till_words = []
-        const max_x = 5;
-        const max_y = 5;
-        this.max_x = 5;
-        this.max_y = 5;
+            // const max_x = 3;
+            // const max_y = 3;
+        this.max_x = table.size;
+        this.max_y = table.size;
         const till = {
             offset_x: this.sys.game.config.width / 15,
             width: this.sys.game.config.width - (this.sys.game.config.width / 6),
             offset_y: this.sys.game.config.height - (this.sys.game.config.width - (this.sys.game.config.width / 6) + this.sys.game.config.height / 20),
         }
-        for (let x = 0; x < max_x; x++) {
-            for (let y = 0; y < max_y; y++) {
+        for (let x = 0; x < this.max_x; x++) {
+            for (let y = 0; y < this.max_y; y++) {
                 this.till_bg.push(new Phaser.Geom.Rectangle(
-                    till.offset_x + (x * (till.width / max_x)),
-                    till.offset_y + (y * (till.width / max_y)),
-                    (till.width / max_x),
-                    (till.width / max_x)));
+                    till.offset_x + (x * (till.width / this.max_x)),
+                    till.offset_y + (y * (till.width / this.max_y)),
+                    (till.width / this.max_x),
+                    (till.width / this.max_x)));
             }
         }
-        console.log(this.till_bg[0]);
+        // console.log(this.till_bg[0]);
         // this.graphics.lineStyle(1, 0x666666);
         this.graphics.fillStyle(0x9e9e9e);
         this.graphics.lineStyle(3, 0xffffff);
@@ -78,11 +92,11 @@ class playGame extends Phaser.Scene {
         this.question_text = this.add.text(
                 this.question_area.x + this.question_area.width - 15,
                 this.question_area.y + (this.question_area.width / 20),
-                "بنت", { rtl: true })
+                this.question, { rtl: true })
             .setFontFamily('Tahoma')
             .setColor('#222')
             .setAlign("right")
-            .setFontSize(this.question_area.width / ("بنت".length + 2))
+            .setFontSize(this.question_area.width / (this.question.length + 2))
             .setSize(this.question_area.width, this.question_area.height)
             // .setPadding(5, 5, 5, 5);
 
@@ -105,7 +119,7 @@ class playGame extends Phaser.Scene {
         // }, this);
         this.input.on('pointerup', this.pointer_up, this);
         this.input.on('pointermove', this.pointer_move, this);
-        console.log("hello");
+        // console.log("hello");
     }
 
     pointer_up() {
@@ -127,7 +141,7 @@ class playGame extends Phaser.Scene {
         this.graphics.fillStyle(0x9e9e9e);
         let index_in_answer = this.answer_key_arr.indexOf(i);
         for (let b = index_in_answer + 1; b < this.answer_key_arr.length; b++) {
-            console.log(this.answer_key_arr[b]);
+            // console.log(this.answer_key_arr[b]);
             this.graphics.strokeRectShape(this.till_bg[this.answer_key_arr[b]]);
             this.graphics.fillRectShape(this.till_bg[this.answer_key_arr[b]]);
         }
@@ -169,6 +183,9 @@ class playGame extends Phaser.Scene {
                     this.answer_arr.push(this.words[i]);
                     this.answer_key_arr.push(i);
                     this.answer_text.setText(this.answer_arr.join(""));
+                    if (this.answer_arr.join("") === this.answer) {
+                        this.win();
+                    }
                     const char_size = (this.answer_arr.join("").length > 8) ? this.answer_arr.join("").length - 3 : 5;
                     this.answer_text.setFontSize(this.answer_area.width / (char_size + 1));
                     break;
@@ -179,9 +196,59 @@ class playGame extends Phaser.Scene {
 
     }
 
-    // update() {
+    win()
+    {
+        setTimeout(() => {
+            alert("you win");
+            this.scene.start('playGame', {
+                // quest: quest,
+                // answer: answer,
+                // satus: status,
+                season_id: this.season_id,
+                word_id : this.word_id+1,
+            });
+        },500);
+    }
 
-    // }
+    make_table(word) {
+        return new Promise((resolve, reject) => {
+            let word_array = word.split('');
+            // resolve(["س", "ل", "ا", "م", "خ", "و", "ب", "ی", "چ"])
+            switch (word_array.length) {
+                case 2:
+                    resolve({ array: ["س", word_array[0], "ا", "م", word_array[1], "و", "ب", "ی", "چ"], size: 3 })
+                    break;
+                case 3:
+                    resolve({ array: ["س", word_array[0], "ا", "م", word_array[1], "و", "ب", word_array[2], "چ"], size: 3 })
+                    break;
+                case 4:
+                    resolve({ array: ["س", word_array[0], "ا", "م", word_array[1], word_array[2], word_array[3], "ب", "چ", "", "", "", "", "", ""], size: 4 })
+                    break;
+                case 5:
+                    resolve({ array: [word_array[0], "ا", "م", word_array[1], "س", "ب", "ب", word_array[2], "ا", "ت", "ف", word_array[3], word_array[4], "", ""], size: 4 })
+                    break;
+                case 6:
+                    resolve({ array: [word_array[0], word_array[1], word_array[2], word_array[3], "س", "ق", word_array[5], word_array[4], "ا", "ی", "ش", "ص", "ق", "غ", "ه"], size: 4 })
+                    break;
+                case 7:
+                    resolve({ array: ["س", word_array[0], "ا", "م", "خ", "و", word_array[1], "ی", word_array[5], word_array[6], "ب", word_array[2], word_array[3], word_array[4], "و", "ش", "م", "ی", "گ", "ذ", "ر", "ه", "ب", "ب", "م", "ج"], size: 5 })
+                    break;
+                case 8:
+                    resolve({ array: ["س", word_array[0], "ا", "م", "خ", "و", word_array[1], "ی", word_array[5], word_array[6], "ب", word_array[2], word_array[3], word_array[4], word_array[7], "ش", "م", "ی", "گ", "ذ", "ر", "ه", "ب", "ب", "م", "ج"], size: 5 })
+                    break;
+                case 9:
+                    resolve({ array: ["س", word_array[0], "ا", "م", "خ", "و", word_array[1], "ی", word_array[5], word_array[6], "ب", word_array[2], word_array[3], word_array[4], word_array[7], "ش", "م", "ی", "گ", word_array[8], "ر", "ه", "ب", "ب", "م", "ج"], size: 5 })
+                    break;
+                case 10:
+                    resolve({ array: ["س", word_array[0], "ا", "م", "خ", "و", word_array[1], "ی", word_array[5], word_array[6], "ب", word_array[2], word_array[3], word_array[4], word_array[7], "ش", "م", "ی", word_array[9], word_array[8], "ر", "ه", "ب", "ب", "م", "ج"], size: 5 })
+                    break;
+                case 11:
+                    resolve({ array: ["س", word_array[0], "ا", "م", "خ", "و", word_array[1], "ی", word_array[5], word_array[6], "ب", word_array[2], word_array[3], word_array[4], word_array[7], "ش", "م", word_array[10], word_array[9], word_array[8], "ر", "ه", "ب", "ب", "م", "ج"], size: 5 })
+                    break;
+            }
+        })
+    }
+
 }
 
 
