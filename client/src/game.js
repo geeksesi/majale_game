@@ -1,6 +1,5 @@
 const { init } = require('./server');
 
-init();
 
 const config = {
     type: Phaser.CANVAS,
@@ -15,8 +14,8 @@ const config = {
     // },
     // scene: [mainMenu, languageMenu, seasonMenu, wordMenu, playGame]
     // scene: [mainMenu,  playGame]
-    // scene: [playGame],
-    scene: [languageMenu, seasonMenu, wordMenu, playGame],
+    scene: [playGame],
+    // scene: [languageMenu, seasonMenu, wordMenu, playGame],
     // scene: [seasonMenu],
     // scene: [wordMenu],
     // scene: [mainMenu],
@@ -47,6 +46,10 @@ function resize() {
         config.width = width;
         config.height = (width / ratio);
         let game = new Phaser.Game(config);
+        game.scene.start('playGame', {
+            season_id: 1,
+            word_id: 0,
+        });
 
         // game.scale.resize(width, (width / ratio));
     } else {
@@ -56,13 +59,18 @@ function resize() {
         config.height = height;
         let game = new Phaser.Game(config);
 
+        game.scene.start('playGame', {
+            season_id: 1,
+            word_id: 0,
+        });
         // game.scale.resize((height * ratio), height);
     }
     // game.scale.resize(window.innerWidth, window.innerHeight);
 }
 
 
-window.onload = () => {
+window.onload = async () => {
+    await init();
     resize();
     window.addEventListener("resize", resize, false);
 

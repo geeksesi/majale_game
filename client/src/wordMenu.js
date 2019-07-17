@@ -47,7 +47,7 @@ class wordMenu extends Phaser.Scene {
     }
     async create() {
         this.word_data = await get_word(this.season_id);
-        console.log(this.word_data + " " + this.season_id)
+        // console.log(this.word_data + " " + this.season_id)
         this.words = [];
         for (let index = 0; index < this.word_data.length; index++) {
             this.words.push(this.add.text(this.words_state[index].x, this.words_state[index].y, index, { fontSize: "22px", color: "#2f2f2f", height: 80, width: 80 }));

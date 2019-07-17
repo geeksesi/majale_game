@@ -1,4 +1,4 @@
-const io = require("socket.io-client");
+import io from "socket.io-client";
 const socket = io();
 
 let season_list = {};
@@ -17,8 +17,37 @@ function get_season(language_id) {
 }
 
 function get_word(season_id) {
+    // return new Promise((res, rej) => {
+    //     console.log(word_list[season_id])
+    //     res(word_list[season_id]);
+    // })
     return new Promise((res, rej) => {
-        res(word_list[season_id]);
+        // console.log(word_list[season_id])
+        res([{
+                "id": 312448,
+                "parent_id": 11,
+                "language_id": 2,
+                "season_sort": 1,
+                "word": "Body",
+                "status": "1",
+                "answer": {
+                    "word": "بدن",
+                    "language_id": 1
+                }
+            },
+            {
+                "id": 312601,
+                "parent_id": 41,
+                "language_id": 2,
+                "season_sort": 2,
+                "word": "Foot",
+                "status": "1",
+                "answer": {
+                    "word": "پا",
+                    "language_id": 1
+                }
+            }
+        ]);
     })
 }
 
@@ -33,6 +62,7 @@ async function init() {
             })
         });
     });
+
     socket.emit("season_list", 2, res => {
         season_list[2] = res.data;
         res.data.forEach(s => {
@@ -61,7 +91,7 @@ async function init() {
 
 }
 
-module.exports = {
+export {
     init,
     get_season,
     get_word,
