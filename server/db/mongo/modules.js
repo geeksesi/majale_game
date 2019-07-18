@@ -1,7 +1,5 @@
 const mongoos = require('mongoose');
-
-
-const actio_historySchema = mongoos.Schema({
+const action_historySchema = mongoos.Schema({
     // _id: mongoos.Schema.Types.ObjectId,
     user_id: {
         type: mongoos.Schema.Types.ObjectId,
@@ -109,16 +107,12 @@ const userSchema = mongoos.Schema({
     credit: {
         type: Number,
         require: false,
-        default: 25
+        default: 25 // every hint cost is : 5
     },
     play_time: {
-        type: Number,
+        type: Number, // Sec
         require: false,
         default: 0,
-    },
-    profile: {
-        type: String,
-        require: false,
     },
     timestamp: {
         type: Number,
@@ -129,12 +123,12 @@ const userSchema = mongoos.Schema({
 
 const user = mongoos.model("user", userSchema);
 const remember_word = mongoos.model("remember_word", remember_wordSchema);
-const actio_history = mongoos.model("actio_history", actio_historySchema);
+const action_history = mongoos.model("action_history", action_historySchema);
 const play_time_history = mongoos.model("play_time_history", play_time_historySchema);
 
 module.exports = {
     user: user,
     remember_word : remember_word,
-    actio_history : actio_history,
+    action_history : action_history,
     play_time_history : play_time_history,
 };

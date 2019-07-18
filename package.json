@@ -25,7 +25,7 @@
     "db_down": "knex migrate:down --env production --knexfile server/db/knexfile.js"
   },
   "nodemonConfig": {
-    "watch" : ["server/server.js", "index.js", "server/db/mysql/mysql.js"],
+    "watch" : ["server/server.js", "index.js", "server/db/mysql/mysql.js", "server/db/mongo/*"],
     "delay": "2500"
   }
 }
