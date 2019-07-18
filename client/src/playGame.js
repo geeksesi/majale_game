@@ -24,20 +24,22 @@ class playGame extends Phaser.Scene {
             width: this.sys.game.config.width - (this.sys.game.config.width / 6),
             offset_y: this.sys.game.config.height - (this.sys.game.config.width - (this.sys.game.config.width / 6) + this.sys.game.config.height / 20) - (this.sys.game.config.height / 8),
         }
-        
+
         this.hint_arr = [];
         this.hint_key_arr = [];
         this.hit_count = 0;
-        
+
         this.answer_arr = [];
         this.answer_key_arr = [];
-        
+
         this.word_data = await get_word(this.season_id);
-        
+
         this.question = this.word_data[this.word_id].word
         this.status = this.word_data[this.word_id].status
         this.answer = this.word_data[this.word_id].answer.word
         this.table_data = await this.make_table(this.answer);
+
+        this.crdit_value = 10;
 
     }
 
@@ -50,8 +52,8 @@ class playGame extends Phaser.Scene {
         this.graphics = this.add.graphics({ fillStyle: { color: 0x9e9e9e } });
         await this.table_ui();
         await this.hint_ui();
-        await this.answer_ui()
-
+        await this.answer_ui();
+        await this.credit_ui();
 
         this.hint_click = false;
 
@@ -65,7 +67,7 @@ class playGame extends Phaser.Scene {
                     this.hint_key_arr.push(this.table_data.array.indexOf(this.answer.split('')[this.hint_arr.length]));
                     this.hint_arr.push(this.answer.split('')[this.hint_arr.length]);
                     // console.log(this.hint_key_arr)
-                    setTimeout(() => { this.hint_click = false;}, 500)
+                    setTimeout(() => { this.hint_click = false; }, 500)
 
                 }
             }
@@ -79,11 +81,11 @@ class playGame extends Phaser.Scene {
         this.answer_arr = [];
         this.answer_key_arr = [];
         this.answer_text.setText('')
-        // console.log(this.hint_key_arr)
+            // console.log(this.hint_key_arr)
         this.graphics.fillStyle(0x2e2e2e);
         this.graphics.lineStyle(3, 0xffffff);
         let m = 0;
-        this.hint_key_arr.forEach( each => {
+        this.hint_key_arr.forEach(each => {
             // console.log(each)
             this.graphics.strokeRectShape(this.till_bg[each]);
             this.graphics.fillRectShape(this.till_bg[each]);
@@ -117,8 +119,7 @@ class playGame extends Phaser.Scene {
         this.graphics.fillStyle(0x9e9e9e);
         let index_in_answer = this.answer_key_arr.indexOf(i);
         for (let b = index_in_answer + 1; b < this.answer_key_arr.length; b++) {
-            if(this.hint_key_arr.indexOf(this.answer_key_arr[b]))
-            {
+            if (this.hint_key_arr.indexOf(this.answer_key_arr[b])) {
                 // return true;
                 // break;
                 // continue;
@@ -192,6 +193,18 @@ class playGame extends Phaser.Scene {
     }
 
     // UI
+
+    credit_ui() {
+        this.credit_text = this.add.text(
+            (this.sys.game.config.width / 20),
+            (this.sys.game.config.height / 14),
+            "$ "+this.crdit_value, { rtl: false })
+        .setFontFamily('Tahoma')
+        .setColor('#222')
+        .setAlign("right")
+        .setFontSize(this.question_area.width / (this.question.length + 2))
+        .setSize(this.question_area.width, this.question_area.height)
+    }
 
     answer_ui() {
 
