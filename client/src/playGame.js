@@ -1,4 +1,4 @@
-import { get_word } from './server';
+import { get_word, user_data, use_hint } from './server';
 import { make_table } from './game_tools/mechanism';
 class playGame extends Phaser.Scene {
 
@@ -39,7 +39,9 @@ class playGame extends Phaser.Scene {
         this.answer = this.word_data[this.word_id].answer.word
         this.table_data = await this.make_table(this.answer);
 
-        this.crdit_value = 10;
+        this.user = await user_data();
+        // console.log(this.user);
+        this.crdit_value = this.user.credit;
 
     }
 
@@ -59,16 +61,11 @@ class playGame extends Phaser.Scene {
 
         // Events
         this.input.on('pointerdown', (pointer) => {
-            // console.log("pointerDown")
             if (this.hint_buttom.contains(pointer.x, pointer.y)) {
                 if (!this.hint_click) {
-                    this.hint_click = true;
-                    // console.log("here1 "+ this.table_data.array.indexOf(this.answer.split('')[this.hint_arr.length]));
-                    this.hint_key_arr.push(this.table_data.array.indexOf(this.answer.split('')[this.hint_arr.length]));
-                    this.hint_arr.push(this.answer.split('')[this.hint_arr.length]);
-                    // console.log(this.hint_key_arr)
-                    setTimeout(() => { this.hint_click = false; }, 500)
+                    console.log("pointerDown")
 
+                    this.hint();
                 }
             }
         }, this);
@@ -77,6 +74,24 @@ class playGame extends Phaser.Scene {
         // console.log("hello");
     }
 
+
+    async hint() {
+        this.hint_click = true;
+        if (this.crdit_value >= 10 && await use_hint()) {
+            this.crdit_value -= 10;
+            this.credit_text.setText("")
+            this.credit_ui();
+            this.hint_key_arr.push(this.table_data.array.indexOf(this.answer.split('')[this.hint_arr.length]));
+            this.hint_arr.push(this.answer.split('')[this.hint_arr.length]);
+        } else {
+            alert("warning on hint")
+        }
+        // console.log(this.hint_key_arr)
+        setTimeout(() => { this.hint_click = false; console.log("WTF") }, 500)
+
+    }
+
+
     pointer_up() {
         this.answer_arr = [];
         this.answer_key_arr = [];
@@ -84,14 +99,9 @@ class playGame extends Phaser.Scene {
             // console.log(this.hint_key_arr)
         this.graphics.fillStyle(0x2e2e2e);
         this.graphics.lineStyle(3, 0xffffff);
-        let m = 0;
         this.hint_key_arr.forEach(each => {
-            // console.log(each)
             this.graphics.strokeRectShape(this.till_bg[each]);
             this.graphics.fillRectShape(this.till_bg[each]);
-            // this.answer_key_arr.push(each);
-            // await this.answer_arr.push(this.hint_arr[m])  
-            // m++;
         })
         this.graphics.fillStyle(0x9e9e9e);
         this.graphics.lineStyle(3, 0xffffff);
@@ -196,14 +206,14 @@ class playGame extends Phaser.Scene {
 
     credit_ui() {
         this.credit_text = this.add.text(
-            (this.sys.game.config.width / 20),
-            (this.sys.game.config.height / 14),
-            "$ "+this.crdit_value, { rtl: false })
-        .setFontFamily('Tahoma')
-        .setColor('#222')
-        .setAlign("right")
-        .setFontSize(this.question_area.width / (this.question.length + 2))
-        .setSize(this.question_area.width, this.question_area.height)
+                (this.sys.game.config.width / 20),
+                (this.sys.game.config.height / 14),
+                "$ " + this.crdit_value, { rtl: false })
+            .setFontFamily('Tahoma')
+            .setColor('#222')
+            .setAlign("right")
+            .setFontSize(this.question_area.width / (this.question.length + 2))
+            .setSize(this.question_area.width, this.question_area.height)
     }
 
     answer_ui() {

@@ -12,9 +12,9 @@ const config = {
     //     width: 600,
     //     height: 1080
     // },
-    // scene: [mainMenu, languageMenu, seasonMenu, wordMenu, playGame]
+    scene: [mainMenu, languageMenu, seasonMenu, wordMenu, playGame]
     // scene: [mainMenu,  playGame]
-    scene: [playGame],
+    // scene: [playGame],
     // scene: [languageMenu, seasonMenu, wordMenu, playGame],
     // scene: [seasonMenu],
     // scene: [wordMenu],
@@ -46,10 +46,10 @@ function resize() {
         config.width = width;
         config.height = (width / ratio);
         let game = new Phaser.Game(config);
-        game.scene.start('playGame', {
-            season_id: 1,
-            word_id: 0,
-        });
+        // game.scene.start('playGame', {
+        //     season_id: 1,
+        //     word_id: 0,
+        // });
 
         // game.scale.resize(width, (width / ratio));
     } else {
@@ -59,10 +59,10 @@ function resize() {
         config.height = height;
         let game = new Phaser.Game(config);
 
-        game.scene.start('playGame', {
-            season_id: 1,
-            word_id: 0,
-        });
+        // game.scene.start('playGame', {
+        //     season_id: 1,
+        //     word_id: 0,
+        // });
         // game.scale.resize((height * ratio), height);
     }
     // game.scale.resize(window.innerWidth, window.innerHeight);
