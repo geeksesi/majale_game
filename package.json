@@ -6,6 +6,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "knex": "^0.18.1",
+    "mongoose": "^5.6.5",
     "mysql": "^2.17.1",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0"
@@ -25,7 +26,12 @@
     "db_down": "knex migrate:down --env production --knexfile server/db/knexfile.js"
   },
   "nodemonConfig": {
-    "watch" : ["server/server.js", "index.js", "server/db/mysql/mysql.js", "server/db/mongo/*"],
+    "watch": [
+      "server/server.js",
+      "index.js",
+      "server/db/mysql/mysql.js",
+      "server/db/mongo/*"
+    ],
     "delay": "2500"
   }
 }
