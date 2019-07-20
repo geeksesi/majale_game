@@ -42,7 +42,26 @@ function hint_cost(rubicka_id, cb) {
     })
 }
 
+
+function finish_level(rubicka_id, value, cb) {
+    user.findOneAndUpdate({ rubicka_id: rubicka_id }, { $inc: { credit: value } }, (err, res) => {
+        console.log(res);
+        let resault = {};
+        if (err) {
+            resault.ok = false;
+            resault.data = err2;
+        } else {
+            resault.ok = true;
+            resault.data = res;
+        }
+        cb(resault);
+    })
+}
+
+
+
 module.exports = {
     user_exist: user_exist,
     hint_cost: hint_cost,
+    finish_level : finish_level,
 }

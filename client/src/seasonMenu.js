@@ -6,7 +6,6 @@ class seasonMenu extends Phaser.Scene {
     }
     init(data) {
         this.language_id = data.language_id;
-
     }
     preload() {
         this.season_state = [
@@ -48,16 +47,18 @@ class seasonMenu extends Phaser.Scene {
     async create() {
         this.seasons_data = await get_season(this.language_id);
         this.seasons = [];
-        for (let index = 0; index < this.seasons_data.length; index++) {
-            this.seasons.push(this.add.text(this.season_state[index].x, this.season_state[index].y, this.seasons_data[index].name, { fontSize: "22px", color: "#2f2f2f", height: 80, width: 80 }));
-            this.seasons[index].setInteractive();
-            this.seasons[index].on('pointerdown', () => { this.playGame_now(this.seasons_data[index].id) }, this, 1);
-        }
+        setTimeout(() => {
+            for (let index = 0; index < this.seasons_data.length; index++) {
+                this.seasons.push(this.add.text(this.season_state[index].x, this.season_state[index].y, this.seasons_data[index].name, { fontSize: "22px", color: "#2f2f2f", height: 80, width: 80 }));
+                this.seasons[index].setInteractive();
+                this.seasons[index].on('pointerdown', () => { this.playGame_now(this.seasons_data[index].id) }, this, 1);
+            }
+        }, 200)
     }
 
     playGame_now(season_id) {
         // console.log(season_id);
-        this.scene.start('wordMenu', { season_id: season_id });
+        this.scene.start('wordMenu', { season_id: season_id, language_id: this.language_id });
 
     }
 }

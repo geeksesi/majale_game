@@ -1,5 +1,5 @@
 const { get_sesson, words_season } = require('./db/mysql/mysql');
-const { user_exist, hint_cost } = require('./db/mongo/insert');
+const { user_exist, hint_cost, finish_level } = require('./db/mongo/insert');
 
 module.exports.my_io = function(server) {
     const io = require('socket.io')(server);
@@ -37,12 +37,27 @@ module.exports.my_io = function(server) {
 
 
         socket.on("user_hint", cb => {
-            console.log(socket.rubicka_id)
             hint_cost(socket.rubicka_id, res => {
-                console.log(res);
-                // if (res.ok === true) {
+                cb(res);
+            })
+        })
+
+
+        socket.on("finish_level", (word_id, time, use_hint, cb) => {
+            console.log(word_id + " " + time + " " + use_hint);
+            let prize_value;
+            if (time <= 5) {
+                prize_value = 10;
+            } else if (time <= 10) {
+                prize_value = 7;
+            } else {
+                prize_value = 5;
+            }
+            finish_level(socket.rubicka_id, prize_value, res => {
+                // console.log(res);
+                if (res.ok === true) {
                     cb(res);
-                // }
+                }
             })
         })
 

@@ -1,4 +1,4 @@
-import { get_word, user_data, use_hint } from './server';
+import { get_word, user_data, use_hint, finish_level } from './server';
 import { make_table } from './game_tools/mechanism';
 class playGame extends Phaser.Scene {
 
@@ -9,6 +9,8 @@ class playGame extends Phaser.Scene {
     init(data) {
         this.season_id = data.season_id;
         this.word_id = data.word_id;
+        this.language_id = data.language_id;
+        console.log(data.language_id);
         this.make_table = make_table;
         // console.log(data)
     }
@@ -43,11 +45,14 @@ class playGame extends Phaser.Scene {
         // console.log(this.user);
         this.crdit_value = this.user.credit;
 
+        this.start_time = Math.floor(Date.now() / 1000);
+
     }
 
 
 
     async create() {
+
         // this.words =this.add.group()
         // this.add.grid(0, 0, 50 * 6, 50 * 5, 50, 50, 0x999999, 1, 0x666666).setOrigin(0);
         await this.variables();
@@ -71,6 +76,8 @@ class playGame extends Phaser.Scene {
         }, this);
         this.input.on('pointerup', this.pointer_up, this);
         this.input.on('pointermove', this.pointer_move, this);
+
+
         // console.log("hello");
     }
 
@@ -84,10 +91,10 @@ class playGame extends Phaser.Scene {
             this.hint_key_arr.push(this.table_data.array.indexOf(this.answer.split('')[this.hint_arr.length]));
             this.hint_arr.push(this.answer.split('')[this.hint_arr.length]);
         } else {
-            alert("warning on hint")
+            console.log("warning on hint")
         }
         // console.log(this.hint_key_arr)
-        setTimeout(() => { this.hint_click = false; console.log("WTF") }, 500)
+        setTimeout(() => { this.hint_click = false; }, 500)
 
     }
 
@@ -192,13 +199,32 @@ class playGame extends Phaser.Scene {
     }
 
     win() {
-        setTimeout(() => {
-            console.log("you win");
-            alert("you win");
-            this.scene.start('playGame', {
-                season_id: this.season_id,
-                word_id: this.word_id + 1,
-            });
+        if (this.is_win) {
+            return true;
+        }
+        this.scene.pause();
+        this.is_win = true;
+        this.finish_time = Math.floor(Date.now() / 1000);
+        let is_hint = false;
+        setTimeout(async() => {
+            if (this.hint_arr.length > 0) {
+                is_hint = true;
+            }
+            let finish_detail = await finish_level(this.word_id, (this.finish_time - this.start_time), is_hint);
+            this.is_win = false;
+            console.log(finish_detail);
+            
+            // alert("you win");
+            if(typeof this.word_data[(this.word_id+1)] === 'undefined')
+            {
+                this.scene.start('seasonMenu', { language_id: this.language_id });
+            }else{
+                this.scene.start('playGame', {
+                    season_id: this.season_id,
+                    word_id: this.word_id + 1,
+                    language_id: this.language_id
+                });
+            }
         }, 500);
     }
 

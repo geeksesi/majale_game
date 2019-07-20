@@ -47,6 +47,32 @@ function use_hint() {
     })
 }
 
+function finish_level(word_id, time, is_hint) {
+    return new Promise((resolve, reject) => {
+        socket.emit("finish_level", word_id, time, is_hint, res => {
+            let prize_value = 0;
+            if (res.ok === true) {
+                if(time <= 5)
+                {
+                    prize_value = 10;
+                }
+                else if(time <= 10)
+                {
+                    prize_value = 7;
+                }
+                else
+                {
+                    prize_value = 5;
+                }
+                user.credit += prize_value;
+                resolve({ok : true, prize : prize_value})
+            } else {
+                reject(false)
+            }
+        })
+    })
+}
+
 async function init() {
     let loader = 0;
     await basic_events();
@@ -89,4 +115,5 @@ export {
     get_word,
     user_data,
     use_hint,
+    finish_level,
 }

@@ -8,6 +8,7 @@ class wordMenu extends Phaser.Scene {
 
     init(data) {
         this.season_id = data.season_id;
+        this.language_id = data.language_id;
     }
 
     preload() {
@@ -65,6 +66,7 @@ class wordMenu extends Phaser.Scene {
             // satus: status,
             season_id: this.season_id,
             word_id : word_id,
+            language_id : this.language_id,
         });
 
     }
