@@ -45,11 +45,11 @@ function hint_cost(rubicka_id, cb) {
 
 function finish_level(rubicka_id, value, cb) {
     user.findOneAndUpdate({ rubicka_id: rubicka_id }, { $inc: { credit: value } }, (err, res) => {
-        console.log(res);
+        // console.log(res);
         let resault = {};
         if (err) {
             resault.ok = false;
-            resault.data = err2;
+            resault.data = err;
         } else {
             resault.ok = true;
             resault.data = res;
@@ -58,10 +58,26 @@ function finish_level(rubicka_id, value, cb) {
     })
 }
 
-
+function remember_me(user_id, word_id, cb) {
+    remember_word.findOneAndUpdate({ user_id: user_id, word_id: word_id }, { user_id: user_id, word_id: word_id, timestamp: Math.floor(Date.now() / 1000), $inc: { try_count: 1 } }, { upsert: true },
+        (err, res) => {
+            console.log(res)
+            let resault = {};
+            if (err) {
+                resault.ok = false;
+                resault.data = err;
+            } else {
+                resault.ok = true;
+                resault.data = res;
+            }
+            cb(resault);
+        }
+    )
+}
 
 module.exports = {
     user_exist: user_exist,
     hint_cost: hint_cost,
-    finish_level : finish_level,
+    finish_level: finish_level,
+    remember_me: remember_me
 }

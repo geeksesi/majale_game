@@ -72,6 +72,7 @@ const remember_wordSchema = mongoos.Schema({
     try_count: {
         type: Number,
         require: true,
+        default :0,
     },
     /**
      * - wait 
@@ -82,15 +83,9 @@ const remember_wordSchema = mongoos.Schema({
     status : {
         type : String,
         require : true,
+        default : "wait"
     },
     timestamp: {
-        type: Number,
-        require: true,
-    },
-    /**
-     * will store a json of time the user did this word
-     */
-    try_date: {
         type: Number,
         require: true,
     },

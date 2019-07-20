@@ -10,7 +10,7 @@ class playGame extends Phaser.Scene {
         this.season_id = data.season_id;
         this.word_id = data.word_id;
         this.language_id = data.language_id;
-        console.log(data.language_id);
+        // console.log(data.language_id);
         this.make_table = make_table;
         // console.log(data)
     }
@@ -210,7 +210,8 @@ class playGame extends Phaser.Scene {
             if (this.hint_arr.length > 0) {
                 is_hint = true;
             }
-            let finish_detail = await finish_level(this.word_id, (this.finish_time - this.start_time), is_hint);
+            console.log(this.word_data[this.word_id].id)
+            let finish_detail = await finish_level(this.word_data[this.word_id].id, (this.finish_time - this.start_time), is_hint);
             this.is_win = false;
             console.log(finish_detail);
             
