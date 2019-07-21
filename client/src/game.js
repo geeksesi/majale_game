@@ -12,9 +12,10 @@ const config = {
     //     width: 600,
     //     height: 1080
     // },
-    scene: [mainMenu, languageMenu, seasonMenu, wordMenu, playGame]
+    scene: [loading, mainMenu, languageMenu, seasonMenu, wordMenu, playGame]
     // scene: [mainMenu,  playGame]
     // scene: [playGame],
+    // scene: [loading],
     // scene: [languageMenu, seasonMenu, wordMenu, playGame],
     // scene: [seasonMenu],
     // scene: [wordMenu],
@@ -27,11 +28,12 @@ const config = {
 // game.scale.pageAlignHorizontally = true;
 // game.scale.pageAlignVertically   = true;
 
-import mainMenu from './mainMenu.js';
-import languageMenu from './languageMenu.js';
-import seasonMenu from './seasonMenu.js';
-import wordMenu from './wordMenu.js';
-import playGame from './playGame.js';
+import loading from './loading';
+import mainMenu from './mainMenu';
+import languageMenu from './languageMenu';
+import seasonMenu from './seasonMenu';
+import wordMenu from './wordMenu';
+import playGame from './playGame';
 
 
 function resize() {
@@ -70,7 +72,7 @@ function resize() {
 
 
 window.onload = async () => {
-    await init();
+    // await init();
     resize();
     window.addEventListener("resize", resize, false);
 
