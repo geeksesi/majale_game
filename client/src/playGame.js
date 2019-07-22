@@ -85,6 +85,7 @@ class playGame extends Phaser.Scene {
     async hint() {
         this.hint_click = true;
         if (this.crdit_value >= 10 && await use_hint()) {
+            console.log(ga('send', 'event', 'hint_use'));
             this.crdit_value -= 10;
             this.credit_text.setText("")
             this.credit_ui();

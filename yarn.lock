@@ -1696,6 +1696,11 @@ fsevents@^1.2.7:
     nan "^2.12.1"
     node-pre-gyp "^0.12.0"
 
+gameanalytics@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/gameanalytics/-/gameanalytics-3.1.2.tgz#6b69f49cb0f7e30483fe172d0ab2d79f8cec60dd"
+  integrity sha512-9kn+HtqWtEFu7ViLEVaOaBN/xmRR6YOq8XDolxep6L7mpOWnQuDSpH1ZLC/Bavia5QEFl/QPa4xbgVg3qH0bnw==
+
 gauge@~2.7.3:
   version "2.7.4"
   resolved "https://registry.yarnpkg.com/gauge/-/gauge-2.7.4.tgz#2c03405c7538c39d7eb37b317022e325fb018bf7"

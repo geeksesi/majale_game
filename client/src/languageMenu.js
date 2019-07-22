@@ -14,7 +14,7 @@ class languageMenu extends Phaser.Scene {
         this.fa_text.setInteractive();
         this.en_text.setInteractive();
         this.ar_text.setInteractive();
-        this.fa_text.on('pointerdown', () => { this.playGame_now(1) }, this, 1);
+        // this.fa_text.on('pointerdown', () => { this.playGame_now(1) }, this, 1);
         this.en_text.on('pointerdown', () => { this.playGame_now(2) }, this, 2);
         this.ar_text.on('pointerdown', () => { this.playGame_now(3) }, this, 3);
     }

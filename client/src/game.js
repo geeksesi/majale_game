@@ -1,6 +1,7 @@
-const { init } = require('./server');
-
-
+// const { init } = require('./server');
+const gameanalytics = require('gameanalytics');
+gameanalytics.GameAnalytics.setEnabledInfoLog(true);
+gameanalytics.GameAnalytics.configureBuild("majale 0.4.0");
 const config = {
     type: Phaser.CANVAS,
     canvas: document.getElementById('myCanvas'),
@@ -13,13 +14,13 @@ const config = {
     //     height: 1080
     // },
     scene: [loading, mainMenu, languageMenu, seasonMenu, wordMenu, playGame]
-    // scene: [mainMenu,  playGame]
-    // scene: [playGame],
-    // scene: [loading],
-    // scene: [languageMenu, seasonMenu, wordMenu, playGame],
-    // scene: [seasonMenu],
-    // scene: [wordMenu],
-    // scene: [mainMenu],
+        // scene: [mainMenu,  playGame]
+        // scene: [playGame],
+        // scene: [loading],
+        // scene: [languageMenu, seasonMenu, wordMenu, playGame],
+        // scene: [seasonMenu],
+        // scene: [wordMenu],
+        // scene: [mainMenu],
 };
 
 
@@ -71,7 +72,7 @@ function resize() {
 }
 
 
-window.onload = async () => {
+window.onload = async() => {
     // await init();
     resize();
     window.addEventListener("resize", resize, false);

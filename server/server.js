@@ -10,12 +10,12 @@ module.exports.my_io = function(server) {
         socket.on("init", async(rubicka_id, cb) => {
             // console.log(await get_season(3));
             let export_object = {
-                seasons: [],
+                seasons: {},
                 words: {},
                 // user: ,
             }
             await get_season(2, async res => {
-                await export_object.seasons.push(res.data);
+                export_object.seasons[2] = await res.data;
                 if (Array.isArray(res.data)) {
                     res.data.forEach(element => {
                         words_season(element.id, 1, word => {
@@ -26,7 +26,7 @@ module.exports.my_io = function(server) {
                 }
             })
             await get_season(3, async res => {
-                await export_object.seasons.push(res.data);
+                export_object.seasons[3] = await res.data;
                 if (Array.isArray(res.data)) {
                     res.data.forEach(element => {
                         words_season(element.id, 1, word => {

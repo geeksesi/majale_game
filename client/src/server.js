@@ -1,7 +1,7 @@
 import io from "socket.io-client";
 const socket = io();
 
-let season_list = [];
+let season_list = {};
 let word_list = {};
 let user = {}
 
@@ -71,7 +71,7 @@ function finish_level(word_id, time, is_hint) {
 async function init(cb) {
     await basic_events();
     await socket.emit("init", 1, res => {
-        season_list = res.seasons.slice();
+        season_list = res.seasons;
         word_list = res.words;
         user = res.user;
         setTimeout(() => { cb(res) }, 500)
