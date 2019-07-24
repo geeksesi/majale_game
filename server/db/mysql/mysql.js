@@ -1,25 +1,25 @@
 const knex = require('knex');
 
-// const db = knex({
-//     client: 'mysql',
-//     connection: {
-//         host: 's7.liara.ir',
-//         port: '32761',
-//         user: 'root',
-//         password: '20bRQYqphdPObGd09hXfrdxG',
-//         database: 'majale'
-//     }
-// });
 const db = knex({
     client: 'mysql',
     connection: {
-        host: '127.0.0.1',
-        port: '3306',
+        host: 's7.liara.ir',
+        port: '32761',
         user: 'root',
-        password: 'javadkhof',
-        database: 'Kalemat'
+        password: '20bRQYqphdPObGd09hXfrdxG',
+        database: 'majale'
     }
 });
+// const db = knex({
+//     client: 'mysql',
+//     connection: {
+//         host: '127.0.0.1',
+//         port: '3306',
+//         user: 'root',
+//         password: 'javadkhof',
+//         database: 'Kalemat'
+//     }
+// });
 
 
 
