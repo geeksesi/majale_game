@@ -30,7 +30,7 @@ function user_exist(rubicka_id, cb) {
 
 function hint_cost(rubicka_id, cb) {
     user.findOneAndUpdate({ rubicka_id: rubicka_id }, { $inc: { credit: -10 } }, (err, res) => {
-        console.log(res);
+        // console.log(res);
         let resault = {};
         if (err) {
             resault.ok = false;
@@ -60,7 +60,7 @@ function finish_level(rubicka_id, value, cb) {
 }
 
 function remember_me(user_id, word_id, cb) {
-    remember_word.findOneAndUpdate({ user_id: user_id, word_id: word_id }, { user_id: user_id, word_id: word_id, timestamp: Math.floor(Date.now() / 1000), $inc: { try_count: 1 } }, { upsert: true },
+    remember_word.findOneAndUpdate({ user_id: user_id, word_id: word_id }, { user_id: user_id, word_id: word_id, timestamp: Math.floor(Date.now() / 1000), $inc: { try_count: 1 }, status : 'wait' }, { upsert: true },
         (err, res) => {
             console.log(res)
             let resault = {};

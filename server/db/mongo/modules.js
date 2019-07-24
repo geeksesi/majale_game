@@ -8,7 +8,7 @@ const action_historySchema = mongoos.Schema({
     /**
      * - payment
      * - hint
-     * - finish_lvl
+     * - finish_word
      */
     type: {
         type: String,
@@ -71,7 +71,6 @@ const remember_wordSchema = mongoos.Schema({
     },
     try_count: {
         type: Number,
-        require: true,
         default :0,
     },
     /**
@@ -82,7 +81,6 @@ const remember_wordSchema = mongoos.Schema({
      */
     status : {
         type : String,
-        require : true,
         default : "wait"
     },
     timestamp: {
@@ -108,6 +106,11 @@ const userSchema = mongoos.Schema({
         type: Number, // Sec
         require: false,
         default: 0,
+    },
+    xp : {
+        type : Number,
+        require : true,
+        default : 0
     },
     timestamp: {
         type: Number,
