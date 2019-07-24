@@ -115,10 +115,13 @@ module.exports.my_io = function(server) {
             let prize_value;
             if (time <= 5) {
                 prize_value = 10;
+                exp_value = 3;
             } else if (time <= 10) {
                 prize_value = 7;
+                exp_value = 2;
             } else {
                 prize_value = 5;
+                exp_value = 1;
             }
             if (use_hint) {
                 remember_me(socket._id, word_id, res => {

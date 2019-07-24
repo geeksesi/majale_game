@@ -14,6 +14,11 @@ const action_historySchema = mongoos.Schema({
         type: String,
         require: true,
     },
+    /**
+     * on finish_word : word_id
+     * on payment : package_id
+     * on hint : word_id
+     */
     value: {
         type: Number,
         require: true,
