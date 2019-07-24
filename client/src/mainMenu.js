@@ -1,31 +1,49 @@
-class mainMenu extends Phaser.Scene
-{
-    constructor()
-    {
-        super({key: 'mainMenu'});
-        
-    }
-
-    preload()
-    {
+class mainMenu extends Phaser.Scene {
+    constructor() {
+        super({ key: 'mainMenu' });
 
     }
-    create()
-    {
-        console.log("i'm here")
-        // this.logo = this.add.text(200, 150 , "HEllow",{fontSize : "100px",color:"#22222"});
-        this.playGame_botton = this.add.text(80, 550 , "Play Game :) ",{fontSize : "50px", color:"#2f2f2f", height: 500, width: 500});
+
+    preload() {
+        this.language_id = parseInt(localStorage.getItem('language_id')) || 2;
+    }
+
+    create() {
+        console.log(this.language_id)
+            // this.logo = this.add.text(200, 150 , "HEllow",{fontSize : "100px",color:"#22222"});
+        this.language_select = this.add.text(this.sys.game.config.width - 100, 30, "", { fontSize: "15px", color: "#2f2f2f" });
+        this.set_language(this.language_id)
+        this.language_select.setInteractive();
+        this.language_select.on('pointerdown', () => {
+            if (!this.change_lang) {
+                this.change_lang = true;
+                this.language_id = (this.language_id === 2) ? 3 : 2;
+                this.set_language(this.language_id)
+                setTimeout(() => { this.change_lang = false }, 500)
+            }
+        }, this);
+
+
+        this.playGame_botton = this.add.text(80, 80, "Play Game", { fontSize: "25px", color: "#2f2f2f" });
         this.playGame_botton.setInteractive();
-        this.playGame_botton.on('pointerdown', this.playGame_now, this);
-    }
-    update()
-    {
+        this.playGame_botton.on('pointerdown', () => { this.play_game() }, this);
+
+        this.level_select = this.add.text(80, 150, "level select", { fontSize: "25px", color: "#2f2f2f" });
+        this.level_select.setInteractive();
+        this.level_select.on('pointerdown', () => { this.level_selected() }, this);
     }
 
-    playGame_now() 
-    {
-        console.log("helloooo");
-        this.scene.start('languageMenu');
+
+    set_language(language_id) {
+        this.language_select.setText((language_id === 2) ? "English" : "عربی")
+    }
+
+    level_selected() {
+        this.scene.start('seasonMenu', { language_id: this.language_id });
+    }
+
+    play_game() {
+        this.scene.start('seasonMenu', { language_id: this.language_id });
     }
 }
 
