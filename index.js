@@ -4,7 +4,7 @@ const server = require('http').createServer(app);
 const { my_io } = require('./server/server');
 const mongoos = require('mongoose');
 
-mongoos.connect('mongodb://127.0.0.1:27017/majale', { useNewUrlParser: true, useCreateIndex: false, useFindAndModify: true });
+mongoos.connect('mongodb://127.0.0.1:27017/majale', { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false });
 
 app.use('/', express.static('public_html'))
 

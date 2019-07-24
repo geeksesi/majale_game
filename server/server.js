@@ -1,30 +1,54 @@
 const { get_season, words_season } = require('./db/mysql/mysql');
 const { user_exist, hint_cost, finish_level, remember_me } = require('./db/mongo/insert');
+const { remember_word, action_history } = require('./db/mongo/modules');
 
 module.exports.my_io = function(server) {
     const io = require('socket.io')(server);
-    // let online_users = {}
     io.on('connection', socket => {
         console.log("hello")
 
         socket.on("init", async(rubicka_id, cb) => {
-            // console.log(await get_season(3));
             let export_object = {
                 seasons: {},
                 words: {},
                 // user: ,
+                finished_word: [],
+                remembers_id: [],
             }
+            await user_exist(rubicka_id, async res => {
+                export_object.user = await res.data;
+                socket._id = await res.data._id;
+                // console.log(res.data._id);
+                socket.rubicka_id = await res.data.rubicka_id;
+
+                await action_history.find({ type: 'finish_lvl', user_id: socket._id }, (err, actions) => {
+                    actions.forEach(async action => {
+                        await export_object.finished_word.push(action.value);
+                    })
+                });
+
+                await remember_word.find({ user_id: socket._id, status: 'wait' }, (err, remembers) => {
+                    // console.log(remembers);
+                    remembers.forEach(remember => {
+                        export_object.remembers_id.push(remember.word_id)
+                    })
+                });
+
+            })
+
+
             await get_season(2, async res => {
                 export_object.seasons[2] = await res.data;
                 if (Array.isArray(res.data)) {
                     res.data.forEach(element => {
                         words_season(element.id, 1, word => {
-                            // console.log(word)
+                            // console.log(word);
                             export_object.words[element.id] = word.data;
                         });
                     });
                 }
             })
+
             await get_season(3, async res => {
                 export_object.seasons[3] = await res.data;
                 if (Array.isArray(res.data)) {
@@ -36,24 +60,15 @@ module.exports.my_io = function(server) {
                 }
             })
 
-            await user_exist(rubicka_id, res => {
-                export_object.user = res.data;
-            })
-
-
-            // socket.rubicka_id = export_object.user.rubicka_id;
-            // socket._id = export_object.user._id;
-
-            setInterval(() => {
+            let t = setInterval(() => {
                 if (Object.keys(export_object.words).length) {
-                    // console.log(export_object);
                     setTimeout(() => {
+                        clearInterval(t);
                         cb(export_object);
                     }, 500)
                 }
             }, 500);
 
-            //     console.log(export_object);
         })
 
 
