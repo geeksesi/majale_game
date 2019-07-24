@@ -1,13 +1,23 @@
 const knex = require('knex');
 
+// const db = knex({
+//     client: 'mysql',
+//     connection: {
+//         host: 's7.liara.ir',
+//         port: '32761',
+//         user: 'root',
+//         password: '20bRQYqphdPObGd09hXfrdxG',
+//         database: 'majale'
+//     }
+// });
 const db = knex({
     client: 'mysql',
     connection: {
-        host: 's7.liara.ir',
-        port: '32761',
+        host: '127.0.0.1',
+        port: '3306',
         user: 'root',
-        password: '20bRQYqphdPObGd09hXfrdxG',
-        database: 'majale'
+        password: 'javadkhof',
+        database: 'Kalemat'
     }
 });
 
