@@ -1,18 +1,18 @@
 const { get_season, words_season } = require('./db/mysql/mysql');
-const { user_exist, hint_cost, finish_level, remember_me } = require('./db/mongo/insert');
+const { user_exist, hint_cost, finish_level, remember_me, finish_again_level, complete_remember } = require('./db/mongo/insert');
 const { remember_word, action_history } = require('./db/mongo/modules');
 
 module.exports.my_io = function(server) {
     const io = require('socket.io')(server);
     io.on('connection', socket => {
-        console.log("hello")
+        // console.log(socket.rubicka_id);
 
         socket.on("init", async(rubicka_id, cb) => {
             let export_object = {
                 seasons: {},
                 words: {},
                 // user: ,
-                finished_word: [],
+                finished_word: {},
                 remembers_id: [],
             }
             await user_exist(rubicka_id, async res => {
@@ -23,7 +23,7 @@ module.exports.my_io = function(server) {
 
                 await action_history.find({ type: 'finish_lvl', user_id: socket._id }, (err, actions) => {
                     actions.forEach(async action => {
-                        await export_object.finished_word.push(action.value);
+                        export_object.finished_word[action.value] = await action.description;
                     })
                 });
 
@@ -103,8 +103,8 @@ module.exports.my_io = function(server) {
         })
 
 
-        socket.on("user_hint", cb => {
-            hint_cost(socket.rubicka_id, res => {
+        socket.on("user_hint", (word_id, cb) => {
+            hint_cost(socket.rubicka_id, word_id, res => {
                 cb(res);
             })
         })
@@ -114,10 +114,10 @@ module.exports.my_io = function(server) {
             // console.log(word_id + " " + time + " " + use_hint);
             let prize_value;
             if (time <= 5) {
-                prize_value = 10;
+                prize_value = 15;
                 exp_value = 3;
             } else if (time <= 10) {
-                prize_value = 7;
+                prize_value = 10;
                 exp_value = 2;
             } else {
                 prize_value = 5;
@@ -127,11 +127,27 @@ module.exports.my_io = function(server) {
                 remember_me(socket._id, word_id, res => {
                     // console.log(res)
                 })
+            } else {
+                complete_remember(socket._id, word_id, res => {
+                    // console.log(res)
+                })
             }
-            finish_level(socket.rubicka_id, prize_value, res => {
-                // console.log(res);
-                if (res.ok === true) {
-                    cb(res);
+            action_history.findOne({ type: 'finish_lvl', user_id: socket._id, word_id: word_id }, (err, action) => {
+                if (action !== null) {
+                    if (action.description < exp_value) {
+                        finish_again_level(socket.rubicka_id, word_id, ((prize_value) - (action.description * 5)), (exp_value - action.description), res => {
+                            if (res.ok === true) {
+                                cb(res);
+                            }
+                        });
+                    }
+                } else {
+                    finish_level(socket.rubicka_id, word_id, prize_value, exp_value, res => {
+                        // console.log(res);
+                        if (res.ok === true) {
+                            cb(res);
+                        }
+                    });
                 }
             })
         })

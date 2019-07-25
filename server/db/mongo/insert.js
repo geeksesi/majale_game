@@ -38,6 +38,7 @@ function hint_cost(rubicka_id, word_id, cb) {
             cb(resault);
             return false;
         }
+        console.log(word_id)
         add_action(res._id, "hint", word_id, "", action => {
             if (action === false) {
                 resault.ok = false;
@@ -58,8 +59,18 @@ function add_action(user_id, type, value, status, cb) {
         user_id: user_id,
         type: type,
         value: value,
-        status: status,
+        description: status,
         timestamp: Math.floor(Date.now() / 1000),
+    });
+    new_action.save((err, res) => {
+        console.log(err)
+        if (err) { cb(false) } else { cb(true) }
+    })
+}
+
+function update_action(user_id, sureplus_status, cb) {
+    action_history.findOneAndUpdate({ user_id: user_id }, {
+        $inc: { description: sureplus_status },
     });
     new_action.save((err, res) => {
         if (err) { cb(false) } else { cb(res) }
@@ -76,7 +87,7 @@ function finish_level(rubicka_id, word_id, prize_value, exp_value, cb) {
             cb(resault);
             return false;
         }
-        add_action(res._id, "finish_word", word_id, (exp_value + " lvl_point"), (action) => {
+        add_action(res._id, "finish_word", word_id, (exp_value), (action) => {
             if (action === false) {
                 resault.ok = false;
                 resault.data = err;
@@ -84,11 +95,36 @@ function finish_level(rubicka_id, word_id, prize_value, exp_value, cb) {
                 return false;
             }
             resault.ok = true;
-            resault.data = res;
+            // resault.data = res;
             cb(resault);
         })
     })
 }
+
+function finish_again_level(rubicka_id, word_id, sureplus_price, sureplus_exp, cb) {
+    user.findOneAndUpdate({ rubicka_id: rubicka_id }, { $inc: { credit: sureplus_price, exp_value, exp: sureplus_exp } }, (err, res) => {
+        // console.log(res);
+        let resault = {};
+        if (err) {
+            resault.ok = false;
+            resault.data = err;
+            cb(resault);
+            return false;
+        }
+        update_action(res._id, sureplus_exp, (action) => {
+            if (action === false) {
+                resault.ok = false;
+                resault.data = err;
+                cb(resault);
+                return false;
+            }
+            resault.ok = true;
+            // resault.data = res;
+            cb(resault);
+        })
+    });
+}
+
 
 function remember_me(user_id, word_id, cb) {
     remember_word.findOneAndUpdate({ user_id: user_id, word_id: word_id }, { user_id: user_id, word_id: word_id, timestamp: Math.floor(Date.now() / 1000), $inc: { try_count: 1 }, status: 'wait' }, { upsert: true },
@@ -107,9 +143,30 @@ function remember_me(user_id, word_id, cb) {
     )
 }
 
+
+function complete_remember(user_id, word_id, cb) {
+    remember_word.findOneAndUpdate({ user_id: user_id, word_id: word_id }, { upsert: false }, { status: 'answered' }, (err, res) => {
+        (err, res) => {
+            console.log(res)
+            let resault = {};
+            if (err) {
+                resault.ok = false;
+                resault.data = err;
+            } else {
+                resault.ok = true;
+                resault.data = res;
+            }
+            cb(resault);
+        }
+    })
+
+}
+
 module.exports = {
     user_exist: user_exist,
     hint_cost: hint_cost,
     finish_level: finish_level,
-    remember_me: remember_me
+    remember_me: remember_me,
+    finish_again_level: finish_again_level,
+    complete_remember: complete_remember,
 }

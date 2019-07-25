@@ -24,9 +24,9 @@ const action_historySchema = mongoos.Schema({
         require: true,
     },
     /**
-     * - Xx lvl_point
+     * - exp value on finish word
+     * - empty on hint
      * - payment on market offer
-     * - hint:(word_id)
      * - payment when play          \
      *                                # when user did payment
      * - payment from market page   /
