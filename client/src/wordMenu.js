@@ -7,8 +7,9 @@ class wordMenu extends Phaser.Scene {
     }
 
     init(data) {
-        this.season_id = data.season_id;
+        // this.season_id = data.season_id;
         this.language_id = data.language_id;
+        this.word_data = data.word_data;
     }
 
     preload() {
@@ -47,7 +48,7 @@ class wordMenu extends Phaser.Scene {
         ];
     }
     async create() {
-        this.word_data = await get_word(this.season_id);
+        // this.word_data = await get_word(this.season_id);
         // console.log(this.word_data + " " + this.season_id)
         this.words = [];
         for (let index = 0; index < this.word_data.length; index++) {
@@ -64,9 +65,10 @@ class wordMenu extends Phaser.Scene {
             // quest: quest,
             // answer: answer,
             // satus: status,
-            season_id: this.season_id,
+            // season_id: this.season_id,
             word_id : word_id,
             language_id : this.language_id,
+            word_data: this.word_data
         });
 
     }

@@ -1,4 +1,4 @@
-import { get_season } from './server';
+import { get_season, get_word } from './server';
 class seasonMenu extends Phaser.Scene {
     constructor() {
         super({ key: 'seasonMenu' });
@@ -56,9 +56,20 @@ class seasonMenu extends Phaser.Scene {
         }, 200)
     }
 
-    playGame_now(season_id) {
+    async playGame_now(season_id) {
         // console.log(season_id);
-        this.scene.start('wordMenu', { season_id: season_id, language_id: this.language_id });
+        console.log(season_id)
+        this.word_data = await get_word(season_id)
+        let interval = setInterval(()=>{
+            if(typeof this.word_data !== 'undefined'){
+                clearInterval(interval);
+                this.scene.start('wordMenu', {
+                    season_id: season_id,
+                    language_id: this.language_id,
+                    word_data: this.word_data
+                });
+            }
+        },200)
 
     }
 }
