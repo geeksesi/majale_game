@@ -3,6 +3,10 @@
 const webpack = require('webpack');
 const path = require('path');
 
+// require('@babel/runtime/core-js/promise').default = require('bluebird');
+
+// const promise = new Promise;
+
 module.exports = {
 
     entry: './client/src/game.js',
@@ -14,12 +18,19 @@ module.exports = {
     },
 
     module: {
-        rules: [
-          {
-            test: [ /\.vert$/, /\.frag$/ ],
-            use: 'raw-loader'
+      rules: [
+        {
+          test: /\.m?js$/,
+          exclude: /(node_modules|bower_components)/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+              plugins: ["@babel/plugin-transform-runtime"]
+            }
           }
-        ]
+        }
+      ]
     },
 
     plugins: [
@@ -33,6 +44,7 @@ module.exports = {
     watchOptions: {
         ignored: ['public_html/assets/*.js', 'node_modules'],
         poll: 100,
-      }
+      },
+
 
 };
