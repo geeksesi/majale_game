@@ -1,3 +1,5 @@
+import { make_road } from './game_tools/game_design';
+import { play_game_data } from './server';
 class mainMenu extends Phaser.Scene {
     constructor() {
         super({ key: 'mainMenu' });
@@ -5,12 +7,13 @@ class mainMenu extends Phaser.Scene {
     }
 
     preload() {
+        // console.log(localStorage.getItem('language_id'));
         this.language_id = parseInt(localStorage.getItem('language_id')) || 2;
     }
 
     create() {
-        console.log(this.language_id)
-            // this.logo = this.add.text(200, 150 , "HEllow",{fontSize : "100px",color:"#22222"});
+        // console.log(this.language_id)
+        // this.logo = this.add.text(200, 150 , "HEllow",{fontSize : "100px",color:"#22222"});
         this.language_select = this.add.text(this.sys.game.config.width - 100, 30, "", { fontSize: "15px", color: "#2f2f2f" });
         this.set_language(this.language_id)
         this.language_select.setInteractive();
@@ -35,6 +38,7 @@ class mainMenu extends Phaser.Scene {
 
 
     set_language(language_id) {
+        localStorage.setItem('language_id', language_id);
         this.language_select.setText((language_id === 2) ? "English" : "عربی")
     }
 
@@ -42,8 +46,15 @@ class mainMenu extends Phaser.Scene {
         this.scene.start('seasonMenu', { language_id: this.language_id });
     }
 
-    play_game() {
-        this.scene.start('seasonMenu', { language_id: this.language_id });
+    async play_game() {
+        let data = await play_game_data();
+        await make_road(data.word_list, data.finished_word, data.remembers_word, this.language_id, res => {
+            console.log("s")
+            this.scene.start('wordMenu', {
+                language_id: this.language_id,
+                word_data: res
+            });
+        })
     }
 }
 

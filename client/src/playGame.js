@@ -7,12 +7,13 @@ class playGame extends Phaser.Scene {
     }
 
     init(data) {
-        this.season_id = data.season_id;
+        // this.season_id = data.season_id;
         this.word_id = data.word_id;
         this.language_id = data.language_id;
         // console.log(data.language_id);
         this.make_table = make_table;
         // console.log(data)
+        this.word_data = data.word_data;
     }
     preload() {
 
@@ -34,7 +35,7 @@ class playGame extends Phaser.Scene {
         this.answer_arr = [];
         this.answer_key_arr = [];
 
-        this.word_data = await get_word(this.season_id);
+        // this.word_data = await get_word(this.season_id);
 
         this.question = this.word_data[this.word_id].word
         this.status = this.word_data[this.word_id].status
@@ -84,8 +85,7 @@ class playGame extends Phaser.Scene {
 
     async hint() {
         this.hint_click = true;
-        if (this.crdit_value >= 10 && await use_hint()) {
-            console.log(ga('send', 'event', 'hint_use'));
+        if (this.crdit_value >= 10 && await use_hint(this.word_data[(this.word_id+1)].id)) {
             this.crdit_value -= 10;
             this.credit_text.setText("")
             this.credit_ui();
@@ -211,12 +211,11 @@ class playGame extends Phaser.Scene {
             if (this.hint_arr.length > 0) {
                 is_hint = true;
             }
-            console.log(this.word_data[this.word_id].id)
+            console.log(this.word_data[this.word_id].status)
             let finish_detail = await finish_level(this.word_data[this.word_id].id, (this.finish_time - this.start_time), is_hint);
             this.is_win = false;
             console.log(finish_detail);
             
-            // alert("you win");
             if(typeof this.word_data[(this.word_id+1)] === 'undefined')
             {
                 this.scene.start('seasonMenu', { language_id: this.language_id });
@@ -224,7 +223,8 @@ class playGame extends Phaser.Scene {
                 this.scene.start('playGame', {
                     season_id: this.season_id,
                     word_id: this.word_id + 1,
-                    language_id: this.language_id
+                    language_id: this.language_id,
+                    word_data : this.word_data
                 });
             }
         }, 500);
@@ -270,7 +270,7 @@ class playGame extends Phaser.Scene {
             .setFontFamily('Tahoma')
             .setColor('#222')
             .setAlign("right")
-            .setFontSize(this.question_area.width / (this.question.length + 2))
+            .setFontSize(this.question_area.width / (this.question.length + 1))
             .setSize(this.question_area.width, this.question_area.height)
             // .setPadding(5, 5, 5, 5);
 
