@@ -2,29 +2,18 @@ const mongoos = require('mongoose');
 const { user, remember_word, action_history, play_time_history } = require('./modules');
 
 function user_exist(rubicka_id, cb) {
+    user.findOneAndUpdate({ rubicka_id: rubicka_id }, {
+        rubicka_id: rubicka_id,
+        credit: 50,
+        xp: 0,
+        timestamp: Math.floor(Date.now() / 1000),
+        $inc: { play_time: 1 },
 
-    user.findOne({ rubicka_id: rubicka_id }, (err, this_user) => {
-        if (err) { cb({ ok: false, data: err }); }
-        if (this_user !== null) {
+    }, { upsert: true }, (err, this_user) => {
+        if (err) { cb({ ok: false, data: err }); } else {
             cb({ ok: true, data: this_user });
             return true;
         }
-        const add_user = new user({
-            rubicka_id: rubicka_id,
-            timestamp: Math.floor(Date.now() / 1000),
-
-        });
-        let resault = {};
-        add_user.save((err2, res) => {
-            if (err) {
-                resault.ok = false;
-                resault.data = err2;
-            } else {
-                resault.ok = true;
-                resault.data = res;
-            }
-            cb(resault);
-        })
     })
 }
 
@@ -38,7 +27,7 @@ function hint_cost(rubicka_id, word_id, cb) {
             cb(resault);
             return false;
         }
-        console.log(word_id)
+        // console.log(word_id)
         add_action(res._id, "hint", word_id, "", action => {
             if (action === false) {
                 resault.ok = false;
@@ -63,7 +52,7 @@ function add_action(user_id, type, value, status, cb) {
         timestamp: Math.floor(Date.now() / 1000),
     });
     new_action.save((err, res) => {
-        console.log(err)
+        // console.log(err)
         if (err) { cb(false) } else { cb(true) }
     })
 }
@@ -129,7 +118,7 @@ function finish_again_level(rubicka_id, word_id, sureplus_price, sureplus_exp, c
 function remember_me(user_id, word_id, cb) {
     remember_word.findOneAndUpdate({ user_id: user_id, word_id: word_id }, { user_id: user_id, word_id: word_id, timestamp: Math.floor(Date.now() / 1000), $inc: { try_count: 1 }, status: 'wait' }, { upsert: true },
         (err, res) => {
-            console.log(res)
+            // console.log(res)
             let resault = {};
             if (err) {
                 resault.ok = false;
@@ -145,19 +134,18 @@ function remember_me(user_id, word_id, cb) {
 
 
 function complete_remember(user_id, word_id, cb) {
-    remember_word.findOneAndUpdate({ user_id: user_id, word_id: word_id }, { upsert: false }, { status: 'answered' }, (err, res) => {
-        (err, res) => {
-            console.log(res)
-            let resault = {};
-            if (err) {
-                resault.ok = false;
-                resault.data = err;
-            } else {
-                resault.ok = true;
-                resault.data = res;
-            }
-            cb(resault);
+    remember_word.findOneAndUpdate({ user_id: user_id, word_id: word_id }, { status: 'answered' }, (err, res) => {
+        console.log('complete')
+        console.log(res)
+        let resault = {};
+        if (err) {
+            resault.ok = false;
+            resault.data = err;
+        } else {
+            resault.ok = true;
+            resault.data = res;
         }
+        cb(resault)
     })
 
 }

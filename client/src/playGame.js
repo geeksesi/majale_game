@@ -85,12 +85,12 @@ class playGame extends Phaser.Scene {
 
     async hint() {
         this.hint_click = true;
-        if (this.crdit_value >= 10 && await use_hint(this.word_data[(this.word_id+1)].id)) {
+        if (this.crdit_value >= 10 && await use_hint(this.word_data[(this.word_id)].id)) {
             this.crdit_value -= 10;
-            this.credit_text.setText("")
-            this.credit_ui();
-            this.hint_key_arr.push(this.table_data.array.indexOf(this.answer.split('')[this.hint_arr.length]));
-            this.hint_arr.push(this.answer.split('')[this.hint_arr.length]);
+            await this.credit_text.setText("")
+            await this.credit_ui();
+            await this.hint_key_arr.push(this.table_data.keys[this.hint_arr.length]);
+            await this.hint_arr.push(this.table_data.array[this.table_data.keys[this.hint_arr.length]]);
         } else {
             console.log("warning on hint")
         }
@@ -212,19 +212,18 @@ class playGame extends Phaser.Scene {
                 is_hint = true;
             }
             console.log(this.word_data[this.word_id].status)
-            let finish_detail = await finish_level(this.word_data[this.word_id].id, (this.finish_time - this.start_time), is_hint);
+            let finish_detail = await finish_level(this.word_data[this.word_id].id, (this.finish_time - this.start_time), is_hint, this.word_data[this.word_id].status);
             this.is_win = false;
             console.log(finish_detail);
-            
-            if(typeof this.word_data[(this.word_id+1)] === 'undefined')
-            {
-                this.scene.start('seasonMenu', { language_id: this.language_id });
-            }else{
+
+            if (typeof this.word_data[(this.word_id + 1)] === 'undefined') {
+                this.scene.start('mainMenu');
+            } else {
                 this.scene.start('playGame', {
                     season_id: this.season_id,
                     word_id: this.word_id + 1,
                     language_id: this.language_id,
-                    word_data : this.word_data
+                    word_data: this.word_data
                 });
             }
         }, 500);

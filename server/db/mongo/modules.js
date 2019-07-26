@@ -108,7 +108,7 @@ const userSchema = mongoos.Schema({
         default: 50 // every hint cost is : 10
     },
     play_time: {
-        type: Number, // Sec
+        type: Number, // counter
         require: false,
         default: 0,
     },

@@ -21,7 +21,8 @@ module.exports.my_io = function(server) {
                 // console.log(res.data._id);
                 socket.rubicka_id = await res.data.rubicka_id;
 
-                await action_history.find({ type: 'finish_lvl', user_id: socket._id }, (err, actions) => {
+                await action_history.find({ type: 'finish_word', user_id: socket._id }, (err, actions) => {
+                    // console.log(socket._id);
                     actions.forEach(async action => {
                         export_object.finished_word[action.value] = await action.description;
                     })
@@ -134,6 +135,7 @@ module.exports.my_io = function(server) {
             }
             action_history.findOne({ type: 'finish_lvl', user_id: socket._id, word_id: word_id }, (err, action) => {
                 if (action !== null) {
+                    console.log("don't need to make again")
                     if (action.description < exp_value) {
                         finish_again_level(socket.rubicka_id, word_id, ((prize_value) - (action.description * 5)), (exp_value - action.description), res => {
                             if (res.ok === true) {
