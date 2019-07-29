@@ -49,9 +49,13 @@ class mainMenu extends Phaser.Scene {
     async play_game() {
         let data = await play_game_data();
         await make_road(data.word_list, data.finished_word, data.remembers_word, this.language_id, res => {
-            console.log("s")
-            this.scene.start('wordMenu', {
-                language_id: this.language_id,
+            // this.scene.start('wordMenu', {
+            //     language_id: this.language_id,
+            //     word_data: res
+            // });
+            this.scene.start('playGame', {
+                word_id : 0,
+                language_id : this.language_id,
                 word_data: res
             });
         })
