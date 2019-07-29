@@ -1,4 +1,4 @@
-import { init,get_season } from './server';
+import { init, get_season } from './server';
 class seasonMenu extends Phaser.Scene {
     constructor() {
         super({ key: 'loading' });
@@ -10,7 +10,10 @@ class seasonMenu extends Phaser.Scene {
 
         this.show_progress()
         console.log("loading")
-        var progress = this.add.graphics();
+            // var progress = this.add.graphics();
+
+        this.load.image('win_bg', 'assets/win.jpg');
+        this.load.atlas('loader', 'assets/loader_sprite.jpg', 'assets/loader_sprite.json');
 
 
         // this.load.on('progress', function (value) {
@@ -21,19 +24,18 @@ class seasonMenu extends Phaser.Scene {
 
         // });
 
-        // this.load.on('complete', function () {
-
-        //     progress.destroy();
-
-        // });
-
-        init(res=>{
-            setTimeout(async () => {
-                console.log(res);
-                this.hide_progress();
-            }, 1000);
+        let image_loaded = false;
+        this.load.on('complete', function() {
+            image_loaded = true;
+        });
+        init(res => {
+            let wait_for_image = setInterval(async() => {
+                if(image_loaded){
+                    this.hide_progress();
+                    clearInterval(wait_for_image);
+                }
+            }, 500);
         })
-        this.load.atlas('loader', 'assets/loader_sprite.jpg', 'assets/loader_sprite.json');
     }
 
     show_progress() {
@@ -67,9 +69,9 @@ class seasonMenu extends Phaser.Scene {
         clearInterval(this.load_interval);
         this.my_progress.clear();
         this.scene.start('mainMenu');
-        
+
     }
-    
+
     create() {
 
     }
