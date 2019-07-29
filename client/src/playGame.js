@@ -14,6 +14,7 @@ class playGame extends Phaser.Scene {
         this.make_table = make_table;
         // console.log(data)
         this.word_data = data.word_data;
+        this.season_id = data.word_data[data.word_id].season_id;
     }
     preload() {
 
@@ -68,7 +69,7 @@ class playGame extends Phaser.Scene {
         // Events
         this.input.on('pointerdown', (pointer) => {
             if (this.hint_buttom.contains(pointer.x, pointer.y)) {
-                if (!this.hint_click) {
+                if (!this.hint_click && !this.is_win) {
                     console.log("pointerDown")
 
                     this.hint();
@@ -101,31 +102,33 @@ class playGame extends Phaser.Scene {
 
 
     pointer_up() {
-        this.answer_arr = [];
-        this.answer_key_arr = [];
-        this.answer_text.setText('')
-            // console.log(this.hint_key_arr)
-        this.graphics.fillStyle(0x2e2e2e);
-        this.graphics.lineStyle(3, 0xffffff);
-        this.hint_key_arr.forEach(each => {
-            this.graphics.strokeRectShape(this.till_bg[each]);
-            this.graphics.fillRectShape(this.till_bg[each]);
-        })
-        this.graphics.fillStyle(0x9e9e9e);
-        this.graphics.lineStyle(3, 0xffffff);
-        for (let i = 0; i < this.till_bg.length; i++) {
-            if (this.hint_key_arr.includes(i)) {
-                continue;
+        if (!this.is_win) {
+            this.answer_arr = [];
+            this.answer_key_arr = [];
+            this.answer_text.setText('')
+                // console.log(this.hint_key_arr)
+            this.graphics.fillStyle(0x2e2e2e);
+            this.graphics.lineStyle(3, 0xffffff);
+            this.hint_key_arr.forEach(each => {
+                this.graphics.strokeRectShape(this.till_bg[each]);
+                this.graphics.fillRectShape(this.till_bg[each]);
+            })
+            this.graphics.fillStyle(0x9e9e9e);
+            this.graphics.lineStyle(3, 0xffffff);
+            for (let i = 0; i < this.till_bg.length; i++) {
+                if (this.hint_key_arr.includes(i)) {
+                    continue;
+                }
+                this.graphics.strokeRectShape(this.till_bg[i]);
+                this.graphics.fillRectShape(this.till_bg[i]);
             }
-            this.graphics.strokeRectShape(this.till_bg[i]);
-            this.graphics.fillRectShape(this.till_bg[i]);
-        }
 
-        this.answer_arr = this.hint_arr.slice();
-        this.answer_key_arr = this.hint_key_arr.slice();
-        this.answer_text.setText(this.hint_arr.join(''))
-        if (this.answer_arr.join("") === this.answer) {
-            this.win();
+            this.answer_arr = this.hint_arr.slice();
+            this.answer_key_arr = this.hint_key_arr.slice();
+            this.answer_text.setText(this.hint_arr.join(''))
+            if (this.answer_arr.join("") === this.answer) {
+                this.win();
+            }
         }
     }
 
@@ -154,7 +157,7 @@ class playGame extends Phaser.Scene {
     }
 
     pointer_move(pointer) {
-        if (pointer.isDown) {
+        if (pointer.isDown && !this.is_win) {
 
             // console.log(pointer.position)
             // console.log(pointer.prevPosition)
@@ -203,7 +206,7 @@ class playGame extends Phaser.Scene {
         if (this.is_win) {
             return true;
         }
-        this.scene.pause();
+        // this.scene.pause();
         this.is_win = true;
         this.finish_time = Math.floor(Date.now() / 1000);
         let is_hint = false;
@@ -211,25 +214,85 @@ class playGame extends Phaser.Scene {
             if (this.hint_arr.length > 0) {
                 is_hint = true;
             }
-            console.log(this.word_data[this.word_id].status)
+            // console.log(this.word_data[this.word_id].status)
             let finish_detail = await finish_level(this.word_data[this.word_id].id, (this.finish_time - this.start_time), is_hint, this.word_data[this.word_id].status);
-            this.is_win = false;
-            console.log(finish_detail);
+            // console.log(finish_detail);
 
-            if (typeof this.word_data[(this.word_id + 1)] === 'undefined') {
-                this.scene.start('mainMenu');
-            } else {
-                this.scene.start('playGame', {
-                    season_id: this.season_id,
-                    word_id: this.word_id + 1,
-                    language_id: this.language_id,
-                    word_data: this.word_data
-                });
-            }
+            this.win_ui();
         }, 500);
     }
 
+    win_ui_event(type) {
+        this.is_win = false;
+
+        if (type === "next") {
+            if (typeof this.word_data[(this.word_id + 1)] === 'undefined') {
+                this.scene.start('mainMenu');
+            } else {
+                if (this.word_data[this.word_id + 1].season_id !== this.season_id) {
+                    console.log("season_finished");
+                } else {
+
+                    this.scene.start('playGame', {
+                        word_id: this.word_id + 1,
+                        language_id: this.language_id,
+                        word_data: this.word_data
+                    });
+                }
+            }
+        } else {
+            this.scene.start('mainMenu');
+        }
+    }
+
     // UI
+
+    win_ui() {
+        // this.graphics.fillStyle(0x9e9e9e);
+        // this.graphics.lineStyle(3, 0xffffff);
+        // this.win_area = this.add.rectangle(
+        //     (this.sys.game.config.width - (this.sys.game.config.width / 5 * 2)),
+        //     (this.sys.game.config.height - (this.sys.game.config.height / 3 * 2)))
+        //     .setDepth(100);
+        // this.graphics.strokeRectShape(this.win_area);
+        // this.graphics.fillRectShape(this.win_area);
+        this.win_bg = this.add.image(
+                (this.sys.game.config.width / 2),
+                (this.sys.game.config.height / 2),
+                // 0,`
+                // 0,`
+                'win_bg')
+            .setDisplaySize(
+                (this.sys.game.config.width - 100),
+                (this.sys.game.config.height - 300)
+
+            )
+
+        this.next_level_text = this.add.text(
+                (this.sys.game.config.width / 2) - 20,
+                (this.sys.game.config.height / 2) + 50,
+                "Next", { rtl: false })
+            .setFontFamily('Tahoma')
+            .setColor('#222')
+            .setAlign("right")
+            .setFontSize(this.question_area.width / (this.question.length + 2))
+            .setSize(this.question_area.width, this.question_area.height)
+
+        this.menu_text = this.add.text(
+                (this.sys.game.config.width / 2) - 20,
+                (this.sys.game.config.height / 2) - 50,
+                "MainMenu", { rtl: false })
+            .setFontFamily('Tahoma')
+            .setColor('#222')
+            .setAlign("right")
+            .setFontSize(this.question_area.width / (this.question.length + 2))
+            .setSize(this.question_area.width, this.question_area.height)
+
+        this.next_level_text.setInteractive();
+        this.next_level_text.on('pointerdown', () => { this.win_ui_event("next") }, this);
+        this.menu_text.setInteractive();
+        this.menu_text.on('pointerdown', () => { this.win_ui_event("menu") }, this);
+    }
 
     credit_ui() {
         this.credit_text = this.add.text(
