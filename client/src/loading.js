@@ -13,7 +13,6 @@ class seasonMenu extends Phaser.Scene {
             // var progress = this.add.graphics();
 
         this.load.image('win_bg', 'assets/win.jpg');
-        this.load.atlas('loader', 'assets/loader_sprite.jpg', 'assets/loader_sprite.json');
 
 
         // this.load.on('progress', function (value) {
@@ -34,6 +33,7 @@ class seasonMenu extends Phaser.Scene {
                     this.hide_progress();
                     clearInterval(wait_for_image);
                 }
+                console.log(res);
             }, 500);
         })
     }
