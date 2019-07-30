@@ -31,9 +31,9 @@ class mainMenu extends Phaser.Scene {
         this.playGame_botton.setInteractive();
         this.playGame_botton.on('pointerdown', () => { this.play_game() }, this);
 
-        this.level_select = this.add.text(80, 150, "level select", { fontSize: "25px", color: "#2f2f2f" });
-        this.level_select.setInteractive();
-        this.level_select.on('pointerdown', () => { this.level_selected() }, this);
+        this.progress = this.add.text(80, 150, "progress", { fontSize: "25px", color: "#2f2f2f" });
+        this.progress.setInteractive();
+        this.progress.on('pointerdown', () => { this.progress_event() }, this);
     }
 
 
@@ -42,8 +42,12 @@ class mainMenu extends Phaser.Scene {
         this.language_select.setText((language_id === 2) ? "English" : "عربی")
     }
 
-    level_selected() {
-        this.scene.start('seasonMenu', { language_id: this.language_id });
+    // level_selected() {
+    //     this.scene.start('seasonMenu', { language_id: this.language_id });
+    // }
+
+    progress_event() {
+        this.scene.start('season_finish', { season_id: 1 });
     }
 
     async play_game() {

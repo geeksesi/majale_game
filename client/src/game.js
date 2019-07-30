@@ -13,9 +13,9 @@ const config = {
     //     width: 600,
     //     height: 1080
     // },
-    scene: [loading, mainMenu, languageMenu, seasonMenu, wordMenu, playGame]
+    scene: [loading, mainMenu, season_finish, playGame]
         // scene: [mainMenu,  playGame]
-        // scene: [playGame],
+        // scene: [season_finish],
         // scene: [loading],
         // scene: [languageMenu, seasonMenu, wordMenu, playGame],
         // scene: [seasonMenu],
@@ -35,6 +35,7 @@ import languageMenu from './languageMenu';
 import seasonMenu from './seasonMenu';
 import wordMenu from './wordMenu';
 import playGame from './playGame';
+import season_finish from './season_finish';
 
 
 function resize() {
