@@ -19,6 +19,33 @@ function get_season(language_id) {
     })
 }
 
+function season_finish_data(season_id) {
+    return new Promise(async(res, rej) => {
+        let this_words = await word_list[season_id];
+        let usefull_array = [];
+        let wait_for_words = setInterval(async() => {
+            if (typeof this_words !== 'undefined') {
+                clearInterval(wait_for_words)
+                this_words.forEach(async element => {
+                    let tmp_obj = await {
+                        id: element.id,
+                        question: element.word,
+                        status: finished_word[element.id]
+                    }
+                    await usefull_array.push(tmp_obj);
+                });
+            }
+        }, 100)
+        let wait = setInterval(() => {
+            if (usefull_array.length === this_words.length) {
+                clearInterval(wait);
+                res(usefull_array);
+            }
+        }, 500);
+    })
+
+}
+
 function user_data() {
     return new Promise((res, rej) => {
         res(user);
@@ -28,7 +55,6 @@ function user_data() {
 
 function get_word(season_id) {
     return new Promise((res, rej) => {
-        console.log(season_id)
         res(word_list[season_id]);
     })
 }
@@ -109,6 +135,15 @@ async function init(cb) {
     })
 }
 
+function season_finish(season_id, cb) {
+    console.log(season_id);
+    socket.emit("season_finish", season_id, res => {
+        console.log(res)
+        user.credit += res.data;
+        cb(res.data)
+    })
+}
+
 export {
     init,
     get_season,
@@ -117,4 +152,6 @@ export {
     use_hint,
     finish_level,
     play_game_data,
+    season_finish,
+    season_finish_data,
 }
