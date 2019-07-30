@@ -126,7 +126,6 @@ module.exports.my_io = function(server) {
 
 
         socket.on("season_finish", (season_id, cb) => {
-            console.log(season_id)
             let array_of_prize = [5, 10, 5, 10, 5, 10, 15, 10, 5, 15, 20, 10, 5, 20, 15, 10, 5, 50, 10, 15, 5, 25, 15, 25, 5, 10, 15];
             let random_prize = array_of_prize[Math.floor(Math.random() * array_of_prize.length)];
             season_finish(socket._id, season_id, random_prize, res=>{
