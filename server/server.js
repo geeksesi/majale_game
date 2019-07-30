@@ -1,5 +1,5 @@
 const { get_season, words_season } = require('./db/mysql/mysql');
-const { user_exist, hint_cost, finish_level, remember_me, finish_again_level, complete_remember } = require('./db/mongo/insert');
+const { user_exist, hint_cost, finish_level, remember_me, finish_again_level, complete_remember, season_finish } = require('./db/mongo/insert');
 const { remember_word, action_history } = require('./db/mongo/modules');
 
 module.exports.my_io = function(server) {
@@ -73,36 +73,6 @@ module.exports.my_io = function(server) {
         })
 
 
-        socket.on("season_list", (language_id, cb) => {
-            get_season(language_id, res => {
-                if (res.ok === true) {
-                    cb(res);
-                }
-            })
-        })
-
-        socket.on("word_season", (season_id, answer_language_id, cb) => {
-
-            words_season(season_id, answer_language_id, res => {
-                if (res.ok === true) {
-                    cb(res);
-                }
-            })
-        })
-
-
-        socket.on("user_login", (rubicka_id, cb) => {
-
-            user_exist(rubicka_id, res => {
-                // console.log(res);
-                if (res.ok === true) {
-                    socket.rubicka_id = res.data.rubicka_id;
-                    socket._id = res.data._id;
-                    cb(res);
-                }
-            })
-        })
-
 
         socket.on("user_hint", (word_id, cb) => {
             hint_cost(socket.rubicka_id, word_id, res => {
@@ -150,6 +120,18 @@ module.exports.my_io = function(server) {
                             cb(res);
                         }
                     });
+                }
+            })
+        })
+
+
+        socket.on("season_finish", (season_id, cb) => {
+            console.log(season_id)
+            let array_of_prize = [5, 10, 5, 10, 5, 10, 15, 10, 5, 15, 20, 10, 5, 20, 15, 10, 5, 50, 10, 15, 5, 25, 15, 25, 5, 10, 15];
+            let random_prize = array_of_prize[Math.floor(Math.random() * array_of_prize.length)];
+            season_finish(socket._id, season_id, random_prize, res=>{
+                if(res.ok){
+                    cb({ ok: true, data: random_prize })
                 }
             })
         })

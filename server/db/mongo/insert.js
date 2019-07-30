@@ -52,7 +52,6 @@ function add_action(user_id, type, value, status, cb) {
         timestamp: Math.floor(Date.now() / 1000),
     });
     new_action.save((err, res) => {
-        // console.log(err)
         if (err) { cb(false) } else { cb(true) }
     })
 }
@@ -150,6 +149,32 @@ function complete_remember(user_id, word_id, cb) {
 
 }
 
+function season_finish(user_id, season_id, prize, cb) {
+    user.findOneAndUpdate({ _id: user_id }, { $inc: { credit: prize } }, (err, res) => {
+        // console.log(res);
+        let resault = {};
+        if (err) {
+            resault.ok = false;
+            resault.data = err;
+            cb(resault);
+            return false;
+        }
+        add_action(user_id, "season_finish", season_id, prize, (action) => {
+            if (!action) {
+                resault.ok = false;
+                resault.data = err;
+                cb(resault);
+                return false;
+            }
+            else{
+                resault.ok = true;
+                // resault.data = res;
+                cb(resault);
+            }
+        })
+    });
+}
+
 module.exports = {
     user_exist: user_exist,
     hint_cost: hint_cost,
@@ -157,4 +182,5 @@ module.exports = {
     remember_me: remember_me,
     finish_again_level: finish_again_level,
     complete_remember: complete_remember,
+    season_finish : season_finish,
 }

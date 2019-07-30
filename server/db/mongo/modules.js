@@ -9,6 +9,7 @@ const action_historySchema = mongoos.Schema({
      * - payment
      * - hint
      * - finish_word
+     * - season_finish
      */
     type: {
         type: String,
@@ -18,6 +19,7 @@ const action_historySchema = mongoos.Schema({
      * on finish_word : word_id
      * on payment : payment package_id
      * on hint : word_id
+     * on season_finish : season_id
      */
     value: {
         type: Number,
@@ -26,6 +28,7 @@ const action_historySchema = mongoos.Schema({
     /**
      * - exp value on finish word
      * - empty on hint
+     * - prize value on season_finish
      * - payment on market offer
      * - payment when play          \
      *                                # when user did payment
