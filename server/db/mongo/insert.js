@@ -134,8 +134,6 @@ function remember_me(user_id, word_id, cb) {
 
 function complete_remember(user_id, word_id, cb) {
     remember_word.findOneAndUpdate({ user_id: user_id, word_id: word_id }, { status: 'answered' }, (err, res) => {
-        console.log('complete')
-        console.log(res)
         let resault = {};
         if (err) {
             resault.ok = false;
