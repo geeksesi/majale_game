@@ -32,7 +32,7 @@ function get_season(language_id, cb) {
 }
 
 function words_season(season_id, answer_language_id, cb) {
-    db.select('id', 'parent_id', 'language_id', 'season_sort', 'word', 'status')
+    db.select('id', 'parent_id', 'language_id', 'season_sort', 'word', 'status', 'season_id')
         .from('word')
         .where('season_id', season_id)
         .andWhereNot('status', null)
