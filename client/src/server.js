@@ -149,6 +149,12 @@ function check_season_finished(season_id) {
         let season_data = await season_finish_data(season_id);
     });
 }
+
+
+function loaded_finished(){
+    socket.emit("loaded");
+}
+
 export {
     init,
     get_season,
@@ -159,5 +165,6 @@ export {
     play_game_data,
     season_finish,
     season_finish_data,
-    check_season_finished
+    check_season_finished,
+    loaded_finished,
 }

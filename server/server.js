@@ -1,5 +1,5 @@
 const { get_season, words_season } = require('./db/mysql/mysql');
-const { user_exist, hint_cost, finish_level, remember_me, finish_again_level, complete_remember, season_finish } = require('./db/mongo/insert');
+const { user_exist, hint_cost, finish_level, remember_me, finish_again_level, complete_remember, season_finish, user_play_time_history } = require('./db/mongo/insert');
 const { remember_word, action_history } = require('./db/mongo/modules');
 
 module.exports.my_io = function(server) {
@@ -7,6 +7,8 @@ module.exports.my_io = function(server) {
     io.on('connection', socket => {
 
         socket.on("init", async(rubicka_id, cb) => {
+            socket.online_timestamp = Math.floor(Date.now() / 1000);
+
             let export_object = {
                 seasons: {},
                 words: {},
@@ -76,6 +78,19 @@ module.exports.my_io = function(server) {
         })
 
 
+        socket.on("loaded", () => {
+            socket.loaded_timestamp = Math.floor(Date.now() / 1000);
+        })
+
+        socket.on('disconnect', (reason) => {
+            // console.log(reason);
+            let offline_timestamp = Math.floor(Date.now() / 1000);
+            let online_timestamp = socket.online_timestamp;
+            let loading_time = socket.loaded_timestamp - socket.online_timestamp;
+            user_play_time_history(socket._id, online_timestamp, offline_timestamp, loading_time, res => {
+
+            })
+        });
 
         socket.on("user_hint", (word_id, cb) => {
             hint_cost(socket.rubicka_id, word_id, res => {

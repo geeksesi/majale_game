@@ -59,10 +59,9 @@ function add_action(user_id, type, value, status, cb) {
 function update_action(user_id, sureplus_status, cb) {
     action_history.findOneAndUpdate({ user_id: user_id }, {
         $inc: { description: sureplus_status },
+    }, (err, res) => {
+        if (err) { cb(false) } else { cb(true) }
     });
-    new_action.save((err, res) => {
-        if (err) { cb(false) } else { cb(res) }
-    })
 }
 
 function finish_level(rubicka_id, word_id, prize_value, exp_value, cb) {
@@ -172,6 +171,21 @@ function season_finish(user_id, season_id, prize, cb) {
     });
 }
 
+
+function user_play_time_history(user_id, online_timestamp, offline_timestamp, loaded_time, cb) {
+    console.log(user_id, online_timestamp, offline_timestamp, loaded_time);
+    const new_play_time = new play_time_history({
+        user_id: user_id,
+        online_timestamp: online_timestamp,
+        offline_timestamp: offline_timestamp,
+        load_time: loaded_time,
+    });
+
+    new_play_time.save((err, res) => {
+        if (err) { cb(false) } else { cb(true) }
+    })
+}
+
 module.exports = {
     user_exist: user_exist,
     hint_cost: hint_cost,
@@ -180,4 +194,5 @@ module.exports = {
     finish_again_level: finish_again_level,
     complete_remember: complete_remember,
     season_finish: season_finish,
+    user_play_time_history: user_play_time_history,
 }
