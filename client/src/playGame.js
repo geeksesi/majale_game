@@ -1,4 +1,4 @@
-import { user_data, use_hint, finish_level, play_game_data } from './server';
+import { user_data, use_hint, finish_level, play_game_data, check_season_finished } from './server';
 import { make_road } from './game_tools/game_design';
 import { make_table } from './game_tools/mechanism';
 
@@ -242,6 +242,7 @@ class playGame extends Phaser.Scene {
         this.is_win = false;
 
         if (type === "next") {
+
             if (typeof this.word_data[(this.word_id + 1)] === 'undefined') {
                 this.show_loading();
                 let data = await play_game_data();
@@ -249,10 +250,6 @@ class playGame extends Phaser.Scene {
                     if (res.length < 1) {
                         console.log("i have no lvl")
                         this.scene.start('mainMenu');
-                    }
-                    if (res[0].season_id !== this.season_id) {
-                        this.stop_loading();
-                        this.scene.start('season_finish', { season_id: this.season_id });
                     }
                     this.stop_loading();
                     this.scene.start('playGame', {
@@ -263,35 +260,22 @@ class playGame extends Phaser.Scene {
                 })
 
             } else {
-                if (this.word_data[this.word_id + 1].season_id !== this.season_id) {
-                    this.scene.start('season_finish', { season_id: this.season_id });
-                } else {
-
-                    this.scene.start('playGame', {
-                        word_id: this.word_id + 1,
-                        language_id: this.language_id,
-                        word_data: this.word_data
-                    });
-                }
+                this.scene.start('playGame', {
+                    word_id: this.word_id + 1,
+                    language_id: this.language_id,
+                    word_data: this.word_data
+                });
             }
         } else {
-            if (typeof this.word_data[(this.word_id + 1)] === 'undefined') {
-                this.show_loading();
-                let data = await play_game_data();
-                if (data[0].season_id !== this.season_id) {
-                    this.stop_loading();
-                    this.scene.start('season_finish', { season_id: this.season_id });
-                } else {
-                    this.stop_loading();
-                    this.scene.start('mainMenu');
-                }
-            } else {
-                if (this.word_data[this.word_id + 1].season_id !== this.season_id) {
-                    this.scene.start('season_finish', { season_id: this.season_id });
-                } else {
-                    this.scene.start('mainMenu');
-                }
-            }
+            this.scene.start('mainMenu');
+        }
+    }
+
+    async animation_finished() {
+        const check_season = await check_season_finished(this.season_id);
+        console.log(check_season);
+        if (check_season) {
+            this.scene.start('season_finish', { season_id: this.season_id });
         }
     }
 
@@ -334,6 +318,10 @@ class playGame extends Phaser.Scene {
         this.next_level_text.on('pointerdown', () => { this.win_ui_event("next") }, this);
         this.menu_text.setInteractive();
         this.menu_text.on('pointerdown', () => { this.win_ui_event("menu") }, this);
+
+        setTimeout(() => {
+            this.animation_finished();
+        }, 1000)
     }
 
     credit_ui() {

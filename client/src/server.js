@@ -6,6 +6,7 @@ let word_list = {};
 let user = {}
 let finished_word = {};
 let remembers_word = [];
+let finished_season = [];
 
 async function basic_events() {
     await socket.on('connect', () => {
@@ -94,12 +95,13 @@ function finish_level(word_id, time, is_hint, status) {
 
 async function init(cb) {
     await basic_events();
-    await socket.emit("init", 10, async res => {
+    await socket.emit("init", 1, async res => {
         season_list = res.seasons;
         word_list = res.words;
         user = res.user;
         finished_word = res.finished_word;
         await remembers_word.push(...res.remembers_id)
+        await finished_season.push(...res.finished_season)
         setTimeout(() => { cb(res) }, 500)
         setTimeout(async() => {
             // console.log(await play_game_data());
@@ -146,12 +148,36 @@ function season_finish_data(season_id) {
 
 function check_season_finished(season_id) {
     return new Promise(async(resolve, reject) => {
+        if (finished_season.indexOf(season_id) !== -1) {
+            resolve(false)
+            return false;
+        }
         let season_data = await season_finish_data(season_id);
+        let ok = []
+        for (let i = 0; i < season_data.length; i++) {
+            const element = season_data[i];
+            if (element.status === null || typeof element.status === 'undefined' || element.status === 0) {
+                resolve(false);
+                break;
+            } else {
+                ok.push(true);
+            }
+        }
+
+        const wait_for_it = setInterval(() => {
+            if (ok.length === season_data.length) {
+                clearInterval(wait_for_it);
+                finished_season.push(season_id);
+                resolve(true);
+            }
+        }, 500);
+
+
     });
 }
 
 
-function loaded_finished(){
+function loaded_finished() {
     socket.emit("loaded");
 }
 

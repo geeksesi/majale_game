@@ -15,6 +15,7 @@ module.exports.my_io = function(server) {
                 // user: ,
                 finished_word: {},
                 remembers_id: [],
+                finished_season: [],
             }
             await user_exist(rubicka_id, async res => {
                 if (res.data === null) {
@@ -43,6 +44,11 @@ module.exports.my_io = function(server) {
 
             })
 
+            await action_history.find({ user_id: socket._id, type: 'season_finish' }, (err, actions) => {
+                actions.forEach(async action => {
+                    await export_object.finished_season.push(action.value);
+                })
+            })
 
             await get_season(2, async res => {
                 export_object.seasons[2] = await res.data;

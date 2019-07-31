@@ -173,7 +173,7 @@ function season_finish(user_id, season_id, prize, cb) {
 
 
 function user_play_time_history(user_id, online_timestamp, offline_timestamp, loaded_time, cb) {
-    console.log(user_id, online_timestamp, offline_timestamp, loaded_time);
+    // console.log(user_id, online_timestamp, offline_timestamp, loaded_time);
     const new_play_time = new play_time_history({
         user_id: user_id,
         online_timestamp: online_timestamp,
