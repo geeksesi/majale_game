@@ -136,9 +136,16 @@ class seasonMenu extends Phaser.Scene {
                 clearInterval(loading);
                 this.chest_rect.setPosition(this.places.chest.x, this.places.chest.y);
                 this.chest_text.setText(res + " $");
+                this.finish_event();
             }, 1000)
         })
 
+    }
+
+    finish_event() {
+        this.input.on('pointerdown', (pointer) => {
+            this.scene.start('mainMenu');
+        })
     }
 
     // UI

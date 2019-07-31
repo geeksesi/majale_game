@@ -1,5 +1,7 @@
-import { get_word, user_data, use_hint, finish_level } from './server';
+import { user_data, use_hint, finish_level, play_game_data } from './server';
+import { make_road } from './game_tools/game_design';
 import { make_table } from './game_tools/mechanism';
+
 class playGame extends Phaser.Scene {
 
     constructor() {
@@ -7,6 +9,11 @@ class playGame extends Phaser.Scene {
     }
 
     init(data) {
+        if (typeof data.word_data[data.word_id] === 'undefined') {
+            console.log('i have no lvl for you')
+            this.scene.start('mainMenu');
+            return false
+        }
         // this.season_id = data.season_id;
         this.word_id = data.word_id;
         this.language_id = data.language_id;
@@ -222,15 +229,42 @@ class playGame extends Phaser.Scene {
         }, 500);
     }
 
-    win_ui_event(type) {
+    show_loading() {
+        console.log("loading")
+    }
+
+    stop_loading() {
+        console.log("stop loading")
+    }
+
+    async win_ui_event(type) {
+        console.log(this.season_id + " " + this.word_data[this.word_id + 1].season_id)
         this.is_win = false;
 
         if (type === "next") {
             if (typeof this.word_data[(this.word_id + 1)] === 'undefined') {
-                this.scene.start('mainMenu');
+                this.show_loading();
+                let data = await play_game_data();
+                await make_road(data.word_list, data.finished_word, data.remembers_word, this.language_id, res => {
+                    if (res.length < 1) {
+                        console.log("i have no lvl")
+                        this.scene.start('mainMenu');
+                    }
+                    if (res[0].season_id !== this.season_id) {
+                        this.stop_loading();
+                        this.scene.start('season_finish', { season_id: this.season_id });
+                    }
+                    this.stop_loading();
+                    this.scene.start('playGame', {
+                        word_id: 0,
+                        language_id: this.language_id,
+                        word_data: res
+                    });
+                })
+
             } else {
                 if (this.word_data[this.word_id + 1].season_id !== this.season_id) {
-                    console.log("season_finished");
+                    this.scene.start('season_finish', { season_id: this.season_id });
                 } else {
 
                     this.scene.start('playGame', {
@@ -241,21 +275,29 @@ class playGame extends Phaser.Scene {
                 }
             }
         } else {
-            this.scene.start('mainMenu');
+            if (typeof this.word_data[(this.word_id + 1)] === 'undefined') {
+                this.show_loading();
+                let data = await play_game_data();
+                if (data[0].season_id !== this.season_id) {
+                    this.stop_loading();
+                    this.scene.start('season_finish', { season_id: this.season_id });
+                } else {
+                    this.stop_loading();
+                    this.scene.start('mainMenu');
+                }
+            } else {
+                if (this.word_data[this.word_id + 1].season_id !== this.season_id) {
+                    this.scene.start('season_finish', { season_id: this.season_id });
+                } else {
+                    this.scene.start('mainMenu');
+                }
+            }
         }
     }
 
     // UI
 
     win_ui() {
-        // this.graphics.fillStyle(0x9e9e9e);
-        // this.graphics.lineStyle(3, 0xffffff);
-        // this.win_area = this.add.rectangle(
-        //     (this.sys.game.config.width - (this.sys.game.config.width / 5 * 2)),
-        //     (this.sys.game.config.height - (this.sys.game.config.height / 3 * 2)))
-        //     .setDepth(100);
-        // this.graphics.strokeRectShape(this.win_area);
-        // this.graphics.fillRectShape(this.win_area);
         this.win_bg = this.add.image(
                 (this.sys.game.config.width / 2),
                 (this.sys.game.config.height / 2),

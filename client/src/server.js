@@ -19,32 +19,6 @@ function get_season(language_id) {
     })
 }
 
-function season_finish_data(season_id) {
-    return new Promise(async(res, rej) => {
-        let this_words = await word_list[season_id];
-        let usefull_array = [];
-        let wait_for_words = setInterval(async() => {
-            if (typeof this_words !== 'undefined') {
-                clearInterval(wait_for_words)
-                this_words.forEach(async element => {
-                    let tmp_obj = await {
-                        id: element.id,
-                        question: element.word,
-                        status: finished_word[element.id]
-                    }
-                    await usefull_array.push(tmp_obj);
-                });
-            }
-        }, 100)
-        let wait = setInterval(() => {
-            if (usefull_array.length === this_words.length) {
-                clearInterval(wait);
-                res(usefull_array);
-            }
-        }, 500);
-    })
-
-}
 
 function user_data() {
     return new Promise((res, rej) => {
@@ -136,14 +110,45 @@ async function init(cb) {
 }
 
 function season_finish(season_id, cb) {
-    console.log(season_id);
     socket.emit("season_finish", season_id, res => {
-        console.log(res)
         user.credit += res.data;
         cb(res.data)
     })
 }
 
+function season_finish_data(season_id) {
+    return new Promise(async(res, rej) => {
+        let this_words = await word_list[season_id];
+        let usefull_array = [];
+        if (typeof this_words === 'undefined') {
+            this_words = await word_list[season_id];
+            console.log(this_words)
+        }
+        if (typeof this_words !== 'undefined') {
+            this_words.forEach(async element => {
+                let tmp_obj = await {
+                    id: element.id,
+                    question: element.word,
+                    status: finished_word[element.id]
+                }
+                await usefull_array.push(tmp_obj);
+            });
+        }
+        let wait = setInterval(() => {
+            if (usefull_array.length === this_words.length) {
+                clearInterval(wait);
+                res(usefull_array);
+            }
+        }, 500);
+    })
+
+}
+
+function check_season_finished(season_id){
+    return new Promise((resolve, reject)=>{
+        let season_data = await season_finish_data(season_id);
+    });
+}
 export {
     init,
     get_season,
