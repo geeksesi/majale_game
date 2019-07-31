@@ -45,7 +45,7 @@ function play_game_data() {
 
 
 function use_hint(word_id) {
-    console.log("hello");
+    // console.log("hello");
     return new Promise((resolve, reject) => {
 
         socket.emit("user_hint", word_id, (res) => {
@@ -94,7 +94,7 @@ function finish_level(word_id, time, is_hint, status) {
 
 async function init(cb) {
     await basic_events();
-    await socket.emit("init", 1, async res => {
+    await socket.emit("init", 10, async res => {
         season_list = res.seasons;
         word_list = res.words;
         user = res.user;
@@ -102,7 +102,7 @@ async function init(cb) {
         await remembers_word.push(...res.remembers_id)
         setTimeout(() => { cb(res) }, 500)
         setTimeout(async() => {
-            console.log(await play_game_data());
+            // console.log(await play_game_data());
             // console.log(word_list);
             // console.log(user);
         }, 1000)
@@ -122,7 +122,7 @@ function season_finish_data(season_id) {
         let usefull_array = [];
         if (typeof this_words === 'undefined') {
             this_words = await word_list[season_id];
-            console.log(this_words)
+            // console.log(this_words)
         }
         if (typeof this_words !== 'undefined') {
             this_words.forEach(async element => {
@@ -144,8 +144,8 @@ function season_finish_data(season_id) {
 
 }
 
-function check_season_finished(season_id){
-    return new Promise((resolve, reject)=>{
+function check_season_finished(season_id) {
+    return new Promise(async(resolve, reject) => {
         let season_data = await season_finish_data(season_id);
     });
 }
@@ -159,4 +159,5 @@ export {
     play_game_data,
     season_finish,
     season_finish_data,
+    check_season_finished
 }

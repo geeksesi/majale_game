@@ -29,8 +29,8 @@ class seasonMenu extends Phaser.Scene {
         });
         init(res => {
             let wait_for_image = setInterval(async() => {
-                if(image_loaded){
-                    this.hide_progress();
+                if (image_loaded) {
+                    this.hide_progress(res.user.play_time);
                     clearInterval(wait_for_image);
                 }
                 console.log(res);
@@ -65,10 +65,14 @@ class seasonMenu extends Phaser.Scene {
         }, 10)
     }
 
-    hide_progress() {
+    hide_progress(first_time) {
         clearInterval(this.load_interval);
         this.my_progress.clear();
-        this.scene.start('mainMenu');
+        if (first_time === 1) {
+            this.scene.start('languageMenu');
+        } else {
+            this.scene.start('mainMenu');
+        }
 
     }
 

@@ -13,7 +13,7 @@ const config = {
     //     width: 600,
     //     height: 1080
     // },
-    scene: [loading, mainMenu, season_finish, playGame]
+    scene: [loading, languageMenu, mainMenu, season_finish, playGame]
         // scene: [mainMenu,  playGame]
         // scene: [season_finish],
         // scene: [loading],

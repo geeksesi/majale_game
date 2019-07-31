@@ -163,8 +163,7 @@ function season_finish(user_id, season_id, prize, cb) {
                 resault.data = err;
                 cb(resault);
                 return false;
-            }
-            else{
+            } else {
                 resault.ok = true;
                 // resault.data = res;
                 cb(resault);
@@ -180,5 +179,5 @@ module.exports = {
     remember_me: remember_me,
     finish_again_level: finish_again_level,
     complete_remember: complete_remember,
-    season_finish : season_finish,
+    season_finish: season_finish,
 }
