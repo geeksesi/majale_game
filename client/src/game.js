@@ -4,30 +4,27 @@ gameanalytics.GameAnalytics.setEnabledInfoLog(true);
 gameanalytics.GameAnalytics.configureBuild("majale 0.4.0");
 const config = {
     type: Phaser.CANVAS,
-    canvas: document.getElementById('myCanvas'),
-    width: 600,
-    height: 1080,
+    canvas:  document.getElementById("myCanvas"),
+    parent: 'myGame',
+
     backgroundColor: 0xefefef,
-    // scale: {
-    //     mode: Phaser.Scale.NONE,
-    //     width: 600,
-    //     height: 1080
-    // },
+    width: 610,
+    height: 1080,
     scene: [loading, languageMenu, mainMenu, season_finish, playGame]
-        // scene: [mainMenu,  playGame]
-        // scene: [season_finish],
-        // scene: [loading],
-        // scene: [languageMenu, seasonMenu, wordMenu, playGame],
-        // scene: [seasonMenu],
-        // scene: [wordMenu],
-        // scene: [mainMenu],
+    // scene: [mainMenu,  playGame]
+    // scene: [season_finish],
+    // scene: [loading],
+    // scene: [languageMenu, seasonMenu, wordMenu, playGame],
+    // scene: [seasonMenu],
+    // scene: [wordMenu],
+    // scene: [mainMenu],
 };
 
+// const game = new Phaser.Game(config);
 
-// game.stage.scale.startFullScreen();
-// game.scale.scaleMode             = Phaser.ScaleManager.SHOW_ALL;
-// game.scale.pageAlignHorizontally = true;
-// game.scale.pageAlignVertically   = true;
+// console.log(game)
+// my_scale.setGameSize(window.innerWidth, window.innerHeight);
+
 
 import loading from './loading';
 import mainMenu from './mainMenu';
@@ -39,7 +36,8 @@ import season_finish from './season_finish';
 
 
 function resize() {
-    let canvas = document.querySelector("canvas");
+    // let canvas = document.querySelector("canvas");
+    let canvas = document.getElementById("myCanvas");
     let width = window.innerWidth;
     let height = window.innerHeight;
     let wratio = width / height;
@@ -49,7 +47,7 @@ function resize() {
         canvas.style.height = (width / ratio) + "px";
         config.width = width;
         config.height = (width / ratio);
-        let game = new Phaser.Game(config);
+        const game = new Phaser.Game(config);
         // game.scene.start('playGame', {
         //     season_id: 1,
         //     word_id: 0,
@@ -61,7 +59,7 @@ function resize() {
         canvas.style.height = height + "px";
         config.width = (height * ratio);
         config.height = height;
-        let game = new Phaser.Game(config);
+        const game = new Phaser.Game(config);
 
         // game.scene.start('playGame', {
         //     season_id: 1,
