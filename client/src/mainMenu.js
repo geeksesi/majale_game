@@ -25,37 +25,7 @@ class mainMenu extends Phaser.Scene {
         await top_ui(this, "main");
         await this.play_ui();
         await this.down_ui();
-        // await this.loading_ui();
-        // console.log(this.language_id)
-        // this.logo = this.add.text(200, 150 , "HEllow",{fontSize : "100px",color:"#22222"});
-        // this.language_select = this.add.text(this.sys.game.config.width - 100, 30, "", { fontSize: "15px", color: "#2f2f2f" });
-        // this.set_language(this.language_id)
-        // this.language_select.setInteractive();
-        // this.language_select.on('pointerdown', () => {
-        //     if (!this.change_lang) {
-        //         this.change_lang = true;
-        //         this.language_id = (this.language_id === 2) ? 3 : 2;
-        //         this.set_language(this.language_id)
-        //         setTimeout(() => { this.change_lang = false }, 500)
-        //     }
-        // }, this);
-
-
-        // this.playGame_botton = this.add.text(80, 80, "Play Game", { fontSize: "25px", color: "#2f2f2f" });
-        // this.playGame_botton.setInteractive();
-        // this.playGame_botton.on('pointerdown', () => { this.play_game() }, this);
-
-        // this.progress = this.add.text(80, 150, "progress", { fontSize: "25px", color: "#2f2f2f" });
-        // this.progress.setInteractive();
-        // this.progress.on('pointerdown', () => { this.progress_event() }, this);
     }
-
-
-
-
-    // level_selected() {
-    //     this.scene.start('seasonMenu', { language_id: this.language_id });
-    // }
 
     progress_event() {
         this.scene.start('season_finish', { season_id: 1 });
@@ -75,7 +45,6 @@ class mainMenu extends Phaser.Scene {
     }
 
 
- 
 
     loading_ui() {
         this.loading = this.add.graphics();
@@ -123,7 +92,7 @@ class mainMenu extends Phaser.Scene {
         ), Phaser.Geom.Rectangle.Contains);
         this.play_game_check = false;
         this.play_buttom.on('pointerover', function() {
-            if(!this.play_game_check){
+            if (!this.play_game_check) {
                 this.play_game();
             }
         }, this);
@@ -166,7 +135,7 @@ class mainMenu extends Phaser.Scene {
                 x: 70 * this.distance,
                 y: 1010 * this.distance,
                 font_size: 35 * this.distance,
-                color : '#222'
+                color: '#222'
             }
         }
 
@@ -197,7 +166,7 @@ class mainMenu extends Phaser.Scene {
                 x: 410 * this.distance,
                 y: 1010 * this.distance,
                 font_size: 35 * this.distance,
-                color : '#222'
+                color: '#222'
             }
         }
 

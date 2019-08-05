@@ -6,6 +6,11 @@ class seasonMenu extends Phaser.Scene {
     }
 
     async preload() {
+        this.load.image('english_flag', 'assets/Eng_flag.png')
+        this.load.image('exp_icon', 'assets/exp.png')
+        this.load.image('coin_icon', 'assets/coin.png')
+        this.load.image('best_flag', 'assets/ranking.png')
+        this.load.image('shop_flag', 'assets/Shop.png')
 
         this.show_progress()
         console.log("loading")
