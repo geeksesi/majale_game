@@ -9,12 +9,15 @@ const path = require('path');
 
 module.exports = {
 
-    entry: './client/src/game.js',
+    entry: {
+      game : './client/src/game.js',
+      admin : './admin/app.js'
+    },
 
     output: {
         path: path.resolve(__dirname, 'public_html/build'),
         publicPath: '/public_html/build/',
-        filename: 'project.bundle.js'
+        filename: '[name].bundle.js'
     },
 
     module: {
@@ -26,7 +29,9 @@ module.exports = {
             loader: 'babel-loader',
             options: {
               presets: ['@babel/preset-env'],
-              plugins: ["@babel/plugin-transform-runtime"]
+              presets: ['@babel/preset-stage-1'],
+              presets: ['@babel/preset-react'],
+              plugins: ["@babel/plugin-transform-runtime"],
             }
           }
         }

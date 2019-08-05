@@ -15,3 +15,5 @@ node_modules/
 /npm-debug.log
 
 majale.code-workspace
+
+public_html/build/*
