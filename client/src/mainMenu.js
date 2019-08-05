@@ -1,28 +1,31 @@
 import { make_road } from './game_tools/game_design';
-import { play_game_data } from './server';
+
+import { top_ui } from './game_tools/global_ui';
+import { play_game_data, user_data } from './server';
 class mainMenu extends Phaser.Scene {
     constructor() {
         super({ key: 'mainMenu' });
 
     }
 
-    preload() {
+    async preload() {
         this.load.image('english_flag', 'assets/Eng_flag.png')
         this.load.image('exp_icon', 'assets/exp.png')
         this.load.image('coin_icon', 'assets/coin.png')
         this.load.image('best_flag', 'assets/ranking.png')
         this.load.image('shop_flag', 'assets/Shop.png')
-        this.coin_value = 5000;
-        this.exp_value = 5000;
+        let user = await user_data();
+        this.coin_value = user.credit;
+        this.exp_value = user.xp;
         // console.log(localStorage.getItem('language_id'));
         this.language_id = parseInt(localStorage.getItem('language_id')) || 2;
     }
 
     async create() {
-        await this.top_ui();
+        await top_ui(this, "main");
         await this.play_ui();
         await this.down_ui();
-        await this.loading_ui();
+        // await this.loading_ui();
         // console.log(this.language_id)
         // this.logo = this.add.text(200, 150 , "HEllow",{fontSize : "100px",color:"#22222"});
         // this.language_select = this.add.text(this.sys.game.config.width - 100, 30, "", { fontSize: "15px", color: "#2f2f2f" });
@@ -48,22 +51,7 @@ class mainMenu extends Phaser.Scene {
     }
 
 
-    set_language(language_id) {
-        localStorage.setItem('language_id', language_id);
-        this.language_select.setText((language_id === 2) ? "English" : "عربی")
-        this.language_select.setFontFamily((language_id === 2) ? "Robot" : "Lalezar")
-        this.language_select.setFontSize((language_id === 2) ? 32 * this.distance : "Lalezar")
-        this.language_flag = this.add.image(
-                this.offset.x + 60 * this.distance,
-                this.offset.y + 75 * this.distance,
-                (language_id === 2) ? "english_flag" : "english_flag"
-            )
-            .setScale(
-                this.distance,
-                this.distance,
-            );;
 
-    }
 
     // level_selected() {
     //     this.scene.start('seasonMenu', { language_id: this.language_id });
@@ -87,123 +75,7 @@ class mainMenu extends Phaser.Scene {
     }
 
 
-    // UI
-    async top_ui() {
-        this.gw = this.sys.game.config.width;
-        this.gh = this.sys.game.config.height
-        this.distance = this.gw / 610;
-        // this.distance = this.gh / 1080;
-        this.offset = {
-            x: 20 * this.distance,
-            y: 20 * this.distance,
-        };
-
-        // Language
-        this.language_select = this.add.text(
-            this.offset.x,
-            this.offset.y,
-            "", {
-                fontSize: "15px",
-                color: "#2f2f2f",
-                fontFamily: "Roboto"
-            });
-
-        await this.set_language(this.language_id)
-
-        // coin 
-
-        const coin_places = {
-            flag: {
-                x: 250 * this.distance,
-                y: (this.offset.y) + 35 * this.distance,
-            },
-            text: {
-                x: 300 * this.distance,
-                y: this.offset.y + 22 * this.distance,
-                font_size: 35 * this.distance
-            }
-        }
-        this.coin_flag = this.add.image(
-                coin_places.flag.x,
-                coin_places.flag.y,
-                "coin_icon"
-            )
-            .setScale(
-                this.distance,
-                this.distance,
-            );
-        this.coin_text = this.add.text(
-            coin_places.text.x,
-            coin_places.text.y,
-            this.coin_value, {
-                fontSize: `${coin_places.text.font_size}px`,
-                color: "#2f2f2f",
-                fontFamily: "Noto Sans"
-            });
-
-
-
-        // exp 
-
-        const exp_places = {
-            flag: {
-                x: 460 * this.distance,
-                y: (this.offset.y) + 35 * this.distance,
-            },
-            text: {
-                x: 505 * this.distance,
-                y: this.offset.y + 22 * this.distance,
-                font_size: 35 * this.distance
-            }
-        }
-        this.exp_flag = this.add.image(
-                exp_places.flag.x,
-                exp_places.flag.y,
-                "exp_icon"
-            )
-            .setScale(
-                this.distance,
-                this.distance,
-            );
-        this.exp_text = this.add.text(
-            exp_places.text.x,
-            exp_places.text.y,
-            this.exp_value, {
-                fontSize: `${exp_places.text.font_size}px`,
-                color: "#2f2f2f",
-                fontFamily: "Noto Sans"
-            });
-
-        // seprator 
-        this.graphics = this.add.graphics({ lineStyle: { color: 0xa0a0a0 } });
-        this.seprator1 = new Phaser.Geom.Line(
-            170 * this.distance,
-            0,
-            170 * this.distance,
-            100 * this.distance
-        )
-
-        this.seprator2 = new Phaser.Geom.Line(
-            405 * this.distance,
-            0,
-            405 * this.distance,
-            100 * this.distance
-        )
-
-        this.seprator3 = new Phaser.Geom.Line(
-            this.gw,
-            110 * this.distance,
-            110 * this.distance,
-            110 * this.distance
-        )
-
-
-        this.graphics.strokeLineShape(this.seprator1);
-        this.graphics.strokeLineShape(this.seprator2);
-        this.graphics.strokeLineShape(this.seprator3);
-
-    }
-
+ 
 
     loading_ui() {
         this.loading = this.add.graphics();
@@ -280,8 +152,9 @@ class mainMenu extends Phaser.Scene {
             305 * this.distance,
             1050 * this.distance
         )
-        this.graphics.setDepth(100)
-        this.graphics.strokeLineShape(this.seprator_down);
+        this.down_graphics = this.add.graphics({ lineStyle: { color: 0xa0a0a0 } });
+        this.down_graphics.setDepth(100)
+        this.down_graphics.strokeLineShape(this.seprator_down);
 
         // Best 
         const best_places = {
@@ -292,7 +165,8 @@ class mainMenu extends Phaser.Scene {
             text: {
                 x: 70 * this.distance,
                 y: 1010 * this.distance,
-                font_size: 45 * this.distance
+                font_size: 35 * this.distance,
+                color : '#222'
             }
         }
 
@@ -308,7 +182,7 @@ class mainMenu extends Phaser.Scene {
             best_places.text.y,
             "برترین‌ها", {
                 fontSize: `${best_places.text.font_size}px`,
-                color: "#fff",
+                color: `${best_places.text.color}`,
                 fontFamily: "Lalezar"
             });
 
@@ -320,9 +194,10 @@ class mainMenu extends Phaser.Scene {
                 y: 950 * this.distance
             },
             text: {
-                x: 380 * this.distance,
+                x: 410 * this.distance,
                 y: 1010 * this.distance,
-                font_size: 45 * this.distance
+                font_size: 35 * this.distance,
+                color : '#222'
             }
         }
 
@@ -338,7 +213,7 @@ class mainMenu extends Phaser.Scene {
             shop_places.text.y,
             "فروشگاه", {
                 fontSize: `${shop_places.text.font_size}px`,
-                color: "#fff",
+                color: `${best_places.text.color}`,
                 fontFamily: "Lalezar"
             });
     }
