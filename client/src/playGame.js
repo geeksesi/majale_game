@@ -75,7 +75,7 @@ class playGame extends Phaser.Scene {
         // this.words =this.add.group()
         // this.add.grid(0, 0, 50 * 6, 50 * 5, 50, 50, 0x999999, 1, 0x666666).setOrigin(0);
         await this.variables();
-        this.graphics = this.add.graphics({ fillStyle: { color: 0x9e9e9e } });
+        this.till_graphic = this.add.graphics({ fillStyle: { color: 0x9e9e9e } });
         await this.table_ui();
         await this.hint_ui();
         await this.answer_ui();
@@ -122,29 +122,37 @@ class playGame extends Phaser.Scene {
 
     }
 
+    clear_all(){
+        for (let i = 0; i < this.till_bg_intract.length; i++) {
+            if (this.hint_key_arr.includes(i)) {
+                continue;
+            }
+            this.make_clear(i)
+        }
+    }
 
     pointer_up() {
         if (!this.is_win) {
-            this.answer_arr = [];
-            this.answer_key_arr = [];
-            this.answer_text.setText('')
-                // console.log(this.hint_key_arr)
-            this.graphics.fillStyle(0x2e2e2e);
-            this.graphics.lineStyle(3, 0xffffff);
+            this.again = true;
             this.hint_key_arr.forEach(each => {
-                this.graphics.strokeRectShape(this.till_bg[each]);
-                this.graphics.fillRectShape(this.till_bg[each]);
+                this.till_graphic.fillRectShape(this.till_bg_intract[each]);
+                this.make_blue(each)
             })
-            this.graphics.fillStyle(0x9e9e9e);
-            this.graphics.lineStyle(3, 0xffffff);
-            for (let i = 0; i < this.till_bg.length; i++) {
+            this.till_graphic.fillStyle(0x9e9e9e);
+            for (let i = 0; i < this.till_bg_intract.length; i++) {
                 if (this.hint_key_arr.includes(i)) {
                     continue;
                 }
-                this.graphics.strokeRectShape(this.till_bg[i]);
-                this.graphics.fillRectShape(this.till_bg[i]);
-            }
+                if(this.answer_key_arr.includes(i)){
+                    this.make_red(i)
+                }else{
 
+                    this.make_clear(i)
+                }
+            }
+            this.answer_arr = [];
+            this.answer_key_arr = [];
+            this.answer_text.setText('')
             this.answer_arr = this.hint_arr.slice();
             this.answer_key_arr = this.hint_key_arr.slice();
             this.answer_text.setText(this.hint_arr.join(''))
@@ -159,7 +167,7 @@ class playGame extends Phaser.Scene {
             // console.log(this.answer_key_arr[this.answer_key_arr.length - 1])
             return true;
         }
-        this.graphics.fillStyle(0x9e9e9e);
+        this.till_graphic.fillStyle(0x9e9e9e);
         let index_in_answer = this.answer_key_arr.indexOf(i);
         for (let b = index_in_answer + 1; b < this.answer_key_arr.length; b++) {
             if (this.hint_key_arr.indexOf(this.answer_key_arr[b])) {
@@ -168,8 +176,8 @@ class playGame extends Phaser.Scene {
                 // continue;
             }
             // console.log(i);
-            this.graphics.strokeRectShape(this.till_bg[this.answer_key_arr[b]]);
-            this.graphics.fillRectShape(this.till_bg[this.answer_key_arr[b]]);
+            this.make_blue(this.answer_key_arr[b])
+            // this.till_graphic.fillRectShape(this.till_bg_intract[this.answer_key_arr[b]]);
         }
         this.answer_arr.splice(index_in_answer + 1);
         this.answer_key_arr.splice(index_in_answer + 1);
@@ -181,17 +189,12 @@ class playGame extends Phaser.Scene {
 
     pointer_move(pointer) {
         if (pointer.isDown && !this.is_win) {
-
-            // console.log(pointer.position)
-            // console.log(pointer.prevPosition)
-            // if (Math.abs(pointer.prevPosition.x - pointer.position.x) > 20 || Math.abs(pointer.prevPosition.y - pointer.position.y) > 20) {
-            //     console.log("must break");
-            //     return false;
-            // }
-            this.graphics.fillStyle(0x2e2e2e);
-            this.graphics.lineStyle(3, 0xffffff);
-            for (let i = 0; i < this.till_bg.length; i++) {
-                if (this.till_bg[i].contains(pointer.x, pointer.y)) {
+            if(this.again){
+                this.again = false;
+                this.clear_all();
+            }
+            for (let i = 0; i < this.till_bg_intract.length; i++) {
+                if (this.till_bg_intract[i].contains(pointer.x, pointer.y)) {
                     if (this.answer_key_arr.includes(i)) {
                         this.check_pointer_way(i)
                         break;
@@ -206,10 +209,9 @@ class playGame extends Phaser.Scene {
                             break;
                         }
                     }
-                    this.graphics.fillRectShape(this.till_bg[i]);
-                    this.graphics.strokeRectShape(this.till_bg[i]);
+                    // this.till_graphic.fillRectShape(this.till_bg_intract[i]);
+                    this.make_blue(i)
                     this.answer_arr.push(this.words[i]);
-                    // console.log(this.hint_arr)
                     this.answer_key_arr.push(i);
                     this.answer_text.setText(this.answer_arr.join(""));
                     if (this.answer_arr.join("") === this.answer) {
@@ -397,7 +399,7 @@ class playGame extends Phaser.Scene {
     table_ui() {
 
         this.till_bg = [];
-
+        this.till_bg_intract = [];
         this.words = this.table_data.array;
         this.till_words = []
             // const max_x = 3;
@@ -407,44 +409,85 @@ class playGame extends Phaser.Scene {
 
         for (let x = 0; x < this.max_x; x++) {
             for (let y = 0; y < this.max_y; y++) {
-                this.till_bg.push(new Phaser.Geom.Rectangle(
+                this.till_bg.push(this.add.graphics().fillStyle(0xffffff).fillRoundedRect(
                     this.till.offset_x + (x * (this.till.width / this.max_x)),
                     this.till.offset_y + (y * (this.till.width / this.max_y)),
                     (this.till.width / this.max_x),
-                    (this.till.width / this.max_x)));
+                    (this.till.width / this.max_x),
+                    15
+                ))
+
+                this.till_bg_intract.push(new Phaser.Geom.Rectangle(
+                    this.till.offset_x + (x * (this.till.width / this.max_x)),
+                    this.till.offset_y + (y * (this.till.width / this.max_y)),
+                    (this.till.width / this.max_x),
+                    (this.till.width / this.max_x) + 2));
             }
         }
         // console.log(this.till_bg[0]);
-        // this.graphics.lineStyle(1, 0x666666);
-        this.graphics.fillStyle(0x9e9e9e);
-        this.graphics.lineStyle(3, 0xffffff);
-        for (let i = 0; i < this.till_bg.length; i++) {
+        // this.till_graphic.fillStyle(0x9e9e9e);
+        for (let i = 0; i < this.till_bg_intract.length; i++) {
             this.add.text(
-                    this.till_bg[i].x + ((this.till_bg[i].width / 2.5)),
-                    this.till_bg[i].y + (this.till_bg[i].width / 5),
+                    this.till_bg_intract[i].x + ((this.till_bg_intract[i].width / 2.5)),
+                    this.till_bg_intract[i].y + (this.till_bg_intract[i].width / 5),
                     this.words[i])
-                .setFontFamily('Tahoma')
-                .setFontSize(this.till_bg[i].width / 2.5)
+                .setFontFamily('Lalezar')
+                .setFontSize(this.till_bg_intract[i].width / 2.5)
                 .setColor('#222')
                 .setAlign("center");
             // .setStyle({ rtl: true });
 
-            this.graphics.strokeRectShape(this.till_bg[i]);
-            this.graphics.fillRectShape(this.till_bg[i]);
+            this.till_graphic.fillStyle(0xb2bec3);
+            this.till_graphic.fillRectShape(this.till_bg_intract[i]);
         }
-
-
     }
 
+    make_blue(key) {
+        this.till_bg[key].clear();
+        this.till_bg[key].fillStyle(0xffffff).fillRoundedRect(
+            this.till_bg_intract[key].x,
+            this.till_bg_intract[key].y,
+            this.till_bg_intract[key].width,
+            this.till_bg_intract[key].height - 2,
+            15).lineStyle(3, 0x0984e3, 3).strokeRoundedRect(
+            this.till_bg_intract[key].x + 1,
+            this.till_bg_intract[key].y + 1,
+            this.till_bg_intract[key].width - 2,
+            this.till_bg_intract[key].height - 4,
+            15);
+    }
+
+    make_clear(key) {
+        this.till_bg[key].clear();
+        this.till_bg[key].fillStyle(0xffffff).fillRoundedRect(
+            this.till_bg_intract[key].x,
+            this.till_bg_intract[key].y,
+            this.till_bg_intract[key].width,
+            this.till_bg_intract[key].height - 2,
+            15);
+    }
+
+    make_red(key){
+        this.till_bg[key].clear();
+        this.till_bg[key].fillStyle(0xffffff).fillRoundedRect(
+            this.till_bg_intract[key].x,
+            this.till_bg_intract[key].y,
+            this.till_bg_intract[key].width,
+            this.till_bg_intract[key].height - 2,
+            15).lineStyle(3, 0xd63031, 3).strokeRoundedRect(
+            this.till_bg_intract[key].x + 1,
+            this.till_bg_intract[key].y + 1,
+            this.till_bg_intract[key].width - 2,
+            this.till_bg_intract[key].height - 4,
+            15);
+    }
 
     hint_ui() {
         this.hint_area = this.add.graphics();
         this.hint_area.fillStyle(0x6ab615);
-        // this.graphics.lineStyle(3, 0xffffff);
-
         this.hint_area.fillRoundedRect(
             this.till.offset_x,
-            this.till.offset_y + this.till.width,
+            this.till.offset_y + this.till.width + 3 * this.distance,
             this.till.width,
             (this.sys.game.config.height / 10), {
                 tl: 0,
