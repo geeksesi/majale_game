@@ -10,8 +10,8 @@ const path = require('path');
 module.exports = {
 
     entry: {
-      game : './client/src/game.js',
-      admin : './admin/app.js'
+        game: './client/src/game.js',
+        admin: './admin/app.js'
     },
 
     output: {
@@ -21,21 +21,20 @@ module.exports = {
     },
 
     module: {
-      rules: [
-        {
-          test: /\.m?js$/,
-          exclude: /(node_modules|bower_components)/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env'],
-              presets: ['@babel/preset-stage-1'],
-              presets: ['@babel/preset-react'],
-              plugins: ["@babel/plugin-transform-runtime"],
+        rules: [{
+            test: /\.m?js$/,
+            exclude: /(node_modules|bower_components)/,
+            use: {
+                loader: 'babel-loader',
+                options: {
+                    presets: ['@babel/preset-env'],
+                    presets: ['@babel/preset-stage-1'],
+                    presets: ['@babel/preset-react'],
+                    plugins: ["@babel/plugin-transform-runtime"],
+                    plugins: ["@babel/plugin-proposal-class-properties"],
+                }
             }
-          }
-        }
-      ]
+        }]
     },
 
     plugins: [
@@ -44,12 +43,12 @@ module.exports = {
             'WEBGL_RENDERER': JSON.stringify(true)
         })
     ],
-    mode : 'development',
+    mode: 'development',
     watch: true,
     watchOptions: {
         ignored: ['public_html/assets/*.js', 'node_modules'],
         poll: 100,
-      },
+    },
 
 
 };
