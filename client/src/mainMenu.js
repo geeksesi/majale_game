@@ -1,7 +1,7 @@
 import { make_road } from './game_tools/game_design';
 
 import { top_ui } from './game_tools/global_ui';
-import { play_game_data, user_data } from './server';
+import { play_game_data } from './server';
 class mainMenu extends Phaser.Scene {
     constructor() {
         super({ key: 'mainMenu' });
@@ -14,11 +14,8 @@ class mainMenu extends Phaser.Scene {
         this.load.image('coin_icon', 'assets/coin.png')
         this.load.image('best_flag', 'assets/ranking.png')
         this.load.image('shop_flag', 'assets/Shop.png')
-        let user = await user_data();
-        this.coin_value = user.credit;
-        this.exp_value = user.xp;
+
         // console.log(localStorage.getItem('language_id'));
-        this.language_id = parseInt(localStorage.getItem('language_id')) || 2;
     }
 
     async create() {
@@ -49,7 +46,7 @@ class mainMenu extends Phaser.Scene {
     loading_ui() {
         this.loading = this.add.graphics();
         this.loading.beginPath();
-        this.loading.lineStyle(3, 0xf4a02e, 1);
+        this.loading.lineStyle(3, 0x6ab615, 1);
 
         this.loading.strokeRoundedRect(
             50 * this.distance,
@@ -63,7 +60,7 @@ class mainMenu extends Phaser.Scene {
 
     play_ui() {
         this.play_area_graphic = this.add.graphics();
-        this.play_area_graphic.fillStyle(0xf4a02e, 1);
+        this.play_area_graphic.fillStyle(0x6ab615, 1);
 
         this.play_area_graphic.fillRoundedRect(
             55 * this.distance,
@@ -101,14 +98,14 @@ class mainMenu extends Phaser.Scene {
             610 * this.distance,
             "Start", {
                 fontSize: `${50* this.distance}px`,
-                color: "#f4a02e",
+                color: "#6ab615",
                 fontFamily: "Noto Sans"
             });
     }
 
     down_ui() {
         this.down_area = this.add.graphics();
-        this.down_area.fillStyle(0xf4a02e, 1);
+        this.down_area.fillStyle(0x6ab615, 1);
         this.down_area.fillRect(
             0,
             940 * this.distance,
@@ -135,7 +132,7 @@ class mainMenu extends Phaser.Scene {
                 x: 70 * this.distance,
                 y: 1010 * this.distance,
                 font_size: 35 * this.distance,
-                color: '#222'
+                color: '#fff'
             }
         }
 
@@ -166,7 +163,7 @@ class mainMenu extends Phaser.Scene {
                 x: 410 * this.distance,
                 y: 1010 * this.distance,
                 font_size: 35 * this.distance,
-                color: '#222'
+                color: '#fff'
             }
         }
 
