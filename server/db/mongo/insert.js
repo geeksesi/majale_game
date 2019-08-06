@@ -2,19 +2,34 @@ const mongoos = require('mongoose');
 const { user, remember_word, action_history, play_time_history } = require('./modules');
 
 function user_exist(rubicka_id, cb) {
-    user.findOneAndUpdate({ rubicka_id: rubicka_id }, {
-        rubicka_id: rubicka_id,
-        credit: 50,
-        xp: 0,
-        timestamp: Math.floor(Date.now() / 1000),
-        $inc: { play_time: 1 },
+    user.find({ rubicka_id: rubicka_id }, (err, this_user) => {
+        if (err) { cb({ ok: false, data: err }); return false; }
+        if (this_user.length === 0) {
+            user.findOneAndUpdate({ rubicka_id: rubicka_id }, {
+                rubicka_id: rubicka_id,
+                credit: 50,
+                xp: 0,
+                timestamp: Math.floor(Date.now() / 1000),
+                $inc: { play_time: 1 },
 
-    }, { upsert: true }, (err, this_user) => {
-        if (err) { cb({ ok: false, data: err }); } else {
-            cb({ ok: true, data: this_user });
-            return true;
+            }, { upsert: true }, (err, new_user) => {
+                if (err) { cb({ ok: false, data: err }); } else {
+                    cb({ ok: true, data: new_user });
+                    return true;
+                }
+            })
+        } else {
+            user.findOneAndUpdate({ rubicka_id: rubicka_id }, {
+                $inc: { play_time: 1 },
+
+            }, { upsert: true }, (err, new_user) => {
+                if (err) { cb({ ok: false, data: err }); } else {
+                    cb({ ok: true, data: new_user });
+                    return true;
+                }
+            })
         }
-    })
+    });
 }
 
 function hint_cost(rubicka_id, word_id, cb) {
