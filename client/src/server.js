@@ -63,19 +63,20 @@ function use_hint(word_id) {
 function finish_level(word_id, time, is_hint, status) {
     return new Promise((resolve, reject) => {
         socket.emit("finish_level", word_id, time, is_hint, res => {
-            let exp_value = 0;
+            let xp_value = 0;
             if (res.ok === true) {
                 if (time <= 5) {
-                    exp_value = 3;
+                    xp_value = 3;
                 } else if (time <= 10) {
-                    exp_value = 2;
+                    xp_value = 2;
                 } else {
-                    exp_value = 1;
+                    xp_value = 1;
                 }
-                let prize_value = exp_value * 5 * status;
+                let prize_value = xp_value * 5 * status;
                 user.credit += prize_value;
-                finished_word[word_id] = exp_value;
-                user.exp += exp_value;
+                finished_word[word_id] = xp_value;
+                user.xp += xp_value;
+                console.log(user.xp)
                 if (is_hint) {
                     remembers_word.push(word_id);
                 } else {
@@ -85,7 +86,7 @@ function finish_level(word_id, time, is_hint, status) {
                         }
                     }
                 }
-                resolve({ ok: true, prize: prize_value })
+                resolve({ ok: true, prize: prize_value, xp : xp_value })
             } else {
                 reject(false)
             }
