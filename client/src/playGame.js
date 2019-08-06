@@ -107,14 +107,12 @@ class playGame extends Phaser.Scene {
         if (this.coin_value >= 10 && await use_hint(this.word_data[(this.word_id)].id)) {
             this.coin_value -= 10;
             credit_change(this, -10);
-            // await this.credit_text.setText("")
-            // await this.credit_ui();
             await this.hint_key_arr.push(this.table_data.keys[this.hint_arr.length]);
             await this.hint_arr.push(this.table_data.array[this.table_data.keys[this.hint_arr.length]]);
         } else {
+            // Must Open Shop Page
             console.log("warning on hint")
         }
-        // console.log(this.hint_key_arr)
         setTimeout(() => { this.hint_click = false; }, 500)
 
     }
@@ -135,13 +133,14 @@ class playGame extends Phaser.Scene {
     }
 
     pointer_up() {
+        console.log("i'm up")
         if (!this.is_win) {
             this.again = true;
             this.hint_key_arr.forEach(each => {
-                this.till_graphic.fillRectShape(this.till_bg_intract[each]);
+                // this.till_graphic.fillRectShape(this.till_bg_intract[each]);
                 this.make_blue(each)
             })
-            this.till_graphic.fillStyle(0x9e9e9e);
+            // this.till_graphic.fillStyle(0x9e9e9e);
             for (let i = 0; i < this.till_bg_intract.length; i++) {
                 if (this.hint_key_arr.includes(i)) {
                     continue;
@@ -166,10 +165,11 @@ class playGame extends Phaser.Scene {
 
     check_pointer_way(i) {
         if (this.answer_key_arr[this.answer_key_arr.length - 1] === i) {
+            // this.make_clear(i);
             // console.log(this.answer_key_arr[this.answer_key_arr.length - 1])
             return true;
         }
-        this.till_graphic.fillStyle(0x9e9e9e);
+        // this.till_graphic.fillStyle(0x9e9e9e);
         let index_in_answer = this.answer_key_arr.indexOf(i);
         for (let b = index_in_answer + 1; b < this.answer_key_arr.length; b++) {
             if (this.hint_key_arr.indexOf(this.answer_key_arr[b])) {
@@ -178,7 +178,7 @@ class playGame extends Phaser.Scene {
                 // continue;
             }
             // console.log(i);
-            this.make_blue(this.answer_key_arr[b])
+            this.make_clear(this.answer_key_arr[b])
                 // this.till_graphic.fillRectShape(this.till_bg_intract[this.answer_key_arr[b]]);
         }
         this.answer_arr.splice(index_in_answer + 1);
