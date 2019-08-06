@@ -109,13 +109,13 @@ module.exports.my_io = function(server) {
             let prize_value;
             if (time <= 5) {
                 prize_value = 15;
-                exp_value = 3;
+                xp_value = 3;
             } else if (time <= 10) {
                 prize_value = 10;
-                exp_value = 2;
+                xp_value = 2;
             } else {
                 prize_value = 5;
-                exp_value = 1;
+                xp_value = 1;
             }
             if (use_hint) {
                 remember_me(socket._id, word_id, res => {})
@@ -125,15 +125,15 @@ module.exports.my_io = function(server) {
             action_history.findOne({ type: 'finish_lvl', user_id: socket._id, word_id: word_id }, (err, action) => {
                 if (action !== null) {
                     console.log("don't need to make again")
-                    if (action.description < exp_value) {
-                        finish_again_level(socket.rubicka_id, word_id, ((prize_value) - (action.description * 5)), (exp_value - action.description), res => {
+                    if (action.description < xp_value) {
+                        finish_again_level(socket.rubicka_id, word_id, ((prize_value) - (action.description * 5)), (xp_value - action.description), res => {
                             if (res.ok === true) {
                                 cb(res);
                             }
                         });
                     }
                 } else {
-                    finish_level(socket.rubicka_id, word_id, prize_value, exp_value, res => {
+                    finish_level(socket.rubicka_id, word_id, prize_value, xp_value, res => {
                         if (res.ok === true) {
                             cb(res);
                         }

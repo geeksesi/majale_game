@@ -64,8 +64,8 @@ function update_action(user_id, sureplus_status, cb) {
     });
 }
 
-function finish_level(rubicka_id, word_id, prize_value, exp_value, cb) {
-    user.findOneAndUpdate({ rubicka_id: rubicka_id }, { $inc: { credit: prize_value, exp_value, exp: exp_value } }, (err, res) => {
+function finish_level(rubicka_id, word_id, prize_value, xp_value, cb) {
+    user.findOneAndUpdate({ rubicka_id: rubicka_id }, { $inc: { credit: prize_value, xp_value, xp: xp_value } }, (err, res) => {
         // console.log(res);
         let resault = {};
         if (err) {
@@ -74,7 +74,7 @@ function finish_level(rubicka_id, word_id, prize_value, exp_value, cb) {
             cb(resault);
             return false;
         }
-        add_action(res._id, "finish_word", word_id, (exp_value), (action) => {
+        add_action(res._id, "finish_word", word_id, (xp_value), (action) => {
             if (action === false) {
                 resault.ok = false;
                 resault.data = err;
@@ -88,8 +88,8 @@ function finish_level(rubicka_id, word_id, prize_value, exp_value, cb) {
     })
 }
 
-function finish_again_level(rubicka_id, word_id, sureplus_price, sureplus_exp, cb) {
-    user.findOneAndUpdate({ rubicka_id: rubicka_id }, { $inc: { credit: sureplus_price, exp_value, exp: sureplus_exp } }, (err, res) => {
+function finish_again_level(rubicka_id, word_id, sureplus_price, sureplus_xp, cb) {
+    user.findOneAndUpdate({ rubicka_id: rubicka_id }, { $inc: { credit: sureplus_price, xp_value, xp: sureplus_xp } }, (err, res) => {
         // console.log(res);
         let resault = {};
         if (err) {
@@ -98,7 +98,7 @@ function finish_again_level(rubicka_id, word_id, sureplus_price, sureplus_exp, c
             cb(resault);
             return false;
         }
-        update_action(res._id, sureplus_exp, (action) => {
+        update_action(res._id, sureplus_xp, (action) => {
             if (action === false) {
                 resault.ok = false;
                 resault.data = err;
