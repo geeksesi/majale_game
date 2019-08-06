@@ -1,5 +1,8 @@
+import { user_data } from './../server';
+
+
 function set_language(my_this, language_id) {
-    if(my_this.change_lang){
+    if (my_this.change_lang) {
         return false;
     }
     my_this.change_lang = true;
@@ -17,12 +20,18 @@ function set_language(my_this, language_id) {
             my_this.distance,
         );
     my_this.language_id = language_id;
-    setTimeout(()=>{
+    setTimeout(() => {
         my_this.change_lang = false;
     }, 500)
 }
 
 async function top_ui(my_this, scene_name) {
+    my_this.language_id = parseInt(localStorage.getItem('language_id')) || 2;
+
+    my_this.user = await user_data();
+    my_this.coin_value = my_this.user.credit;
+    my_this.exp_value = my_this.user.xp;
+
     my_this.gw = my_this.sys.game.config.width;
     my_this.gh = my_this.sys.game.config.height
     my_this.distance = my_this.gw / 610;
@@ -48,7 +57,7 @@ async function top_ui(my_this, scene_name) {
         my_this.language_select.setInteractive();
 
         my_this.language_select.on('pointerdown', () => { set_language(my_this, ((my_this.language_id === 2) ? 3 : 2)) }, my_this);
-        
+
         my_this.language_flag.setInteractive();
 
         my_this.language_flag.on('pointerdown', () => { set_language(my_this, ((my_this.language_id === 2) ? 3 : 2)) }, my_this);
@@ -150,4 +159,12 @@ async function top_ui(my_this, scene_name) {
 
 }
 
-export { top_ui }
+function credit_change(my_this, value) {
+    my_this.coin_text.setText(parseInt(my_this.coin_text.text) + value)
+}
+
+function exp_change(my_this, value) {
+    my_this.exp_text.setText(parseInt(my_this.exp_text.text) + value)
+}
+
+export { top_ui, credit_change, exp_change }
