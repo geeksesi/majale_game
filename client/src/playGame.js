@@ -1,7 +1,7 @@
-import { user_data, use_hint, finish_level, play_game_data, check_season_finished } from './server';
+import { use_hint, finish_level, play_game_data, check_season_finished } from './server';
 import { make_road } from './game_tools/game_design';
 import { make_table } from './game_tools/mechanism';
-import { top_ui } from './game_tools/global_ui';
+import { top_ui, credit_change, exp_change } from './game_tools/global_ui';
 
 class playGame extends Phaser.Scene {
 
@@ -28,15 +28,11 @@ class playGame extends Phaser.Scene {
 
 
     async preload() {
-        this.load.image('english_flag', 'assets/Eng_flag.png')
-        this.load.image('exp_icon', 'assets/exp.png')
-        this.load.image('coin_icon', 'assets/coin.png')
-
-        this.user = await user_data();
-        // this.coin_value = user.credit;
-        // this.exp_value = user.xp;
-        this.coin_value = 200;
-        this.exp_value = 50;
+        // this.load.image('english_flag', 'assets/Eng_flag.png')
+        // this.load.image('exp_icon', 'assets/exp.png')
+        // this.load.image('coin_icon', 'assets/coin.png')
+            // this.coin_value = 200;
+            // this.exp_value = 50;
     }
 
     async variables() {
@@ -108,10 +104,11 @@ class playGame extends Phaser.Scene {
 
     async hint() {
         this.hint_click = true;
-        if (this.crdit_value >= 10 && await use_hint(this.word_data[(this.word_id)].id)) {
-            this.crdit_value -= 10;
-            await this.credit_text.setText("")
-            await this.credit_ui();
+        if (this.coin_value >= 10 && await use_hint(this.word_data[(this.word_id)].id)) {
+            this.coin_value -= 10;
+            credit_change(this, -10);
+            // await this.credit_text.setText("")
+            // await this.credit_ui();
             await this.hint_key_arr.push(this.table_data.keys[this.hint_arr.length]);
             await this.hint_arr.push(this.table_data.array[this.table_data.keys[this.hint_arr.length]]);
         } else {
@@ -122,13 +119,19 @@ class playGame extends Phaser.Scene {
 
     }
 
-    clear_all(){
+    clear_all() {
+        this.answer_arr = [];
+        this.answer_key_arr = [];
+        this.answer_text.setText('')
         for (let i = 0; i < this.till_bg_intract.length; i++) {
             if (this.hint_key_arr.includes(i)) {
                 continue;
             }
             this.make_clear(i)
         }
+        this.answer_arr = this.hint_arr.slice();
+        this.answer_key_arr = this.hint_key_arr.slice();
+        this.answer_text.setText(this.hint_arr.join(''))
     }
 
     pointer_up() {
@@ -143,19 +146,18 @@ class playGame extends Phaser.Scene {
                 if (this.hint_key_arr.includes(i)) {
                     continue;
                 }
-                if(this.answer_key_arr.includes(i)){
+                if (this.answer_key_arr.includes(i)) {
                     this.make_red(i)
-                }else{
+                } else {
 
                     this.make_clear(i)
                 }
             }
-            this.answer_arr = [];
-            this.answer_key_arr = [];
-            this.answer_text.setText('')
-            this.answer_arr = this.hint_arr.slice();
-            this.answer_key_arr = this.hint_key_arr.slice();
-            this.answer_text.setText(this.hint_arr.join(''))
+            setTimeout(() => {
+                this.clear_all();
+            }, 1500)
+
+
             if (this.answer_arr.join("") === this.answer) {
                 this.win();
             }
@@ -177,7 +179,7 @@ class playGame extends Phaser.Scene {
             }
             // console.log(i);
             this.make_blue(this.answer_key_arr[b])
-            // this.till_graphic.fillRectShape(this.till_bg_intract[this.answer_key_arr[b]]);
+                // this.till_graphic.fillRectShape(this.till_bg_intract[this.answer_key_arr[b]]);
         }
         this.answer_arr.splice(index_in_answer + 1);
         this.answer_key_arr.splice(index_in_answer + 1);
@@ -189,7 +191,7 @@ class playGame extends Phaser.Scene {
 
     pointer_move(pointer) {
         if (pointer.isDown && !this.is_win) {
-            if(this.again){
+            if (this.again) {
                 this.again = false;
                 this.clear_all();
             }
@@ -242,7 +244,9 @@ class playGame extends Phaser.Scene {
             }
             // console.log(this.word_data[this.word_id].status)
             let finish_detail = await finish_level(this.word_data[this.word_id].id, (this.finish_time - this.start_time), is_hint, this.word_data[this.word_id].status);
-            // console.log(finish_detail);
+            credit_change(this, finish_detail.prize);
+            exp_change(this, finish_detail.xp);
+            console.log(finish_detail);
 
             this.win_ui();
         }, 500);
@@ -467,7 +471,7 @@ class playGame extends Phaser.Scene {
             15);
     }
 
-    make_red(key){
+    make_red(key) {
         this.till_bg[key].clear();
         this.till_bg[key].fillStyle(0xffffff).fillRoundedRect(
             this.till_bg_intract[key].x,
