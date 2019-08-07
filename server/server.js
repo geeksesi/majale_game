@@ -1,6 +1,6 @@
 const { get_season, words_season } = require('./db/mysql/mysql');
 const { user_exist, hint_cost, finish_level, remember_me, finish_again_level, complete_remember, season_finish, user_play_time_history } = require('./db/mongo/insert');
-const { remember_word, action_history } = require('./db/mongo/modules');
+const { user, remember_word, action_history } = require('./db/mongo/modules');
 
 module.exports.my_io = function(server) {
     const io = require('socket.io')(server);
@@ -36,7 +36,7 @@ module.exports.my_io = function(server) {
                     })
                 });
 
-                await remember_word.find({ user_id: socket._id, status: 'wait', timestamp : {$gt : socket.online_timestamp + 64800} }, (err, remembers) => {
+                await remember_word.find({ user_id: socket._id, status: 'wait', timestamp: { $gt: socket.online_timestamp + 64800 } }, (err, remembers) => {
                     remembers.forEach(remember => {
                         export_object.remembers_id.push(remember.word_id)
                     })
@@ -154,6 +154,47 @@ module.exports.my_io = function(server) {
         })
 
 
-    });
+        socket.on("leaderBoard", (cb) => {
+            let export_array = [];
+            let user_data = {};
+            let users_length;
+            user.find()
+                .select('rubicka_id xp')
+                .sort({ xp: 'asc' })
+                .exec((err, users) => {
+                    if (err) { cb({ ok: false, data: null }); return false; }
+                    users_length = users.length;
+                    for (let i = 0; i < users.length; i++) {
+                        if (export_array.length < 10) {
+                            users[i].rank = i;
+                            export_array.push(users[i]);
+                            if (typeof socket.rubicka_id !== 'undefined' && users[i].rubicka_id === socket.rubicka_id) {
+                                user_data = {ok : true}
+                            }
+                        }
+                        if (typeof socket.rubicka_id !== 'undefined' && users[i].rubicka_id === socket.rubicka_id && typeof user_data.ok === 'undefined') {
+                            users[i].rank = i;
+                            users[i].rb_id = socket.rubicka_id;
+                            user_data = users[i];
+                        }
+                    }
+                })
 
+            let wait = setInterval(() => {
+                if (export_array.length > 9 || (typeof users_length !== 'undefined' && export_array.length === users_length)) {
+                    if (typeof socket.rubicka_id === 'undefined' || typeof user_data.ok !== 'undefined') {
+                        clearInterval(wait);
+                        cb({ ok: true, data: export_array })
+                    } else {
+                        if (Object.keys(user_data).length !== 0) {
+                            cb({ ok: true, data: [...export_array, user_data] })
+                        }
+                    }
+                }
+            }, 200)
+
+        })
+
+
+    });
 }
