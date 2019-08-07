@@ -31,8 +31,8 @@ class playGame extends Phaser.Scene {
         // this.load.image('english_flag', 'assets/Eng_flag.png')
         // this.load.image('exp_icon', 'assets/exp.png')
         // this.load.image('coin_icon', 'assets/coin.png')
-            // this.coin_value = 200;
-            // this.exp_value = 50;
+        // this.coin_value = 200;
+        // this.exp_value = 50;
     }
 
     async variables() {
@@ -40,9 +40,9 @@ class playGame extends Phaser.Scene {
         await top_ui(this, "play_game");
 
         this.till = {
-            offset_x: this.sys.game.config.width / 25,
-            width: this.sys.game.config.width - (this.sys.game.config.width / 12),
-            offset_y: this.sys.game.config.height - (this.sys.game.config.width - (this.sys.game.config.width / 6) + this.sys.game.config.height / 20) - (this.sys.game.config.height / 8),
+            offset_x: 0,
+            width: this.sys.game.config.width,
+            offset_y: this.sys.game.config.height - (this.sys.game.config.width - (this.sys.game.config.width / 6) + this.sys.game.config.height / 20) - (this.sys.game.config.height / 8) - 50 * this.distance,
         }
 
         this.hint_arr = [];
@@ -137,10 +137,10 @@ class playGame extends Phaser.Scene {
         if (!this.is_win) {
             this.again = true;
             this.hint_key_arr.forEach(each => {
-                // this.till_graphic.fillRectShape(this.till_bg_intract[each]);
-                this.make_blue(each)
-            })
-            // this.till_graphic.fillStyle(0x9e9e9e);
+                    // this.till_graphic.fillRectShape(this.till_bg_intract[each]);
+                    this.make_blue(each)
+                })
+                // this.till_graphic.fillStyle(0x9e9e9e);
             for (let i = 0; i < this.till_bg_intract.length; i++) {
                 if (this.hint_key_arr.includes(i)) {
                     continue;
@@ -186,7 +186,7 @@ class playGame extends Phaser.Scene {
         this.answer_text.setText(this.answer_arr.join(""));
         this.answer_text.setPosition(
             350 * this.distance + this.answer_arr.length * 2.3 / this.distance,
-            300 * this.distance);
+            250 * this.distance);
     }
 
     pointer_move(pointer) {
@@ -221,7 +221,7 @@ class playGame extends Phaser.Scene {
                     }
                     this.answer_text.setPosition(
                         350 * this.distance + this.answer_arr.length * 2.3 / this.distance,
-                        300 * this.distance);
+                        250 * this.distance);
                     break;
                 }
             }
@@ -352,7 +352,7 @@ class playGame extends Phaser.Scene {
         this.answer_area.fillStyle(0xffffff);
         this.answer_area.fillRect(
             this.till.offset_x,
-            280 * this.distance,
+            230 * this.distance,
             this.till.width,
             100 * this.distance
         );
@@ -361,7 +361,7 @@ class playGame extends Phaser.Scene {
         this.question_area.fillStyle(0x6ab615);
         this.question_area.fillRoundedRect(
             this.till.offset_x,
-            180 * this.distance,
+            130 * this.distance,
             this.till.width,
             100 * this.distance, {
                 tl: 30,
@@ -372,7 +372,7 @@ class playGame extends Phaser.Scene {
 
         this.question_text = this.add.text(
                 270 * this.distance - ((this.question.length < 8) ? this.question.length * 2 : this.question.length * 4),
-                210 * this.distance,
+                160 * this.distance,
                 this.question)
             .setAlign("center")
             .setColor("#fff")
@@ -391,7 +391,7 @@ class playGame extends Phaser.Scene {
 
         this.answer_text = this.add.text(
                 350 * this.distance,
-                300 * this.distance,
+                250 * this.distance,
                 "", { rtl: true })
             .setFontFamily('Lalezar')
             .setFontSize(35 * this.distance)
@@ -414,10 +414,10 @@ class playGame extends Phaser.Scene {
         for (let x = 0; x < this.max_x; x++) {
             for (let y = 0; y < this.max_y; y++) {
                 this.till_bg.push(this.add.graphics().fillStyle(0xffffff).fillRoundedRect(
-                    this.till.offset_x + (x * (this.till.width / this.max_x)),
-                    this.till.offset_y + (y * (this.till.width / this.max_y)),
-                    (this.till.width / this.max_x),
-                    (this.till.width / this.max_x),
+                    this.till.offset_x + (x * (this.till.width / this.max_x)) + 3 * this.distance,
+                    this.till.offset_y + (y * (this.till.width / this.max_y)) + 3 * this.distance,
+                    (this.till.width / this.max_x) - 6 * this.distance,
+                    (this.till.width / this.max_x) - 6 * this.distance,
                     15
                 ))
 
@@ -449,11 +449,11 @@ class playGame extends Phaser.Scene {
     make_blue(key) {
         this.till_bg[key].clear();
         this.till_bg[key].fillStyle(0xffffff).fillRoundedRect(
-            this.till_bg_intract[key].x,
-            this.till_bg_intract[key].y,
-            this.till_bg_intract[key].width,
-            this.till_bg_intract[key].height - 2,
-            15).lineStyle(3, 0x0984e3, 3).strokeRoundedRect(
+            this.till_bg_intract[key].x + 3 * this.distance,
+            this.till_bg_intract[key].y + 3 * this.distance,
+            this.till_bg_intract[key].width - 6 * this.distance,
+            this.till_bg_intract[key].height - 2 - 6 * this.distance,
+            15).lineStyle(2, 0x0984e3, 1).strokeRoundedRect(
             this.till_bg_intract[key].x + 1,
             this.till_bg_intract[key].y + 1,
             this.till_bg_intract[key].width - 2,
@@ -464,21 +464,21 @@ class playGame extends Phaser.Scene {
     make_clear(key) {
         this.till_bg[key].clear();
         this.till_bg[key].fillStyle(0xffffff).fillRoundedRect(
-            this.till_bg_intract[key].x,
-            this.till_bg_intract[key].y,
-            this.till_bg_intract[key].width,
-            this.till_bg_intract[key].height - 2,
+            this.till_bg_intract[key].x + 3 * this.distance,
+            this.till_bg_intract[key].y + 3 * this.distance,
+            this.till_bg_intract[key].width - 6 * this.distance,
+            this.till_bg_intract[key].height - 2 - 6 * this.distance,
             15);
     }
 
     make_red(key) {
         this.till_bg[key].clear();
         this.till_bg[key].fillStyle(0xffffff).fillRoundedRect(
-            this.till_bg_intract[key].x,
-            this.till_bg_intract[key].y,
-            this.till_bg_intract[key].width,
-            this.till_bg_intract[key].height - 2,
-            15).lineStyle(3, 0xd63031, 3).strokeRoundedRect(
+            this.till_bg_intract[key].x + 3 * this.distance,
+            this.till_bg_intract[key].y + 3 * this.distance,
+            this.till_bg_intract[key].width - 6 * this.distance,
+            this.till_bg_intract[key].height - 2 - 6 * this.distance,
+            15).lineStyle(2, 0xd63031, 1).strokeRoundedRect(
             this.till_bg_intract[key].x + 1,
             this.till_bg_intract[key].y + 1,
             this.till_bg_intract[key].width - 2,
