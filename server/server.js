@@ -50,34 +50,37 @@ module.exports.my_io = function(server) {
                 })
             })
 
+            let howmany_wait = 0;
             await get_season(2, async res => {
                 export_object.seasons[2] = await res.data;
                 if (Array.isArray(res.data)) {
+                    howmany_wait = res.data.length;
                     res.data.forEach(element => {
                         words_season(element.id, 1, word => {
+                            console.log((element.id === 7)?word:"")
                             export_object.words[element.id] = word.data;
                         });
                     });
                 }
             })
-
-            await get_season(3, async res => {
-                export_object.seasons[3] = await res.data;
-                if (Array.isArray(res.data)) {
-                    res.data.forEach(element => {
-                        words_season(element.id, 1, word => {
-                            export_object.words[element.id] = word.data;
-                        });
-                    });
-                }
-            })
+            // No Arabic for now
+            // await get_season(3, async res => {
+            //     export_object.seasons[3] = await res.data;
+            //     if (Array.isArray(res.data)) {
+            //         res.data.forEach(element => {
+            //             words_season(element.id, 1, word => {
+            //                 export_object.words[element.id] = word.data;
+            //             });
+            //         });
+            //     }
+            // })
 
             let t = setInterval(() => {
-                if (Object.keys(export_object.words).length) {
+                if (typeof howmany_wait !== 'undefined' && Object.keys(export_object.words).length > howmany_wait -1) {
                     setTimeout(() => {
                         clearInterval(t);
                         cb(export_object);
-                    }, 500)
+                    }, 1000)
                 }
             }, 500);
 
