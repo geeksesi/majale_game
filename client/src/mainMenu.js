@@ -1,27 +1,25 @@
-import { make_road } from './game_tools/game_design';
+import { make_road, user_path } from './game_tools/game_design';
 
 import { top_ui } from './game_tools/global_ui';
-import { play_game_data } from './server';
+import { play_game_data, get_season } from './server';
 class mainMenu extends Phaser.Scene {
     constructor() {
         super({ key: 'mainMenu' });
 
     }
 
-    async preload() {
-        this.load.image('english_flag', 'assets/Eng_flag.png')
-        this.load.image('exp_icon', 'assets/exp.png')
-        this.load.image('coin_icon', 'assets/coin.png')
-        this.load.image('best_flag', 'assets/ranking.png')
-        this.load.image('shop_flag', 'assets/Shop.png')
-
-        // console.log(localStorage.getItem('language_id'));
-    }
+    async preload() {}
 
     async create() {
         await top_ui(this, "main");
         await this.play_ui();
         await this.down_ui();
+        this.data = await play_game_data();
+        this.seasons = await get_season();
+        let finished_word_keys = Object.keys(this.data.finished_word);
+        // user_path(this.data.word_list, finished_word_keys[finished_word_keys.length - 1], this.data.remembers_word, this.language_id, this.seasons, res => {
+        //     console.log(res)
+        // })
     }
 
     progress_event() {
@@ -30,8 +28,7 @@ class mainMenu extends Phaser.Scene {
 
     async play_game() {
         this.play_game_check = true;
-        let data = await play_game_data();
-        await make_road(data.word_list, data.finished_word, data.remembers_word, this.language_id, res => {
+        await make_road(this.data.word_list, this.data.finished_word, this.data.remembers_word, this.language_id, res => {
             this.play_game_check = false;
             this.scene.start('playGame', {
                 word_id: 0,
@@ -114,11 +111,12 @@ class mainMenu extends Phaser.Scene {
         )
         this.seprator_down = new Phaser.Geom.Line(
             305 * this.distance,
-            970 * this.distance,
+            960 * this.distance,
             305 * this.distance,
-            1050 * this.distance
+            1060 * this.distance
         )
-        this.down_graphics = this.add.graphics({ lineStyle: { color: 0xa0a0a0 } });
+        this.down_graphics = this.add.graphics();
+        this.down_graphics.lineStyle(3, 0xffffff, 1.0);
         this.down_graphics.setDepth(100)
         this.down_graphics.strokeLineShape(this.seprator_down);
 
