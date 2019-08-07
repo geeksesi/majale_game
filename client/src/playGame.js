@@ -1,6 +1,6 @@
 import { use_hint, finish_level, play_game_data, check_season_finished } from './server';
 import { make_road } from './game_tools/game_design';
-import { make_table } from './game_tools/mechanism';
+import { make_table, make_event } from './game_tools/mechanism';
 import { top_ui, credit_change, exp_change } from './game_tools/global_ui';
 
 class playGame extends Phaser.Scene {
@@ -19,24 +19,17 @@ class playGame extends Phaser.Scene {
         // this.season_id = data.season_id;
         this.word_id = data.word_id;
         this.language_id = data.language_id;
-        // console.log(data.language_id);
         this.make_table = make_table;
-        // console.log(data)
         this.word_data = data.word_data;
         this.season_id = data.word_data[data.word_id].season_id;
     }
 
 
     async preload() {
-        // this.load.image('english_flag', 'assets/Eng_flag.png')
-        // this.load.image('exp_icon', 'assets/exp.png')
-        // this.load.image('coin_icon', 'assets/coin.png')
-        // this.coin_value = 200;
-        // this.exp_value = 50;
+
     }
 
     async variables() {
-        // console.log("here")
         await top_ui(this, "play_game");
 
         this.till = {
@@ -52,8 +45,6 @@ class playGame extends Phaser.Scene {
         this.answer_arr = [];
         this.answer_key_arr = [];
 
-        // this.word_data = await get_word(this.season_id);
-
         this.question = this.word_data[this.word_id].word
         this.status = this.word_data[this.word_id].status
         this.answer = this.word_data[this.word_id].answer.word
@@ -64,12 +55,8 @@ class playGame extends Phaser.Scene {
 
     }
 
-
-
     async create() {
 
-        // this.words =this.add.group()
-        // this.add.grid(0, 0, 50 * 6, 50 * 5, 50, 50, 0x999999, 1, 0x666666).setOrigin(0);
         await this.variables();
         this.till_graphic = this.add.graphics({ fillStyle: { color: 0x9e9e9e } });
         await this.table_ui();
@@ -81,9 +68,7 @@ class playGame extends Phaser.Scene {
         this.make_event();
 
         this.input.on('pointerup', this.pointer_up, this);
-        this.input.on('pointermove', this.pointer_move, this);
 
-        // console.log("hello");
     }
 
 
@@ -133,14 +118,11 @@ class playGame extends Phaser.Scene {
     }
 
     pointer_up() {
-        console.log("i'm up")
         if (!this.is_win) {
             this.again = true;
             this.hint_key_arr.forEach(each => {
-                    // this.till_graphic.fillRectShape(this.till_bg_intract[each]);
                     this.make_blue(each)
                 })
-                // this.till_graphic.fillStyle(0x9e9e9e);
             for (let i = 0; i < this.till_bg_intract.length; i++) {
                 if (this.hint_key_arr.includes(i)) {
                     continue;
@@ -152,7 +134,7 @@ class playGame extends Phaser.Scene {
                     this.make_clear(i)
                 }
             }
-            setTimeout(() => {
+            this.clear_timeout = setTimeout(() => {
                 this.clear_all();
             }, 1500)
 
@@ -165,11 +147,8 @@ class playGame extends Phaser.Scene {
 
     check_pointer_way(i) {
         if (this.answer_key_arr[this.answer_key_arr.length - 1] === i) {
-            // this.make_clear(i);
-            // console.log(this.answer_key_arr[this.answer_key_arr.length - 1])
             return true;
         }
-        // this.till_graphic.fillStyle(0x9e9e9e);
         let index_in_answer = this.answer_key_arr.indexOf(i);
         for (let b = index_in_answer + 1; b < this.answer_key_arr.length; b++) {
             if (this.hint_key_arr.indexOf(this.answer_key_arr[b])) {
@@ -177,9 +156,8 @@ class playGame extends Phaser.Scene {
                 // break;
                 // continue;
             }
-            // console.log(i);
+
             this.make_clear(this.answer_key_arr[b])
-                // this.till_graphic.fillRectShape(this.till_bg_intract[this.answer_key_arr[b]]);
         }
         this.answer_arr.splice(index_in_answer + 1);
         this.answer_key_arr.splice(index_in_answer + 1);
@@ -189,52 +167,48 @@ class playGame extends Phaser.Scene {
             250 * this.distance);
     }
 
-    pointer_move(pointer) {
-        if (pointer.isDown && !this.is_win) {
-            if (this.again) {
-                this.again = false;
-                this.clear_all();
+    table_content_action(i) {
+        if (this.again) {
+            this.again = false;
+            this.clear_all();
+                clearTimeout(this.clear_timeout);
+        }
+        if (!this.is_win) {
+
+            if (this.answer_key_arr.includes(i)) {
+                this.check_pointer_way(i)
+                return false;
             }
-            for (let i = 0; i < this.till_bg_intract.length; i++) {
-                if (this.till_bg_intract[i].contains(pointer.x, pointer.y)) {
-                    if (this.answer_key_arr.includes(i)) {
-                        this.check_pointer_way(i)
-                        break;
-                    }
-                    if (this.answer_key_arr.length !== 0) {
-                        if (
-                            (this.answer_key_arr[this.answer_key_arr.length - 1] + 1) !== i &&
-                            (this.answer_key_arr[this.answer_key_arr.length - 1] - 1) !== i &&
-                            (this.answer_key_arr[this.answer_key_arr.length - 1] + this.max_y) !== i &&
-                            (this.answer_key_arr[this.answer_key_arr.length - 1] - this.max_y) !== i
-                        ) {
-                            break;
-                        }
-                    }
-                    // this.till_graphic.fillRectShape(this.till_bg_intract[i]);
-                    this.make_blue(i)
-                    this.answer_arr.push(this.words[i]);
-                    this.answer_key_arr.push(i);
-                    this.answer_text.setText(this.answer_arr.join(""));
-                    if (this.answer_arr.join("") === this.answer) {
-                        this.win();
-                    }
-                    this.answer_text.setPosition(
-                        350 * this.distance + this.answer_arr.length * 2.3 / this.distance,
-                        250 * this.distance);
-                    break;
+            if (this.answer_key_arr.length !== 0) {
+                if (
+                    (this.answer_key_arr[this.answer_key_arr.length - 1] + 1) !== i &&
+                    (this.answer_key_arr[this.answer_key_arr.length - 1] - 1) !== i &&
+                    (this.answer_key_arr[this.answer_key_arr.length - 1] + this.max_y) !== i &&
+                    (this.answer_key_arr[this.answer_key_arr.length - 1] - this.max_y) !== i
+                ) {
+                    return false;
                 }
             }
-
+            // this.till_graphic.fillRectShape(this.till_bg_intract[i]);
+            this.make_blue(i)
+            this.answer_arr.push(this.words[i]);
+            this.answer_key_arr.push(i);
+            this.answer_text.setText(this.answer_arr.join(""));
+            if (this.answer_arr.join("") === this.answer) {
+                this.win();
+            }
+            this.answer_text.setPosition(
+                350 * this.distance + this.answer_arr.length * 2.3 / this.distance,
+                250 * this.distance);
+            return true;
         }
-
     }
+
 
     win() {
         if (this.is_win) {
             return true;
         }
-        // this.scene.pause();
         this.is_win = true;
         this.finish_time = Math.floor(Date.now() / 1000);
         let is_hint = false;
@@ -242,7 +216,6 @@ class playGame extends Phaser.Scene {
             if (this.hint_arr.length > 0) {
                 is_hint = true;
             }
-            // console.log(this.word_data[this.word_id].status)
             let finish_detail = await finish_level(this.word_data[this.word_id].id, (this.finish_time - this.start_time), is_hint, this.word_data[this.word_id].status);
             credit_change(this, finish_detail.prize);
             exp_change(this, finish_detail.xp);
@@ -261,7 +234,7 @@ class playGame extends Phaser.Scene {
     }
 
     async win_ui_event(type) {
-        console.log(this.season_id + " " + this.word_data[this.word_id + 1].season_id)
+        // console.log(this.season_id + " " + this.word_data[this.word_id + 1].season_id)
         this.is_win = false;
 
         if (type === "next") {
@@ -308,8 +281,6 @@ class playGame extends Phaser.Scene {
         this.win_bg = this.add.image(
                 (this.sys.game.config.width / 2),
                 (this.sys.game.config.height / 2),
-                // 0,`
-                // 0,`
                 'win_bg')
             .setDisplaySize(
                 (this.sys.game.config.width - 100),
@@ -406,30 +377,41 @@ class playGame extends Phaser.Scene {
         this.till_bg_intract = [];
         this.words = this.table_data.array;
         this.till_words = []
-            // const max_x = 3;
-            // const max_y = 3;
         this.max_x = this.table_data.size;
         this.max_y = this.table_data.size;
-
         for (let x = 0; x < this.max_x; x++) {
             for (let y = 0; y < this.max_y; y++) {
-                this.till_bg.push(this.add.graphics().fillStyle(0xffffff).fillRoundedRect(
-                    this.till.offset_x + (x * (this.till.width / this.max_x)) + 3 * this.distance,
-                    this.till.offset_y + (y * (this.till.width / this.max_y)) + 3 * this.distance,
-                    (this.till.width / this.max_x) - 6 * this.distance,
-                    (this.till.width / this.max_x) - 6 * this.distance,
-                    15
-                ))
+                this.till_bg.push(
+                    this.add.graphics()
+                    .fillStyle(0xffffff)
+                    .fillRoundedRect(
+                        this.till.offset_x + (x * (this.till.width / this.max_x)) + 3 * this.distance,
+                        this.till.offset_y + (y * (this.till.width / this.max_y)) + 3 * this.distance,
+                        (this.till.width / this.max_x) - 6 * this.distance,
+                        (this.till.width / this.max_x) - 6 * this.distance,
+                        15
+                    )
+                    .setInteractive(
+                        new Phaser.Geom.Rectangle(
+                            this.till.offset_x + (x * (this.till.width / this.max_x)) + 3 * this.distance,
+                            this.till.offset_y + (y * (this.till.width / this.max_y)) + 3 * this.distance,
+                            (this.till.width / this.max_x) - 6 * this.distance,
+                            (this.till.width / this.max_x) - 6 * this.distance
+                        ),
+                        Phaser.Geom.Rectangle.Contains
+                    )
+                )
 
                 this.till_bg_intract.push(new Phaser.Geom.Rectangle(
                     this.till.offset_x + (x * (this.till.width / this.max_x)),
                     this.till.offset_y + (y * (this.till.width / this.max_y)),
                     (this.till.width / this.max_x),
                     (this.till.width / this.max_x) + 2));
+
             }
         }
-        // console.log(this.till_bg[0]);
-        // this.till_graphic.fillStyle(0x9e9e9e);
+        make_event(this)
+
         for (let i = 0; i < this.till_bg_intract.length; i++) {
             this.add.text(
                     this.till_bg_intract[i].x + ((this.till_bg_intract[i].width / 2.5)),

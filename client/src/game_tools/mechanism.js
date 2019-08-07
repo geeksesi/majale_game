@@ -234,7 +234,119 @@ function make_table(word) {
 
 
 
+function make_event(my_this) {
+    switch (my_this.till_bg.length) {
+        case 9:
+            my_this.till_bg[0].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(0);
+            }, my_this)
+            my_this.till_bg[1].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(1);
+            }, my_this)
+            my_this.till_bg[2].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(2);
+            }, my_this)
+            my_this.till_bg[3].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(3);
+            }, my_this)
+            my_this.till_bg[4].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(4);
+            }, my_this)
+            my_this.till_bg[5].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(5);
+            }, my_this)
+            my_this.till_bg[6].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(6);
+            }, my_this)
+            my_this.till_bg[7].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(7);
+            }, my_this)
+            my_this.till_bg[8].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(8);
+            }, my_this)
+
+            break;
+        case 16:
+            my_this.till_bg[0].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(0);
+            }, my_this)
+            my_this.till_bg[1].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(1);
+            }, my_this)
+            my_this.till_bg[2].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(2);
+            }, my_this)
+            my_this.till_bg[3].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(3);
+            }, my_this)
+            my_this.till_bg[4].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(4);
+            }, my_this)
+            my_this.till_bg[5].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(5);
+            }, my_this)
+            my_this.till_bg[6].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(6);
+            }, my_this)
+            my_this.till_bg[7].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(7);
+            }, my_this)
+            my_this.till_bg[8].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(8);
+            }, my_this)
+            my_this.till_bg[9].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(9);
+            }, my_this)
+            my_this.till_bg[10].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(10);
+            }, my_this)
+            my_this.till_bg[11].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(11);
+            }, my_this)
+            my_this.till_bg[12].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(12);
+            }, my_this)
+            my_this.till_bg[13].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(13);
+            }, my_this)
+            my_this.till_bg[14].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(14);
+            }, my_this)
+            my_this.till_bg[15].on('pointermove', (pointer) => {
+                if(pointer.isDown)
+                my_this.table_content_action(15);
+            }, my_this)
+            break;
+        case 25:
+            break;
+    }
+}
+
 export {
     make_table,
-
+    make_event,
 }
