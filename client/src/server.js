@@ -86,7 +86,7 @@ function finish_level(word_id, time, is_hint, status) {
                         }
                     }
                 }
-                resolve({ ok: true, prize: prize_value, xp : xp_value })
+                resolve({ ok: true, prize: prize_value, xp: xp_value })
             } else {
                 reject(false)
             }
@@ -105,6 +105,7 @@ async function init(cb) {
         await finished_season.push(...res.finished_season)
         setTimeout(() => { cb(res) }, 500)
         setTimeout(async() => {
+            leader_board(out=>{console.log("here")})
             // console.log(await play_game_data());
             // console.log(word_list);
             // console.log(user);
@@ -182,6 +183,19 @@ function loaded_finished() {
     socket.emit("loaded");
 }
 
+function leader_board(cb) {
+
+    socket.emit("leaderBoard", (res) => {
+        if (res.ok === true) {
+            console.log(res)
+            cb(res.data)
+        } else {
+            console.log(res)
+            cb(false);
+        }
+    })
+}
+
 export {
     init,
     get_season,
@@ -194,4 +208,5 @@ export {
     season_finish_data,
     check_season_finished,
     loaded_finished,
+    leader_board,
 }
