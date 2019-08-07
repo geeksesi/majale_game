@@ -53,16 +53,16 @@ async function top_ui(my_this, scene_name) {
 
     await set_language(my_this, my_this.language_id)
     my_this.change_lang = false;
-    if (scene_name === 'main') {
-        my_this.language_select.setInteractive();
+    // if (scene_name === 'main') {
+    //     my_this.language_select.setInteractive();
 
-        my_this.language_select.on('pointerdown', () => { set_language(my_this, ((my_this.language_id === 2) ? 3 : 2)) }, my_this);
+    //     my_this.language_select.on('pointerdown', () => { set_language(my_this, ((my_this.language_id === 2) ? 3 : 2)) }, my_this);
 
-        my_this.language_flag.setInteractive();
+    //     my_this.language_flag.setInteractive();
 
-        my_this.language_flag.on('pointerdown', () => { set_language(my_this, ((my_this.language_id === 2) ? 3 : 2)) }, my_this);
+    //     my_this.language_flag.on('pointerdown', () => { set_language(my_this, ((my_this.language_id === 2) ? 3 : 2)) }, my_this);
 
-    }
+    // }
 
     // exp 
 
