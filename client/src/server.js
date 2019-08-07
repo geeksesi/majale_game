@@ -78,7 +78,7 @@ function finish_level(word_id, time, is_hint, status) {
                 user.xp += xp_value;
                 console.log(user.xp)
                 if (is_hint) {
-                    remembers_word.push(word_id);
+                    // remembers_word.push(word_id);
                 } else {
                     if (remembers_word.includes(word_id)) {
                         for (var i = remembers_word.length - 1; i--;) {
