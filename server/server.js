@@ -2,11 +2,11 @@ const { get_season, words_season } = require('./db/mysql/mysql');
 const { user_exist, hint_cost, finish_level, remember_me, finish_again_level, complete_remember, season_finish, user_play_time_history } = require('./db/mongo/insert');
 const { user, remember_word, action_history } = require('./db/mongo/modules');
 
-module.exports.my_io = function(server) {
+module.exports.my_io = function (server) {
     const io = require('socket.io')(server);
     io.on('connection', socket => {
 
-        socket.on("init", async(rubicka_id, cb) => {
+        socket.on("init", async (rubicka_id, cb) => {
             socket.online_timestamp = Math.floor(Date.now() / 1000);
 
             let export_object = {
@@ -50,17 +50,20 @@ module.exports.my_io = function(server) {
                 })
             })
 
-            let howmany_wait = 0;
+            let howmany_wait;
+            let finished = false;
             await get_season(2, async res => {
                 export_object.seasons[2] = await res.data;
                 if (Array.isArray(res.data)) {
-                    howmany_wait = res.data.length;
-                    res.data.forEach(element => {
-                        words_season(element.id, 1, word => {
-                            console.log((element.id === 7)?word:"")
+                    howmany_wait = 20;
+                    for (let i = 0; i < res.data.length; i++) {
+                        const element = res.data[i];
+                        await words_season(element.id, 1, word => {
                             export_object.words[element.id] = word.data;
                         });
-                    });
+                    }
+                    // res.data.forEach(element => {
+                    // });
                 }
             })
             // No Arabic for now
@@ -76,7 +79,8 @@ module.exports.my_io = function(server) {
             // })
 
             let t = setInterval(() => {
-                if (typeof howmany_wait !== 'undefined' && Object.keys(export_object.words).length > howmany_wait -1) {
+                // console.log(typeof howmany_wait + " ::: " + Object.keys(export_object.words).length + " :: " + howmany_wait)
+                if ((typeof howmany_wait !== 'undefined' && Object.keys(export_object.words).length > howmany_wait - 1)) {
                     setTimeout(() => {
                         clearInterval(t);
                         cb(export_object);
@@ -121,9 +125,9 @@ module.exports.my_io = function(server) {
                 xp_value = 1;
             }
             if (use_hint) {
-                remember_me(socket._id, word_id, res => {})
+                remember_me(socket._id, word_id, res => { })
             } else {
-                complete_remember(socket._id, word_id, res => {})
+                complete_remember(socket._id, word_id, res => { })
             }
             action_history.findOne({ type: 'finish_lvl', user_id: socket._id, word_id: word_id }, (err, action) => {
                 if (action !== null) {
@@ -172,7 +176,7 @@ module.exports.my_io = function(server) {
                             users[i].rank = i;
                             export_array.push(users[i]);
                             if (typeof socket.rubicka_id !== 'undefined' && users[i].rubicka_id === socket.rubicka_id) {
-                                user_data = {ok : true}
+                                user_data = { ok: true }
                             }
                         }
                         if (typeof socket.rubicka_id !== 'undefined' && users[i].rubicka_id === socket.rubicka_id && typeof user_data.ok === 'undefined') {
