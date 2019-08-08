@@ -53,11 +53,12 @@ class seasonMenu extends Phaser.Scene {
     hide_progress(first_time) {
         clearInterval(this.load_interval);
         this.my_progress.clear();
-        if (first_time === 1) {
-            this.scene.start('languageMenu');
-        } else {
+        //No Arabic
+        // if (first_time === 1) {
+            // this.scene.start('languageMenu');
+        // } else {
             this.scene.start('mainMenu');
-        }
+        // }
 
     }
 
