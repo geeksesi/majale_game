@@ -41,14 +41,15 @@ module.exports.my_io = function (server) {
                         export_object.remembers_id.push(remember.word_id)
                     })
                 });
-
-            })
-
-            await action_history.find({ user_id: socket._id, type: 'season_finish' }, (err, actions) => {
-                actions.forEach(async action => {
-                    await export_object.finished_season.push(action.value);
+                
+                await action_history.find({ user_id: socket._id, type: 'season_finish' }, (err, actions) => {
+                    console.log(socket._id);
+                    actions.forEach(async action => {
+                        await export_object.finished_season.push(action.value);
+                    })
                 })
             })
+
 
             let howmany_wait;
             let finished = false;
@@ -62,8 +63,6 @@ module.exports.my_io = function (server) {
                             export_object.words[element.id] = word.data;
                         });
                     }
-                    // res.data.forEach(element => {
-                    // });
                 }
             })
             // No Arabic for now
@@ -79,7 +78,7 @@ module.exports.my_io = function (server) {
             // })
 
             let t = setInterval(() => {
-                // console.log(typeof howmany_wait + " ::: " + Object.keys(export_object.words).length + " :: " + howmany_wait)
+
                 if ((typeof howmany_wait !== 'undefined' && Object.keys(export_object.words).length > howmany_wait - 1)) {
                     setTimeout(() => {
                         clearInterval(t);
