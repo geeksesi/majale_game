@@ -30,8 +30,8 @@ class playGame extends Phaser.Scene {
     }
 
     async variables() {
+        this.is_win = false;
         await top_ui(this, "play_game");
-
         this.till = {
             offset_x: 0,
             width: this.sys.game.config.width,
@@ -215,36 +215,33 @@ class playGame extends Phaser.Scene {
         this.is_win = true;
         this.finish_time = Math.floor(Date.now() / 1000);
         let is_hint = false;
-        setTimeout(async () => {
-            if (this.hint_arr.length > 0) {
-                is_hint = true;
-            }
-            finish_level(
-                this.word_data[this.word_id].id,
-                this.season_id,
-                (this.finish_time - this.start_time),
-                is_hint,
-                this.word_data[this.word_id].status,
-                res => {
-                    if (!res.ok) {
-                        this.error_ui();
-                        return false;
-                    }
-                    if (res.season_status) {
-                        season_finish(this, (this.season_id / 30) * 100);
-                        credit_change(this, res.prize);
-                        exp_change(this, res.xp);
-                    } else {
-                        console.log(res);
-                        level_finish(this, res.xp);
-                        credit_change(this, res.prize);
-                        exp_change(this, res.xp);
-                    }
-                });
-            // console.log(finish_detail);
+        if (this.hint_arr.length > 0) {
+            is_hint = true;
+        }
+        finish_level(
+            this.word_data[this.word_id].id,
+            this.season_id,
+            (this.finish_time - this.start_time),
+            is_hint,
+            this.word_data[this.word_id].status,
+            res => {
+                if (!res.ok) {
+                    this.error_ui();
+                    return false;
+                }
+                if (res.season_status) {
+                    season_finish(this, (this.season_id / 30) * 100);
+                    credit_change(this.coin_text, res.prize);
+                    exp_change(this.exp_text, res.xp);
+                } else {
+                    level_finish(this, res.xp);
+                    credit_change(this.coin_text, res.prize);
+                    exp_change(this.exp_text, res.xp);
+                }
+            });
+        // console.log(finish_detail);
 
-            // this.win_ui();
-        }, 500);
+        // this.win_ui();
     }
 
     show_loading() {
@@ -316,7 +313,7 @@ class playGame extends Phaser.Scene {
             this.question)
             .setAlign("center")
             .setColor("#fff")
-
+            .setPadding(0, 0, 0, 5)
 
         this.question_text.text.length;
         if (this.language_id == 2) {
