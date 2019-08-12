@@ -6,17 +6,16 @@ const config = {
     type: Phaser.CANVAS,
     canvas: document.getElementById("myCanvas"),
     parent: 'myGame',
-
     backgroundColor: 0xefefef,
     width: 610,
     height: 1080,
-    scene: [loading, languageMenu, mainMenu, season_finish, playGame]
+    scene: [detail, loading, languageMenu, mainMenu, season_finish, playGame, shop, leaderboard]
     // scene: [mainMenu,  playGame]
-    // scene: [playGam1e],
+    // scene: [test],
     // scene: [loading],
     // scene: [languageMenu, seasonMenu, wordMenu, playGame],
-    // scene: [seasonMenu],
-    // scene: [wordMenu],
+    // scene: [shop],
+    // scene: [leaderboard],
     // scene: [mainMenu],
 };
 
@@ -26,11 +25,13 @@ const config = {
 // my_scale.setGameSize(window.innerWidth, window.innerHeight);
 
 
+import test from './testui';
+import detail from './detailScene';
 import loading from './loading';
 import mainMenu from './mainMenu';
 import languageMenu from './languageMenu';
-// import seasonMenu from './seasonMenu';
-// import wordMenu from './wordMenu';
+import leaderboard from './leaderboardScene';
+import shop from './shopScene';
 import playGame from './playGame';
 import season_finish from './season_finish';
 
