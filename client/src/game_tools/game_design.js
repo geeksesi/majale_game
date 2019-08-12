@@ -1,4 +1,4 @@
-import {season_finish_data} from './../server';
+import { season_finish_data, get_finished_season, splice_word } from './../server';
 
 async function make_road(words, finished_word, remembers, language_id, cb) {
 
@@ -14,10 +14,16 @@ async function make_road(words, finished_word, remembers, language_id, cb) {
                 }
             }
             if (typeof finished_word[word.id] === 'undefined' && word.language_id === language_id) {
-                await new_words.push(word);
+                if (typeof word.answer !== 'undefined' && word.answer.word.length < 12)
+                    await new_words.push(word);
+                else
+                    splice_word(word.season_id, word.id)
             } else {
                 if (remembers.includes(word.id) && word.language_id === language_id) {
-                    await remembers_word.push(word);
+                    if (typeof word.answer !== 'undefined' && word.answer.word.length < 12)
+                        await remembers_word.push(word);
+                    else
+                        splice_word(word.season_id, word.id)
                 }
             }
         })
@@ -61,56 +67,65 @@ function make_final_road(new_words, remembers) {
     })
 }
 
-function user_level(words, last_finished_word_key, remembers, language_id, finished_season, cb) {
-    let output = {
-        remember_length: remembers.length,
-        season_id: 0,
-        season_name: "",
-        season_length: 0,
-        season_finished_level: 0,
-    }
-    if (typeof finished_season[finished_season.length - 1] !== 'undefined') {
-        output.season_id = finished_season[finished_season.length - 1].id
-        output.season_id = finished_season[finished_season.length - 1].name
-    }else{
-
-    }
-    Object.keys(words).forEach(key => {
-        words[key].forEach(word => {
-            if (word.id === last_finished_word_key) {
-                season_id = key;
-                season_length = words[key].length;
-                if (word.season_sort < words[key].length) {
-                    output.season_id = key;
-                    output.season_length = words[key].length;
-                    output.season_finished_length = word.season_sort;
-                    console.log(output.season_id)
+function user_level(cb) {
+    get_finished_season(async seasons_id => {
+        if (seasons_id.length < 1) {
+            let finish = false;
+            let completed = 0;
+            let season_data = await season_finish_data(1);
+            for (let i = 0; i < season_data.length; i++) {
+                if (typeof season_data[i].status === 'undefined') {
+                    finish = true;
+                    break;
                 } else {
-                    if (typeof words[key + 1] !== 'undefined') {
-                        output.season_id = key + 1;
-                        output.season_length = words[key + 1].length;
-                        output.season_finished_length = 1;
-                        console.log(output.season_id)
-                    } else {
-                        cb({ ok: false })
-                    }
+                    completed++;
+                }
+                if (typeof season_data[i + 1] === 'undefined') {
+                    finish = true;
                 }
             }
-        });
-    });
-
-    let wait_for_season_id = setInterval(() => {
-        if (output.season_id !== 0) {
-            clearInterval(wait_for_season_id);
-            season_info(output.season_id, season, language_id, name => {
-                output.season_name = name;
-                setTimeout(() => {
-                    cb(output);
-                }, 200)
-            })
+            const wait_interval = setInterval(() => {
+                if (finish) {
+                    clearInterval(wait_interval);
+                    cb({
+                        ok: true,
+                        season_id: 1,
+                        length: season_data.length,
+                        completed: completed,
+                    })
+                }
+            }, 200)
         }
-    }, 500);
+        else {
+            let season_id = await seasons_id[seasons_id.length - 1] + 1;
+            let finish = false;
+            let completed = 0;
+            let season_data = await season_finish_data(season_id);
+            for (let i = 0; i < season_data.length; i++) {
+                if (typeof season_data[i].status === 'undefined') {
+                    finish = true;
+                    break;
+                } else {
+                    completed++;
+                }
+                if (typeof season_data[i + 1] === 'undefined') {
+                    finish = true;
+                }
+            }
+            const wait_interval = setInterval(() => {
+                if (finish) {
+                    clearInterval(wait_interval);
+                    cb({
+                        ok: true,
+                        season_id: season_id,
+                        length: season_data.length,
+                        completed: completed,
+                    })
+                }
+            }, 200)
 
+        }
+    })
 }
 
 

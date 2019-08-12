@@ -125,7 +125,6 @@ async function init(cb) {
 
 function season_finish(season_id, cb) {
     socket.emit("season_finish", season_id, res => {
-        user.credit += res.data;
         cb(res.data)
     })
 }
@@ -136,7 +135,6 @@ function season_finish_data(season_id) {
         let usefull_array = [];
         if (typeof this_words === 'undefined') {
             this_words = await word_list[season_id];
-            // console.log(this_words)
         }
         if (typeof this_words !== 'undefined') {
             this_words.forEach(async element => {
@@ -159,33 +157,36 @@ function season_finish_data(season_id) {
 }
 
 async function check_season_finished(season_id, cb) {
+    let wait_for_it;
     if (finished_season.indexOf(season_id) !== -1) {
         cb(false)
         return false;
     }
     let season_data = await season_finish_data(season_id);
-    console.log(season_data);
     let ok = []
     for (let i = 0; i < season_data.length; i++) {
         const element = season_data[i];
         if (element.status === null || typeof element.status === 'undefined' || element.status === 0) {
-            clearInterval(wait_for_it);
+            if (typeof wait_for_it !== 'undefined') {
+                clearInterval(wait_for_it);
+            }
             cb(false);
+            return false;
             break;
         } else {
             ok.push(true);
         }
     }
 
-    const wait_for_it = setInterval(() => {
+    wait_for_it = setInterval(() => {
         if (ok.length === season_data.length) {
             clearInterval(wait_for_it);
             finished_season.push(season_id);
-            cb(true);
+            season_finish(season_id, res => {
+                cb(true);
+            })
         }
     }, 500);
-
-
 }
 
 
@@ -206,6 +207,17 @@ function leader_board(cb) {
     })
 }
 
+function splice_word(season_id, word_id) {
+    for (var i = 0; i < word_list[season_id].length; i++) {
+        if (word_list[season_id][i].id === word_id) {
+            word_list[season_id].splice(i, 1);
+        }
+    }
+    setTimeout(() => {
+        console.log(word_list[season_id]);
+    }, 500);
+}
+
 export {
     init,
     get_season,
@@ -220,4 +232,5 @@ export {
     loaded_finished,
     leader_board,
     get_finished_season,
+    splice_word,
 }
