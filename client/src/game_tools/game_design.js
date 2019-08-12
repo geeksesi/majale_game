@@ -1,3 +1,5 @@
+import {season_finish_data} from './../server';
+
 async function make_road(words, finished_word, remembers, language_id, cb) {
 
     let new_words = [];
@@ -23,7 +25,7 @@ async function make_road(words, finished_word, remembers, language_id, cb) {
     setTimeout(() => {
         check_finish = true;
     }, 2000)
-    let wait_for_him = setInterval(async() => {
+    let wait_for_him = setInterval(async () => {
         if (check_finish) {
             clearInterval(wait_for_him);
             // console.log(await make_final_road(new_words, remembers_word))
@@ -37,7 +39,7 @@ async function make_road(words, finished_word, remembers, language_id, cb) {
 }
 
 function make_final_road(new_words, remembers) {
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         let road = [];
         if (new_words.length <= 4) {
             road = await [
@@ -59,15 +61,20 @@ function make_final_road(new_words, remembers) {
     })
 }
 
-function user_path(words, last_finished_word_key, remembers, language_id, season, cb) {
+function user_level(words, last_finished_word_key, remembers, language_id, finished_season, cb) {
     let output = {
-        remember_length : remembers.length,
-        season_id : 0,
-        season_name : "",
-        season_length : 0,
-        season_finished_length : 0,
+        remember_length: remembers.length,
+        season_id: 0,
+        season_name: "",
+        season_length: 0,
+        season_finished_level: 0,
     }
+    if (typeof finished_season[finished_season.length - 1] !== 'undefined') {
+        output.season_id = finished_season[finished_season.length - 1].id
+        output.season_id = finished_season[finished_season.length - 1].name
+    }else{
 
+    }
     Object.keys(words).forEach(key => {
         words[key].forEach(word => {
             if (word.id === last_finished_word_key) {
@@ -80,8 +87,8 @@ function user_path(words, last_finished_word_key, remembers, language_id, season
                     console.log(output.season_id)
                 } else {
                     if (typeof words[key + 1] !== 'undefined') {
-                        output.season_id = key+1;
-                        output.season_length = words[key+1].length;
+                        output.season_id = key + 1;
+                        output.season_length = words[key + 1].length;
                         output.season_finished_length = 1;
                         console.log(output.season_id)
                     } else {
@@ -115,4 +122,4 @@ function season_info(season_id, season, language_id, cb) {
     })
 }
 
-export { make_road, user_path };
+export { make_road, user_level };
