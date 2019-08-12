@@ -1,12 +1,12 @@
 const { get_season, words_season } = require('./db/mysql/mysql');
 const { user_exist, hint_cost, finish_level, remember_me, finish_again_level, complete_remember, season_finish, user_play_time_history } = require('./db/mongo/insert');
-const { remember_word, action_history } = require('./db/mongo/modules');
+const { user, remember_word, action_history } = require('./db/mongo/modules');
 
-module.exports.my_io = function(server) {
+module.exports.my_io = function (server) {
     const io = require('socket.io')(server);
     io.on('connection', socket => {
 
-        socket.on("init", async(rubicka_id, cb) => {
+        socket.on("init", async (rubicka_id, cb) => {
             socket.online_timestamp = Math.floor(Date.now() / 1000);
 
             let export_object = {
@@ -36,48 +36,53 @@ module.exports.my_io = function(server) {
                     })
                 });
 
-                await remember_word.find({ user_id: socket._id, status: 'wait' }, (err, remembers) => {
+                await remember_word.find({ user_id: socket._id, status: 'wait', timestamp: { $gt: socket.online_timestamp + 64800 } }, (err, remembers) => {
                     remembers.forEach(remember => {
                         export_object.remembers_id.push(remember.word_id)
                     })
                 });
-
-            })
-
-            await action_history.find({ user_id: socket._id, type: 'season_finish' }, (err, actions) => {
-                actions.forEach(async action => {
-                    await export_object.finished_season.push(action.value);
+                
+                await action_history.find({ user_id: socket._id, type: 'season_finish' }, (err, actions) => {
+                    actions.forEach(async action => {
+                        await export_object.finished_season.push(action.value);
+                    })
                 })
             })
 
+
+            let howmany_wait;
+            let finished = false;
             await get_season(2, async res => {
                 export_object.seasons[2] = await res.data;
                 if (Array.isArray(res.data)) {
-                    res.data.forEach(element => {
-                        words_season(element.id, 1, word => {
+                    howmany_wait = 20;
+                    for (let i = 0; i < res.data.length; i++) {
+                        const element = res.data[i];
+                        await words_season(element.id, 1, word => {
                             export_object.words[element.id] = word.data;
                         });
-                    });
+                    }
                 }
             })
-
-            await get_season(3, async res => {
-                export_object.seasons[3] = await res.data;
-                if (Array.isArray(res.data)) {
-                    res.data.forEach(element => {
-                        words_season(element.id, 1, word => {
-                            export_object.words[element.id] = word.data;
-                        });
-                    });
-                }
-            })
+            // No Arabic for now
+            // await get_season(3, async res => {
+            //     export_object.seasons[3] = await res.data;
+            //     if (Array.isArray(res.data)) {
+            //         res.data.forEach(element => {
+            //             words_season(element.id, 1, word => {
+            //                 export_object.words[element.id] = word.data;
+            //             });
+            //         });
+            //     }
+            // })
 
             let t = setInterval(() => {
-                if (Object.keys(export_object.words).length) {
+
+                if ((typeof howmany_wait !== 'undefined' && Object.keys(export_object.words).length > howmany_wait - 1)) {
                     setTimeout(() => {
                         clearInterval(t);
                         cb(export_object);
-                    }, 500)
+                    }, 1000)
                 }
             }, 500);
 
@@ -109,31 +114,31 @@ module.exports.my_io = function(server) {
             let prize_value;
             if (time <= 5) {
                 prize_value = 15;
-                exp_value = 3;
+                xp_value = 3;
             } else if (time <= 10) {
                 prize_value = 10;
-                exp_value = 2;
+                xp_value = 2;
             } else {
                 prize_value = 5;
-                exp_value = 1;
+                xp_value = 1;
             }
             if (use_hint) {
-                remember_me(socket._id, word_id, res => {})
+                remember_me(socket._id, word_id, res => { })
             } else {
-                complete_remember(socket._id, word_id, res => {})
+                complete_remember(socket._id, word_id, res => { })
             }
             action_history.findOne({ type: 'finish_lvl', user_id: socket._id, word_id: word_id }, (err, action) => {
                 if (action !== null) {
                     console.log("don't need to make again")
-                    if (action.description < exp_value) {
-                        finish_again_level(socket.rubicka_id, word_id, ((prize_value) - (action.description * 5)), (exp_value - action.description), res => {
+                    if (action.description < xp_value) {
+                        finish_again_level(socket.rubicka_id, word_id, ((prize_value) - (action.description * 5)), (xp_value - action.description), res => {
                             if (res.ok === true) {
                                 cb(res);
                             }
                         });
                     }
                 } else {
-                    finish_level(socket.rubicka_id, word_id, prize_value, exp_value, res => {
+                    finish_level(socket.rubicka_id, word_id, prize_value, xp_value, res => {
                         if (res.ok === true) {
                             cb(res);
                         }
@@ -154,6 +159,47 @@ module.exports.my_io = function(server) {
         })
 
 
-    });
+        socket.on("leaderBoard", (cb) => {
+            let export_array = [];
+            let user_data = {};
+            let users_length;
+            user.find()
+                .select('rubicka_id xp')
+                .sort({ xp: 'asc' })
+                .exec((err, users) => {
+                    if (err) { cb({ ok: false, data: null }); return false; }
+                    users_length = users.length;
+                    for (let i = 0; i < users.length; i++) {
+                        if (export_array.length < 10) {
+                            users[i].rank = i;
+                            export_array.push(users[i]);
+                            if (typeof socket.rubicka_id !== 'undefined' && users[i].rubicka_id === socket.rubicka_id) {
+                                user_data = { ok: true }
+                            }
+                        }
+                        if (typeof socket.rubicka_id !== 'undefined' && users[i].rubicka_id === socket.rubicka_id && typeof user_data.ok === 'undefined') {
+                            users[i].rank = i;
+                            users[i].rb_id = socket.rubicka_id;
+                            user_data = users[i];
+                        }
+                    }
+                })
 
+            let wait = setInterval(() => {
+                if (export_array.length > 9 || (typeof users_length !== 'undefined' && export_array.length === users_length)) {
+                    if (typeof socket.rubicka_id === 'undefined' || typeof user_data.ok !== 'undefined') {
+                        clearInterval(wait);
+                        cb({ ok: true, data: export_array })
+                    } else {
+                        if (Object.keys(user_data).length !== 0) {
+                            cb({ ok: true, data: [...export_array, user_data] })
+                        }
+                    }
+                }
+            }, 200)
+
+        })
+
+
+    });
 }

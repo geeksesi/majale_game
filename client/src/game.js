@@ -4,19 +4,18 @@ gameanalytics.GameAnalytics.setEnabledInfoLog(true);
 gameanalytics.GameAnalytics.configureBuild("majale 0.4.0");
 const config = {
     type: Phaser.CANVAS,
-    canvas:  document.getElementById("myCanvas"),
+    canvas: document.getElementById("myCanvas"),
     parent: 'myGame',
-
     backgroundColor: 0xefefef,
     width: 610,
     height: 1080,
-    scene: [loading, languageMenu, mainMenu, season_finish, playGame]
+    scene: [detail, loading, languageMenu, mainMenu, season_finish, playGame, shop, leaderboard]
     // scene: [mainMenu,  playGame]
-    // scene: [season_finish],
+    // scene: [test],
     // scene: [loading],
     // scene: [languageMenu, seasonMenu, wordMenu, playGame],
-    // scene: [seasonMenu],
-    // scene: [wordMenu],
+    // scene: [shop],
+    // scene: [leaderboard],
     // scene: [mainMenu],
 };
 
@@ -26,11 +25,13 @@ const config = {
 // my_scale.setGameSize(window.innerWidth, window.innerHeight);
 
 
+import test from './testui';
+import detail from './detailScene';
 import loading from './loading';
 import mainMenu from './mainMenu';
 import languageMenu from './languageMenu';
-import seasonMenu from './seasonMenu';
-import wordMenu from './wordMenu';
+import leaderboard from './leaderboardScene';
+import shop from './shopScene';
 import playGame from './playGame';
 import season_finish from './season_finish';
 
@@ -48,11 +49,6 @@ function resize() {
         config.width = width;
         config.height = (width / ratio);
         const game = new Phaser.Game(config);
-        // game.scene.start('playGame', {
-        //     season_id: 1,
-        //     word_id: 0,
-        // });
-
         // game.scale.resize(width, (width / ratio));
     } else {
         canvas.style.width = (height * ratio) + "px";
@@ -60,11 +56,6 @@ function resize() {
         config.width = (height * ratio);
         config.height = height;
         const game = new Phaser.Game(config);
-
-        // game.scene.start('playGame', {
-        //     season_id: 1,
-        //     word_id: 0,
-        // });
         // game.scale.resize((height * ratio), height);
     }
     // game.scale.resize(window.innerWidth, window.innerHeight);

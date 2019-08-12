@@ -1,4 +1,5 @@
 import { init, loaded_finished } from './server';
+import { loading_start, loading_stop } from './game_tools/loading_ui';
 class seasonMenu extends Phaser.Scene {
     constructor() {
         super({ key: 'loading' });
@@ -7,16 +8,32 @@ class seasonMenu extends Phaser.Scene {
 
     async preload() {
 
+        this.load.image('english_flag', 'assets/Eng_flag.png')
+        this.load.image('exp_icon', 'assets/xp.png')
+        this.load.image('coin_icon', 'assets/coin.png')
+        this.load.image('back', 'assets/back.png')
+        this.load.image('avatar1', 'assets/av1.png')
+        this.load.image('avatar2', 'assets/av2.png')
+        this.load.image('avatar3', 'assets/av3.png')
+        this.load.image('avatar4', 'assets/av4.png')
+        this.load.image('avatar5', 'assets/av5.png')
+        this.load.image('avatar6', 'assets/av6.png')
+        this.load.image('avatar7', 'assets/av7.png')
+        this.load.image('avatar8', 'assets/av8.png')
+        this.load.image('avatar9', 'assets/av9.png')
+        this.load.image('avatar10', 'assets/av10.png')
+        this.load.image('best_flag', 'assets/ranking.png')
+        this.load.image('shop_flag', 'assets/shop.png')
+
         this.show_progress()
         console.log("loading")
-        this.load.image('win_bg', 'assets/win.jpg');
 
         let image_loaded = false;
-        this.load.on('complete', function() {
+        this.load.on('complete', function () {
             image_loaded = true;
         });
         init(res => {
-            let wait_for_image = setInterval(async() => {
+            let wait_for_image = setInterval(async () => {
                 if (image_loaded) {
                     loaded_finished();
                     this.hide_progress(res.user.play_time);
@@ -28,31 +45,17 @@ class seasonMenu extends Phaser.Scene {
     }
 
     show_progress() {
-
-        this.my_progress = this.add.graphics();
-        let i = 0,
-            reverse = false;
-        this.load_interval = setInterval(() => {
-            if (i > 350) { reverse = true }
-            if (i < 50) { reverse = false }
-            if (reverse) { i-- } else { i++ }
-            this.my_progress.clear();
-            this.my_progress.lineStyle(4, 0xff00ff, 1);
-            this.my_progress.beginPath();
-            this.my_progress.arc(this.sys.game.config.width / 2 - 25, this.sys.game.config.height / 2 - 25, 50, Phaser.Math.DegToRad(i), Phaser.Math.DegToRad(0), true).setAngle(0);
-            this.my_progress.strokePath();
-
-        }, 10)
+        loading_start(this);
     }
 
     hide_progress(first_time) {
-        clearInterval(this.load_interval);
-        this.my_progress.clear();
-        if (first_time === 1) {
-            this.scene.start('languageMenu');
-        } else {
-            this.scene.start('mainMenu');
-        }
+        loading_stop(this);
+        //No Arabic
+        // if (first_time === 1) {
+        // this.scene.start('languageMenu');
+        // } else {
+        this.scene.start('mainMenu');
+        // }
 
     }
 
