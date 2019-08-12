@@ -74,7 +74,9 @@ async function top_ui(my_this, scene_name) {
         )
             .setScale(my_this.distance / 1.5 * my_this.distance)
             .setInteractive()
-            .on('pointerdown', () => { my_this.scene.start('mainMenu') }, my_this)
+            .on('pointerdown', () => {
+                my_this.scene.start('mainMenu');
+            }, my_this)
     }
 
     // exp 
@@ -172,14 +174,18 @@ async function top_ui(my_this, scene_name) {
 
 }
 
-function credit_change(object, start, finish) {
-    setTimeout(()=>{
+function credit_change(object, sureplus) {
+    const start = parseInt(object.text);
+    const finish = start + sureplus;
+    setTimeout(() => {
         number_animation(object, start, finish, 1000 / 30)
     }, 1000)
 }
 
-function exp_change(object, start, finish) {
-    setTimeout(()=>{
+function exp_change(object, sureplus) {
+    const start = parseInt(object.text);
+    const finish = start + sureplus;
+    setTimeout(() => {
         number_animation(object, start, finish, 1000 / 6)
     }, 1000)
     // object.setText(parseInt(my_this.exp_text.text) + value)
