@@ -15,11 +15,36 @@ class mainMenu extends Phaser.Scene {
         await this.play_ui();
         await this.down_ui();
         this.data = await play_game_data();
-        this.seasons = await get_season();
-        let finished_word_keys = Object.keys(this.data.finished_word);
-        // user_level(this.data.word_list, finished_word_keys[finished_word_keys.length - 1], this.data.remembers_word, this.language_id, this.seasons, res => {
-        //     console.log(res)
-        // })
+
+        user_level(res => {
+            this.user_level_ui(res);
+        })
+    }
+
+    user_level_ui(data) {
+
+        this.season_detail_text = this.add.text(
+            330 * this.distance,
+            480 * this.distance,
+            `فـصـل :   ${data.season_id}`
+        )
+            .setColor('#fff')
+            .setFontFamily("Lalezar")
+            .setFontSize(60 * this.distance)
+            .setPadding(0, 0, 0, 5)
+            .initRTL()
+
+        this.season_detail_text = this.add.text(
+            110 * this.distance,
+            480 * this.distance,
+            `${data.completed} / ${data.length}`
+        )
+            .setColor('#fff')
+            .setFontFamily("Lalezar")
+            .setFontSize(60 * this.distance)
+            .setPadding(0, 0, 0, 5)
+            .initRTL()
+
     }
 
     progress_event() {
@@ -40,19 +65,19 @@ class mainMenu extends Phaser.Scene {
 
 
 
-    loading_ui() {
-        this.loading = this.add.graphics();
-        this.loading.beginPath();
-        this.loading.lineStyle(3, 0x6ab615, 1);
+    // loading_ui() {
+    //     this.loading = this.add.graphics();
+    //     this.loading.beginPath();
+    //     this.loading.lineStyle(3, 0x6ab615, 1);
 
-        this.loading.strokeRoundedRect(
-            50 * this.distance,
-            395 * this.distance,
-            510 * this.distance,
-            310 * this.distance,
-            50 * this.distance
-        );
-    }
+    //     this.loading.strokeRoundedRect(
+    //         50 * this.distance,
+    //         395 * this.distance,
+    //         510 * this.distance,
+    //         310 * this.distance,
+    //         50 * this.distance
+    //     );
+    // }
 
 
     play_ui() {
