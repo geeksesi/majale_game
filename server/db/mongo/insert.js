@@ -163,6 +163,7 @@ function complete_remember(user_id, word_id, cb) {
 
 function season_finish(user_id, season_id, cb) {
     add_action(user_id, "season_finish", season_id, "", (action) => {
+        resault = {};
         if (!action) {
             resault.ok = false;
             resault.data = err;

@@ -77,8 +77,7 @@ module.exports.my_io = function (server) {
             // })
 
             let t = setInterval(() => {
-
-                if ((typeof howmany_wait !== 'undefined' && Object.keys(export_object.words).length > howmany_wait - 1)) {
+                if ((typeof howmany_wait !== 'undefined' && Object.keys(export_object.words).length >= howmany_wait )) {
                     setTimeout(() => {
                         clearInterval(t);
                         cb(export_object);
@@ -149,11 +148,11 @@ module.exports.my_io = function (server) {
 
 
         socket.on("season_finish", (season_id, cb) => {
-            let array_of_prize = [5, 10, 5, 10, 5, 10, 15, 10, 5, 15, 20, 10, 5, 20, 15, 10, 5, 50, 10, 15, 5, 25, 15, 25, 5, 10, 15];
-            let random_prize = array_of_prize[Math.floor(Math.random() * array_of_prize.length)];
-            season_finish(socket._id, season_id, random_prize, res => {
+            // let array_of_prize = [5, 10, 5, 10, 5, 10, 15, 10, 5, 15, 20, 10, 5, 20, 15, 10, 5, 50, 10, 15, 5, 25, 15, 25, 5, 10, 15];
+            // let random_prize = array_of_prize[Math.floor(Math.random() * array_of_prize.length)];
+            season_finish(socket._id, season_id, res => {
                 if (res.ok) {
-                    cb({ ok: true, data: random_prize })
+                    cb({ ok: true })
                 }
             })
         })
