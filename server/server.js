@@ -43,7 +43,6 @@ module.exports.my_io = function (server) {
                 });
                 
                 await action_history.find({ user_id: socket._id, type: 'season_finish' }, (err, actions) => {
-                    console.log(socket._id);
                     actions.forEach(async action => {
                         await export_object.finished_season.push(action.value);
                     })
