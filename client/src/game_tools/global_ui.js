@@ -1,4 +1,5 @@
 import { user_data } from './../server';
+import { number_animation } from './mechanism';
 
 
 function set_language(my_this, language_id) {
@@ -11,10 +12,10 @@ function set_language(my_this, language_id) {
     my_this.language_select.setFontFamily((language_id === 2) ? "Robot" : "Lalezar")
     my_this.language_select.setFontSize((language_id === 2) ? 32 * my_this.distance : 32 * my_this.distance)
     my_this.language_flag = my_this.add.image(
-            my_this.offset.x + 60 * my_this.distance,
-            my_this.offset.y + 75 * my_this.distance,
-            (language_id === 2) ? "english_flag" : "english_flag"
-        )
+        my_this.offset.x + 60 * my_this.distance,
+        my_this.offset.y + 75 * my_this.distance,
+        (language_id === 2) ? "english_flag" : "english_flag"
+    )
         .setScale(
             my_this.distance,
             my_this.distance,
@@ -41,28 +42,40 @@ async function top_ui(my_this, scene_name) {
         y: 20 * my_this.distance,
     };
 
-    // Language
-    my_this.language_select = my_this.add.text(
-        my_this.offset.x,
-        my_this.offset.y,
-        "", {
-            fontSize: "15px",
-            color: "#2f2f2f",
-            fontFamily: "Roboto"
-        });
+    if (scene_name === 'main') {
+        // Language
+        my_this.language_select = my_this.add.text(
+            my_this.offset.x,
+            my_this.offset.y,
+            "", {
+                fontSize: "15px",
+                color: "#2f2f2f",
+                fontFamily: "Roboto"
+            })
+            .setPadding(0, 0, 0, 5);
 
-    await set_language(my_this, my_this.language_id)
-    my_this.change_lang = false;
-    // if (scene_name === 'main') {
-    //     my_this.language_select.setInteractive();
+        await set_language(my_this, my_this.language_id)
+        my_this.change_lang = false;
 
-    //     my_this.language_select.on('pointerdown', () => { set_language(my_this, ((my_this.language_id === 2) ? 3 : 2)) }, my_this);
 
-    //     my_this.language_flag.setInteractive();
+        //     my_this.language_select.setInteractive();
 
-    //     my_this.language_flag.on('pointerdown', () => { set_language(my_this, ((my_this.language_id === 2) ? 3 : 2)) }, my_this);
+        //     my_this.language_select.on('pointerdown', () => { set_language(my_this, ((my_this.language_id === 2) ? 3 : 2)) }, my_this);
 
-    // }
+        //     my_this.language_flag.setInteractive();
+
+        //     my_this.language_flag.on('pointerdown', () => { set_language(my_this, ((my_this.language_id === 2) ? 3 : 2)) }, my_this);
+
+    } else {
+        my_this.back_btn = my_this.add.image(
+            my_this.offset.x + 60 * my_this.distance,
+            my_this.offset.y + 50 * my_this.distance,
+            "back"
+        )
+            .setScale(my_this.distance / 1.5 * my_this.distance)
+            .setInteractive()
+            .on('pointerdown', () => { my_this.scene.start('mainMenu') }, my_this)
+    }
 
     // exp 
 
@@ -79,13 +92,12 @@ async function top_ui(my_this, scene_name) {
         }
     }
     my_this.exp_flag = my_this.add.image(
-            exp_places.flag.x,
-            exp_places.flag.y,
-            "exp_icon"
-        )
+        exp_places.flag.x,
+        exp_places.flag.y,
+        "exp_icon"
+    )
         .setScale(
-            my_this.distance,
-            my_this.distance,
+            my_this.distance / 2 * my_this.distance
         );
     my_this.exp_text = my_this.add.text(
         exp_places.text.x,
@@ -94,7 +106,8 @@ async function top_ui(my_this, scene_name) {
             fontSize: `${exp_places.text.font_size}px`,
             color: `${exp_places.text.color}`,
             fontFamily: "Noto Sans"
-        });
+        })
+        .setPadding(0, 0, 0, 5);
 
 
 
@@ -112,13 +125,12 @@ async function top_ui(my_this, scene_name) {
         }
     }
     my_this.coin_flag = my_this.add.image(
-            coin_places.flag.x,
-            coin_places.flag.y,
-            "coin_icon"
-        )
+        coin_places.flag.x,
+        coin_places.flag.y,
+        "coin_icon"
+    )
         .setScale(
-            my_this.distance,
-            my_this.distance,
+            my_this.distance / 2 * my_this.distance
         );
     my_this.coin_text = my_this.add.text(
         coin_places.text.x,
@@ -127,7 +139,8 @@ async function top_ui(my_this, scene_name) {
             fontSize: `${coin_places.text.font_size}px`,
             color: `${coin_places.text.color}`,
             fontFamily: "Noto Sans"
-        });
+        })
+        .setPadding(0, 0, 0, 5);
 
     // seprator 
     my_this.graphics = my_this.add.graphics({ lineStyle: { color: 0xa0a0a0 } });
@@ -159,12 +172,17 @@ async function top_ui(my_this, scene_name) {
 
 }
 
-function credit_change(my_this, value) {
-    my_this.coin_text.setText(parseInt(my_this.coin_text.text) + value)
+function credit_change(object, start, finish) {
+    setTimeout(()=>{
+        number_animation(object, start, finish, 1000 / 30)
+    }, 1000)
 }
 
-function exp_change(my_this, value) {
-    my_this.exp_text.setText(parseInt(my_this.exp_text.text) + value)
+function exp_change(object, start, finish) {
+    setTimeout(()=>{
+        number_animation(object, start, finish, 1000 / 6)
+    }, 1000)
+    // object.setText(parseInt(my_this.exp_text.text) + value)
 }
 
 export { top_ui, credit_change, exp_change }
