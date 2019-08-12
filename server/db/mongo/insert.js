@@ -161,29 +161,19 @@ function complete_remember(user_id, word_id, cb) {
 
 }
 
-function season_finish(user_id, season_id, prize, cb) {
-    user.findOneAndUpdate({ _id: user_id }, { $inc: { credit: prize } }, (err, res) => {
-        // console.log(res);
-        let resault = {};
-        if (err) {
+function season_finish(user_id, season_id, cb) {
+    add_action(user_id, "season_finish", season_id, "", (action) => {
+        if (!action) {
             resault.ok = false;
             resault.data = err;
             cb(resault);
             return false;
+        } else {
+            resault.ok = true;
+            // resault.data = res;
+            cb(resault);
         }
-        add_action(user_id, "season_finish", season_id, prize, (action) => {
-            if (!action) {
-                resault.ok = false;
-                resault.data = err;
-                cb(resault);
-                return false;
-            } else {
-                resault.ok = true;
-                // resault.data = res;
-                cb(resault);
-            }
-        })
-    });
+    })
 }
 
 

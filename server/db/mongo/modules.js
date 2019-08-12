@@ -105,6 +105,16 @@ const userSchema = mongoos.Schema({
         required: true,
         unique: true,
     },
+    name: {
+        type: String,
+        required: false,
+        default : null
+    },
+    avatar: {
+        type: String,
+        required: false,
+        default : 'av1'
+    },
     credit: {
         type: Number,
         require: false,
