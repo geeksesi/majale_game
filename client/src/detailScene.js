@@ -47,6 +47,17 @@ class detail extends Phaser.Scene {
             .setFontFamily('Lalezar')
             .setColor('#fff')
             .setScale(this.scale2_value)
+
+
+            this.test_katibeh = this.add.text(
+            0 * this.distance,
+            0 * this.distance,
+            'مـــجـــلـــه'
+        )
+            .setFontSize(5)
+            .setFontFamily('Katibeh')
+            .setColor('#fff')
+            .setScale(this.scale2_value)
     }
 
     update() {
