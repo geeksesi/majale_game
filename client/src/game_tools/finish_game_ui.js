@@ -89,10 +89,7 @@ function season_finish(my_this, percent) {
             ),
             Phaser.Geom.Rectangle.Contains
         ).on('pointerdown', () => {
-            my_this.season_finish_precent_text.setText('شـمـا   ' + percent + '%  از  زبـان ')
-            setTimeout(() => {
-                my_this.next_level();
-            }, 500)
+            my_this.next_level();
         })
 
     my_this.season_finish_nex_btn = my_this.add.text(
