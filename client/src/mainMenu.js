@@ -1,4 +1,4 @@
-import { make_road, user_path } from './game_tools/game_design';
+import { make_road, user_level } from './game_tools/game_design';
 
 import { top_ui } from './game_tools/global_ui';
 import { play_game_data, get_season } from './server';
@@ -8,7 +8,7 @@ class mainMenu extends Phaser.Scene {
 
     }
 
-    async preload() {}
+    async preload() { }
 
     async create() {
         await top_ui(this, "main");
@@ -17,7 +17,7 @@ class mainMenu extends Phaser.Scene {
         this.data = await play_game_data();
         this.seasons = await get_season();
         let finished_word_keys = Object.keys(this.data.finished_word);
-        // user_path(this.data.word_list, finished_word_keys[finished_word_keys.length - 1], this.data.remembers_word, this.language_id, this.seasons, res => {
+        // user_level(this.data.word_list, finished_word_keys[finished_word_keys.length - 1], this.data.remembers_word, this.language_id, this.seasons, res => {
         //     console.log(res)
         // })
     }
@@ -85,7 +85,7 @@ class mainMenu extends Phaser.Scene {
             40 * this.distance
         ), Phaser.Geom.Rectangle.Contains);
         this.play_game_check = false;
-        this.play_buttom.on('pointerover', function() {
+        this.play_buttom.on('pointerdown', function () {
             if (!this.play_game_check) {
                 this.play_game();
             }
@@ -94,21 +94,56 @@ class mainMenu extends Phaser.Scene {
             235 * this.distance,
             610 * this.distance,
             "Start", {
-                fontSize: `${50* this.distance}px`,
+                fontSize: `${50 * this.distance}px`,
                 color: "#6ab615",
                 fontFamily: "Noto Sans"
-            });
+            })
+            .setPadding(0, 0, 0, 5);
     }
 
     down_ui() {
-        this.down_area = this.add.graphics();
-        this.down_area.fillStyle(0x6ab615, 1);
-        this.down_area.fillRect(
-            0,
-            940 * this.distance,
-            610 * this.distance,
-            140 * this.distance,
-        )
+        this.down_area_left = this.add.graphics()
+            .fillStyle(0x6ab615, 1)
+            .fillRect(
+                0,
+                940 * this.distance,
+                306 * this.distance,
+                140 * this.distance,
+            )
+            .setInteractive(
+                new Phaser.Geom.Rectangle(
+                    0,
+                    940 * this.distance,
+                    306 * this.distance,
+                    140 * this.distance,
+                ),
+                Phaser.Geom.Rectangle.Contains
+            )
+            .on('pointerdown', () => {
+                this.scene.start('leaderboard')
+            });
+
+        this.down_area_right = this.add.graphics()
+            .fillStyle(0x6ab615, 1)
+            .fillRect(
+                305 * this.distance,
+                940 * this.distance,
+                306 * this.distance,
+                140 * this.distance,
+            )
+            .setInteractive(
+                new Phaser.Geom.Rectangle(
+                    305 * this.distance,
+                    940 * this.distance,
+                    306 * this.distance,
+                    140 * this.distance,
+                ),
+                Phaser.Geom.Rectangle.Contains
+            )
+            .on('pointerdown', () => {
+                this.scene.start('shop')
+            });;
+
         this.seprator_down = new Phaser.Geom.Line(
             305 * this.distance,
             960 * this.distance,
@@ -127,7 +162,7 @@ class mainMenu extends Phaser.Scene {
                 y: 930 * this.distance
             },
             text: {
-                x: 70 * this.distance,
+                x: 100 * this.distance,
                 y: 1010 * this.distance,
                 font_size: 35 * this.distance,
                 color: '#fff'
@@ -135,23 +170,23 @@ class mainMenu extends Phaser.Scene {
         }
 
         this.best_flag = this.add.image(
-                best_places.flag.x,
-                best_places.flag.y,
-                'best_flag',
-            )
-            .setScale(this.distance);
+            best_places.flag.x,
+            best_places.flag.y,
+            'best_flag',
+        )
+            .setScale(2 / 3 * this.distance);
 
         this.best_text = this.add.text(
             best_places.text.x,
             best_places.text.y,
-            "برترین‌ها", {
-                fontSize: `${best_places.text.font_size}px`,
-                color: `${best_places.text.color}`,
-                fontFamily: "Lalezar"
-            });
+            "برترین‌ها")
+            .setFontSize(best_places.text.font_size)
+            .setColor(best_places.text.color)
+            .setFontFamily("Lalezar")
+            .setPadding(0, 0, 0, 5)
 
 
-        // Best 
+        // Shop 
         const shop_places = {
             flag: {
                 x: 460 * this.distance,
@@ -166,20 +201,20 @@ class mainMenu extends Phaser.Scene {
         }
 
         this.shop_flag = this.add.image(
-                shop_places.flag.x,
-                shop_places.flag.y,
-                'shop_flag',
-            )
-            .setScale(this.distance);
+            shop_places.flag.x,
+            shop_places.flag.y,
+            'shop_flag',
+        )
+            .setScale(2 / 3.5 * this.distance);
 
         this.shop_text = this.add.text(
             shop_places.text.x,
             shop_places.text.y,
-            "فروشگاه", {
-                fontSize: `${shop_places.text.font_size}px`,
-                color: `${best_places.text.color}`,
-                fontFamily: "Lalezar"
-            });
+            "فروشگاه")
+            .setFontSize(`${shop_places.text.font_size}px`)
+            .setColor(`${best_places.text.color}`)
+            .setFontFamily("Lalezar")
+            .setPadding(0, 0, 0, 5)
     }
 }
 
