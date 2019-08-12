@@ -2,6 +2,7 @@ import { use_hint, finish_level, play_game_data, check_season_finished } from '.
 import { make_road } from './game_tools/game_design';
 import { make_table, make_event } from './game_tools/mechanism';
 import { top_ui, credit_change, exp_change } from './game_tools/global_ui';
+import { season_finish, level_finish } from './game_tools/finish_game_ui';
 
 class playGame extends Phaser.Scene {
 
@@ -10,7 +11,6 @@ class playGame extends Phaser.Scene {
     }
 
     init(data) {
-        console.log(data);
         if (typeof data.word_data[data.word_id] === 'undefined') {
             console.log('i have no lvl for you')
             this.scene.start('mainMenu');
@@ -79,7 +79,7 @@ class playGame extends Phaser.Scene {
             this.till.width,
             (this.sys.game.config.height / 10)
         ), Phaser.Geom.Rectangle.Contains);
-        this.hint_area.on('pointerover', function() {
+        this.hint_area.on('pointerover', function () {
             if (!this.hint_click && !this.is_win) {
                 this.hint();
             }
@@ -121,8 +121,8 @@ class playGame extends Phaser.Scene {
         if (!this.is_win) {
             this.again = true;
             this.hint_key_arr.forEach(each => {
-                    this.make_blue(each)
-                })
+                this.make_blue(each)
+            })
             for (let i = 0; i < this.till_bg_intract.length; i++) {
                 if (this.hint_key_arr.includes(i)) {
                     continue;
@@ -171,7 +171,7 @@ class playGame extends Phaser.Scene {
         if (this.again) {
             this.again = false;
             this.clear_all();
-                clearTimeout(this.clear_timeout);
+            clearTimeout(this.clear_timeout);
         }
         if (!this.is_win) {
 
@@ -204,6 +204,9 @@ class playGame extends Phaser.Scene {
         }
     }
 
+    error_ui() {
+        console.log("problem")
+    }
 
     win() {
         if (this.is_win) {
@@ -212,16 +215,35 @@ class playGame extends Phaser.Scene {
         this.is_win = true;
         this.finish_time = Math.floor(Date.now() / 1000);
         let is_hint = false;
-        setTimeout(async() => {
+        setTimeout(async () => {
             if (this.hint_arr.length > 0) {
                 is_hint = true;
             }
-            let finish_detail = await finish_level(this.word_data[this.word_id].id, (this.finish_time - this.start_time), is_hint, this.word_data[this.word_id].status);
-            credit_change(this, finish_detail.prize);
-            exp_change(this, finish_detail.xp);
-            console.log(finish_detail);
+            finish_level(
+                this.word_data[this.word_id].id,
+                this.season_id,
+                (this.finish_time - this.start_time),
+                is_hint,
+                this.word_data[this.word_id].status,
+                res => {
+                    if (!res.ok) {
+                        this.error_ui();
+                        return false;
+                    }
+                    if (res.season_status) {
+                        season_finish(this, (this.season_id / 30) * 100);
+                        credit_change(this, res.prize);
+                        exp_change(this, res.xp);
+                    } else {
+                        console.log(res);
+                        level_finish(this, res.xp);
+                        credit_change(this, res.prize);
+                        exp_change(this, res.xp);
+                    }
+                });
+            // console.log(finish_detail);
 
-            this.win_ui();
+            // this.win_ui();
         }, 500);
     }
 
@@ -233,90 +255,37 @@ class playGame extends Phaser.Scene {
         console.log("stop loading")
     }
 
-    async win_ui_event(type) {
-        // console.log(this.season_id + " " + this.word_data[this.word_id + 1].season_id)
+    async next_level() {
         this.is_win = false;
 
-        if (type === "next") {
-
-            if (typeof this.word_data[(this.word_id + 1)] === 'undefined') {
-                this.show_loading();
-                let data = await play_game_data();
-                await make_road(data.word_list, data.finished_word, data.remembers_word, this.language_id, res => {
-                    if (res.length < 1) {
-                        console.log("i have no lvl")
-                        this.scene.start('mainMenu');
-                    }
-                    this.stop_loading();
-                    this.scene.start('playGame', {
-                        word_id: 0,
-                        language_id: this.language_id,
-                        word_data: res
-                    });
-                })
-
-            } else {
+        if (typeof this.word_data[(this.word_id + 1)] === 'undefined') {
+            this.show_loading();
+            let data = await play_game_data();
+            await make_road(data.word_list, data.finished_word, data.remembers_word, this.language_id, res => {
+                if (res.length < 1) {
+                    console.log("i have no lvl")
+                    this.scene.start('mainMenu');
+                }
+                this.stop_loading();
                 this.scene.start('playGame', {
-                    word_id: this.word_id + 1,
+                    word_id: 0,
                     language_id: this.language_id,
-                    word_data: this.word_data
+                    word_data: res
                 });
-            }
-        } else {
-            this.scene.start('mainMenu');
-        }
-    }
+            })
 
-    async animation_finished() {
-        const check_season = await check_season_finished(this.season_id);
-        console.log(check_season);
-        if (check_season) {
-            this.scene.start('season_finish', { season_id: this.season_id });
+        } else {
+            this.scene.start('playGame', {
+                word_id: this.word_id + 1,
+                language_id: this.language_id,
+                word_data: this.word_data
+            });
         }
+
     }
 
     // UI
 
-    win_ui() {
-        this.win_bg = this.add.image(
-                (this.sys.game.config.width / 2),
-                (this.sys.game.config.height / 2),
-                'win_bg')
-            .setDisplaySize(
-                (this.sys.game.config.width - 100),
-                (this.sys.game.config.height - 300)
-
-            )
-
-        this.next_level_text = this.add.text(
-                (this.sys.game.config.width / 2) - 20,
-                (this.sys.game.config.height / 2) + 50,
-                "Next", { rtl: false })
-            .setFontFamily('Tahoma')
-            .setColor('#222')
-            .setAlign("right")
-            .setFontSize(this.question_area.width / (this.question.length + 2))
-            .setSize(this.question_area.width, this.question_area.height)
-
-        this.menu_text = this.add.text(
-                (this.sys.game.config.width / 2) - 20,
-                (this.sys.game.config.height / 2) - 50,
-                "MainMenu", { rtl: false })
-            .setFontFamily('Tahoma')
-            .setColor('#222')
-            .setAlign("right")
-            .setFontSize(this.question_area.width / (this.question.length + 2))
-            .setSize(this.question_area.width, this.question_area.height)
-
-        this.next_level_text.setInteractive();
-        this.next_level_text.on('pointerdown', () => { this.win_ui_event("next") }, this);
-        this.menu_text.setInteractive();
-        this.menu_text.on('pointerdown', () => { this.win_ui_event("menu") }, this);
-
-        setTimeout(() => {
-            this.animation_finished();
-        }, 1000)
-    }
 
     answer_ui() {
         this.answer_area = this.add.graphics();
@@ -342,9 +311,9 @@ class playGame extends Phaser.Scene {
             });
 
         this.question_text = this.add.text(
-                270 * this.distance - ((this.question.length < 8) ? this.question.length * 2 : this.question.length * 4),
-                160 * this.distance,
-                this.question)
+            270 * this.distance - ((this.question.length < 8) ? this.question.length * 2 : this.question.length * 4),
+            160 * this.distance,
+            this.question)
             .setAlign("center")
             .setColor("#fff")
 
@@ -361,9 +330,9 @@ class playGame extends Phaser.Scene {
         }
 
         this.answer_text = this.add.text(
-                350 * this.distance,
-                250 * this.distance,
-                "", { rtl: true })
+            350 * this.distance,
+            250 * this.distance,
+            "", { rtl: true })
             .setFontFamily('Lalezar')
             .setFontSize(35 * this.distance)
             .setColor('#222')
@@ -383,23 +352,23 @@ class playGame extends Phaser.Scene {
             for (let y = 0; y < this.max_y; y++) {
                 this.till_bg.push(
                     this.add.graphics()
-                    .fillStyle(0xffffff)
-                    .fillRoundedRect(
-                        this.till.offset_x + (x * (this.till.width / this.max_x)) + 3 * this.distance,
-                        this.till.offset_y + (y * (this.till.width / this.max_y)) + 3 * this.distance,
-                        (this.till.width / this.max_x) - 6 * this.distance,
-                        (this.till.width / this.max_x) - 6 * this.distance,
-                        15
-                    )
-                    .setInteractive(
-                        new Phaser.Geom.Rectangle(
+                        .fillStyle(0xffffff)
+                        .fillRoundedRect(
                             this.till.offset_x + (x * (this.till.width / this.max_x)) + 3 * this.distance,
                             this.till.offset_y + (y * (this.till.width / this.max_y)) + 3 * this.distance,
                             (this.till.width / this.max_x) - 6 * this.distance,
-                            (this.till.width / this.max_x) - 6 * this.distance
-                        ),
-                        Phaser.Geom.Rectangle.Contains
-                    )
+                            (this.till.width / this.max_x) - 6 * this.distance,
+                            15
+                        )
+                        .setInteractive(
+                            new Phaser.Geom.Rectangle(
+                                this.till.offset_x + (x * (this.till.width / this.max_x)) + 3 * this.distance,
+                                this.till.offset_y + (y * (this.till.width / this.max_y)) + 3 * this.distance,
+                                (this.till.width / this.max_x) - 6 * this.distance,
+                                (this.till.width / this.max_x) - 6 * this.distance
+                            ),
+                            Phaser.Geom.Rectangle.Contains
+                        )
                 )
 
                 this.till_bg_intract.push(new Phaser.Geom.Rectangle(
@@ -414,13 +383,14 @@ class playGame extends Phaser.Scene {
 
         for (let i = 0; i < this.till_bg_intract.length; i++) {
             this.add.text(
-                    this.till_bg_intract[i].x + ((this.till_bg_intract[i].width / 2.5)),
-                    this.till_bg_intract[i].y + (this.till_bg_intract[i].width / 5),
-                    this.words[i])
-                .setFontFamily('Lalezar')
+                this.till_bg_intract[i].x + ((this.till_bg_intract[i].width / 2.5)),
+                this.till_bg_intract[i].y + (this.till_bg_intract[i].width / 5),
+                this.words[i])
+                .setFontFamily('Katibeh')
                 .setFontSize(this.till_bg_intract[i].width / 2.5)
                 .setColor('#222')
-                .setAlign("center");
+                .setAlign("center")
+                .setPadding(0, 0, 0, 10);
             // .setStyle({ rtl: true });
 
             this.till_graphic.fillStyle(0xb2bec3);
@@ -436,11 +406,11 @@ class playGame extends Phaser.Scene {
             this.till_bg_intract[key].width - 6 * this.distance,
             this.till_bg_intract[key].height - 2 - 6 * this.distance,
             15).lineStyle(2, 0x0984e3, 1).strokeRoundedRect(
-            this.till_bg_intract[key].x + 1,
-            this.till_bg_intract[key].y + 1,
-            this.till_bg_intract[key].width - 2,
-            this.till_bg_intract[key].height - 4,
-            15);
+                this.till_bg_intract[key].x + 1,
+                this.till_bg_intract[key].y + 1,
+                this.till_bg_intract[key].width - 2,
+                this.till_bg_intract[key].height - 4,
+                15);
     }
 
     make_clear(key) {
@@ -461,11 +431,11 @@ class playGame extends Phaser.Scene {
             this.till_bg_intract[key].width - 6 * this.distance,
             this.till_bg_intract[key].height - 2 - 6 * this.distance,
             15).lineStyle(2, 0xd63031, 1).strokeRoundedRect(
-            this.till_bg_intract[key].x + 1,
-            this.till_bg_intract[key].y + 1,
-            this.till_bg_intract[key].width - 2,
-            this.till_bg_intract[key].height - 4,
-            15);
+                this.till_bg_intract[key].x + 1,
+                this.till_bg_intract[key].y + 1,
+                this.till_bg_intract[key].width - 2,
+                this.till_bg_intract[key].height - 4,
+                15);
     }
 
     hint_ui() {
@@ -483,29 +453,30 @@ class playGame extends Phaser.Scene {
             });
 
         this.hint_text = this.add.text(
-                this.till.offset_x + (this.till.width / 2) - 65 * this.distance,
-                this.till.offset_y + this.till.width + this.sys.game.config.height / 20 - 25 * this.distance,
-                "راهنمایی")
+            this.till.offset_x + (this.till.width / 2) - 65 * this.distance,
+            this.till.offset_y + this.till.width + this.sys.game.config.height / 20 - 25 * this.distance,
+            "راهنمایی")
             .setFontFamily("Lalezar")
             .setColor("#fff")
             .setFontSize(35 * this.distance)
+            .setPadding(0, 0, 0, 5)
 
         this.hint_sprite = this.add.image(
-                120 * this.distance,
-                this.till.offset_y + this.till.width + this.sys.game.config.height / 20,
-                "coin_icon"
-            )
-            .setScale(0.5 * this.distance)
+            120 * this.distance,
+            this.till.offset_y + this.till.width + this.sys.game.config.height / 20,
+            "coin_icon"
+        )
+            .setScale(0.5 / 2 * this.distance)
 
         this.hint_sprite_text = this.add.text(
-                50 * this.distance,
-                this.till.offset_y + this.till.width + this.sys.game.config.height / 20 - 15 * this.distance,
-                "10"
-            )
+            50 * this.distance,
+            this.till.offset_y + this.till.width + this.sys.game.config.height / 20 - 15 * this.distance,
+            "10"
+        )
             .setFontFamily("Noto Sans")
             .setColor("#fff")
             .setFontSize(35 * this.distance)
-
+            .setPadding(0, 0, 0, 5)
     }
 
 }
