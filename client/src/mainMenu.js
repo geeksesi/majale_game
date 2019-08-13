@@ -1,7 +1,7 @@
 import { make_road, user_level } from './game_tools/game_design';
 
 import { top_ui } from './game_tools/global_ui';
-import { play_game_data, get_season } from './server';
+import { play_game_data, user_data } from './server';
 class mainMenu extends Phaser.Scene {
     constructor() {
         super({ key: 'mainMenu' });
@@ -144,8 +144,12 @@ class mainMenu extends Phaser.Scene {
                 ),
                 Phaser.Geom.Rectangle.Contains
             )
-            .on('pointerdown', () => {
-                this.scene.start('leaderboard')
+            .on('pointerdown', async () => {
+                this.user = await user_data();
+                if (this.user.name === null || this.user.avatar === null)
+                    this.scene.start('userDetail')
+                else
+                    this.scene.start('leaderboard')
             });
 
         this.down_area_right = this.add.graphics()
