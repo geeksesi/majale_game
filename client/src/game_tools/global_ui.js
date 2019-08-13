@@ -75,6 +75,9 @@ async function top_ui(my_this, scene_name) {
             .setScale(my_this.distance / 1.5 * my_this.distance)
             .setInteractive()
             .on('pointerdown', () => {
+                if (scene_name === "userDetail") {
+                    document.getElementById('inputName').style = "display : none;"
+                }
                 my_this.scene.start('mainMenu');
             }, my_this)
     }
