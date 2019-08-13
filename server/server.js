@@ -41,7 +41,7 @@ module.exports.my_io = function (server) {
                         export_object.remembers_id.push(remember.word_id)
                     })
                 });
-                
+
                 await action_history.find({ user_id: socket._id, type: 'season_finish' }, (err, actions) => {
                     actions.forEach(async action => {
                         await export_object.finished_season.push(action.value);
@@ -77,7 +77,7 @@ module.exports.my_io = function (server) {
             // })
 
             let t = setInterval(() => {
-                if ((typeof howmany_wait !== 'undefined' && Object.keys(export_object.words).length >= howmany_wait )) {
+                if ((typeof howmany_wait !== 'undefined' && Object.keys(export_object.words).length >= howmany_wait)) {
                     setTimeout(() => {
                         clearInterval(t);
                         cb(export_object);
@@ -128,7 +128,6 @@ module.exports.my_io = function (server) {
             }
             action_history.findOne({ type: 'finish_lvl', user_id: socket._id, word_id: word_id }, (err, action) => {
                 if (action !== null) {
-                    console.log("don't need to make again")
                     if (action.description < xp_value) {
                         finish_again_level(socket.rubicka_id, word_id, ((prize_value) - (action.description * 5)), (xp_value - action.description), res => {
                             if (res.ok === true) {
@@ -163,35 +162,38 @@ module.exports.my_io = function (server) {
             let user_data = {};
             let users_length;
             user.find()
-                .sort({ xp: 'asc' })
+                .sort({ xp: 'desc' })
                 .exec((err, users) => {
                     if (err) { cb({ ok: false, data: null }); return false; }
+                    // cb({ok:true, data:users});return true;
                     users_length = users.length;
+                    user_data = { ok: false }
                     for (let i = 0; i < users.length; i++) {
                         if (export_array.length < 10) {
                             users[i].rank = i;
                             export_array.push(users[i]);
-                            if (typeof socket.rubicka_id !== 'undefined' && users[i].rubicka_id === socket.rubicka_id) {
-                                user_data = { ok: true }
-                            }
+                            // if (typeof socket.rubicka_id !== 'undefined' && users[i].rubicka_id === socket.rubicka_id) {
+                            //     // user_data = { ok: true }
+                            // }
                         }
-                        if (typeof socket.rubicka_id !== 'undefined' && users[i].rubicka_id === socket.rubicka_id && typeof user_data.ok === 'undefined') {
+                        if (typeof socket.rubicka_id !== 'undefined' && users[i].rubicka_id === socket.rubicka_id) {
                             users[i].rank = i;
                             users[i].rb_id = socket.rubicka_id;
-                            user_data = users[i];
+                            user_data.ok = true;
+                            user_data.data = users[i];
+                            user_data.rank = (i + 1);
                         }
                     }
                 })
 
             let wait = setInterval(() => {
                 if (export_array.length > 9 || (typeof users_length !== 'undefined' && export_array.length === users_length)) {
-                    if (typeof socket.rubicka_id === 'undefined' || typeof user_data.ok !== 'undefined') {
+                    if (typeof socket.rubicka_id === 'undefined' && user_data.ok === false) {
                         clearInterval(wait);
                         cb({ ok: true, data: export_array })
-                    } else {
-                        if (Object.keys(user_data).length !== 0) {
-                            cb({ ok: true, data: [...export_array, user_data] })
-                        }
+                    } else if (typeof socket.rubicka_id !== 'undefined' && user_data.ok !== false) {
+                        clearInterval(wait);
+                        cb({ ok: true, data: [...export_array], user: user_data })
                     }
                 }
             }, 200)
@@ -201,8 +203,8 @@ module.exports.my_io = function (server) {
 
         socket.on("userDetail", (object, cb) => {
             user.findOneAndUpdate({ rubicka_id: socket.rubicka_id }, {
-                name : object.name,
-                avatar : object.av_name,
+                name: object.name,
+                avatar: object.av_name,
 
             }, { upsert: true }, (err, new_user) => {
                 if (err) { cb({ ok: false, data: err }); } else {
