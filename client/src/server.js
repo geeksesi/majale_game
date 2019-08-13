@@ -107,7 +107,7 @@ function finish_level(word_id, season_id, time, is_hint, status, cb) {
 
 async function init(cb) {
     await basic_events();
-    await socket.emit("init", 1, async res => {
+    await socket.emit("init", parseInt(localStorage.getItem('rubicka_id')), async res => {
         season_list = res.seasons;
         word_list = res.words;
         user = res.user;
@@ -198,8 +198,8 @@ function leader_board(cb) {
 
     socket.emit("leaderBoard", (res) => {
         if (res.ok === true) {
-            console.log(res)
-            cb(res.data)
+            // console.log(res)
+            cb(res)
         } else {
             console.log(res)
             cb(false);
@@ -214,19 +214,21 @@ function splice_word(season_id, word_id) {
         }
     }
     setTimeout(() => {
-        console.log(word_list[season_id]);
+        // console.log(word_list[season_id]);
     }, 500);
 }
 
 
-function change_user_detail(object, cb) {
+function change_user_detail(user_update, cb) {
 
-    socket.emit("userDetail", object, res => {
+    socket.emit("userDetail", user_update, res => {
         if (res.ok === true) {
-            console.log(res)
+            user.name = user_update.name;
+            user.avatar = user_update.av_name;
+            // console.log(res)
             cb(true)
         } else {
-            console.log(res)
+            // console.log(res)
             cb(false);
         }
     })
