@@ -43,16 +43,39 @@ class leaderboard extends Phaser.Scene {
                 this.places.offset_navbar + 60 * this.distance,
             )
         leader_board(res => {
-            console.log(res)
-            for (let i = 0; i < 10; i++) {
-                if (typeof res[i] !== 'undefined')
-                    this.row_ui(i, i + 1, res[i].name, res[i].credit, res[i].avatar)
+            for (let i = 0; i < 9; i++) {
+                if (typeof res.data[i] !== 'undefined') {
+                    this.row_ui(i, i + 1, res.data[i].name, res.data[i].xp, res.data[i].avatar)
+                }
             }
+            this.row_ui(9, res.user.rank, res.user.data.name, res.user.data.xp, res.user.data.avatar, "user");
         })
     }
 
     // UI
-    row_ui(i, rank, name, xp, avatar) {
+    row_ui(i, rank, name, xp, avatar, user = null) {
+        if (user !== null) {
+            const row_bg = this.add.graphics()
+                .fillStyle(0x6ab615, 0.5)
+                .fillRect(
+                    0,
+                    this.places.offset_navbar + this.places.top_offset + (this.places.row_size * i) - 30 * this.distance,
+                    610 * this.distance,
+                    this.places.row_size + 10 * this.distance,
+                )
+                .setInteractive(
+                    new Phaser.Geom.Rectangle(
+                        0,
+                        this.places.offset_navbar + this.places.top_offset + (this.places.row_size * i) - 30 * this.distance,
+                        610 * this.distance,
+                        this.places.row_size + 10 * this.distance,
+                    ),
+                    Phaser.Geom.Rectangle.Contains
+                )
+                .on('pointerdown', () => {
+                    this.scene.start('userDetail')
+                })
+        }
         const row_number = this.add.text(
             (rank.toString().length < 3) ? this.places.width_offset : this.places.width_offset - 15 * this.distance,
             this.places.offset_navbar + this.places.top_offset + (this.places.row_size * i),
@@ -104,6 +127,7 @@ class leaderboard extends Phaser.Scene {
         )
             .setScale(this.distance / 3 * this.distance)
     }
+
 }
 
 export default leaderboard;
