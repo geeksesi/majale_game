@@ -12,7 +12,7 @@ class userDetail extends Phaser.Scene {
     }
 
     async create() {
-        await top_ui(this, "ss")
+        await top_ui(this, "userDetail")
         this.avatar_ui();
         this.input_ui();
         this.input_btn_ui();
@@ -48,12 +48,11 @@ class userDetail extends Phaser.Scene {
             350 * this.distance,
             name
         )
-        .setScale(this.distance / 2 * this.distance)
+            .setScale(this.distance / 2 * this.distance)
         this.av[1].avName = name;
     }
 
     more_av(name, number) {
-        console.log(name + " :: " +number)
         if (typeof this.av[number] !== 'undefined') {
             this.av[number].destroy();
         }
@@ -96,15 +95,21 @@ class userDetail extends Phaser.Scene {
             cord[number].y,
             name
         )
-        .setScale(this.distance / (cord[number].scale) * this.distance)
+            .setScale(this.distance / (cord[number].scale) * this.distance)
             .setInteractive()
             .on('pointerdown', () => {
-                const tmp_name = this.av[number].avName;
-                // this.av[number].destroy();
-                this.more_av(this.av[1].avName, number);
-                this.av1(tmp_name);
+                if (!this.av_selected) {
+                    this.av_selected = true;
+                    const tmp_name = this.av[number].avName;
+                    // this.av[number].destroy();
+                    this.more_av(this.av[1].avName, number);
+                    this.av1(tmp_name);
+                    setTimeout(() => {
+                        this.av_selected = false
+                    }, 400);
+                }
             })
-            this.av[number].avName = name;
+        this.av[number].avName = name;
 
     }
 
@@ -149,25 +154,25 @@ class userDetail extends Phaser.Scene {
                 Phaser.Geom.Rectangle.Contains
             )
             .on('pointerdown', () => {
-                if(document.getElementById('inputName').value === ''){
+                if (document.getElementById('inputName').value === '') {
                     console.log('please fill name');
-                }else{
+                } else {
                     const ok_obj = {
-                        name : document.getElementById('inputName').value,
-                        av_name : this.av[1].avName,
+                        name: document.getElementById('inputName').value,
+                        av_name: this.av[1].avName,
                     }
-                    change_user_detail(ok_obj, res=>{
-                        if(res){
+                    change_user_detail(ok_obj, res => {
+                        if (res) {
                             document.getElementById('inputName').style = "display : none;"
                             this.scene.start('leaderboard')
-                        }else{
+                        } else {
                             document.getElementById('inputName').style = "display : none;"
                             this.scene.start('mainMenu')
                         }
                     })
                     // console.log(ok_obj);
                 }
-                
+
             })
 
         this.input_btn_text = this.add.text(
