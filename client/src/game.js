@@ -9,7 +9,7 @@ const config = {
     backgroundColor: 0xefefef,
     width: 610,
     height: 1080,
-    scene: [detail, loading, languageMenu, mainMenu, season_finish, playGame, shop, leaderboard]
+    scene: [detail, loading, userDetail, mainMenu, season_finish, playGame, shop, leaderboard]
     // scene: [mainMenu,  playGame]
     // scene: [test],
     // scene: [loading],
@@ -29,7 +29,7 @@ import test from './testui';
 import detail from './detailScene';
 import loading from './loading';
 import mainMenu from './mainMenu';
-import languageMenu from './languageMenu';
+import userDetail from './userDetailScene';
 import leaderboard from './leaderboardScene';
 import shop from './shopScene';
 import playGame from './playGame';
