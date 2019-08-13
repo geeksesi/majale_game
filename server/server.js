@@ -163,7 +163,6 @@ module.exports.my_io = function (server) {
             let user_data = {};
             let users_length;
             user.find()
-                .select('rubicka_id xp')
                 .sort({ xp: 'asc' })
                 .exec((err, users) => {
                     if (err) { cb({ ok: false, data: null }); return false; }
@@ -198,6 +197,20 @@ module.exports.my_io = function (server) {
             }, 200)
 
         })
+
+
+        socket.on("userDetail", (object, cb) => {
+            user.findOneAndUpdate({ rubicka_id: socket.rubicka_id }, {
+                name : object.name,
+                avatar : object.av_name,
+
+            }, { upsert: true }, (err, new_user) => {
+                if (err) { cb({ ok: false, data: err }); } else {
+                    cb({ ok: true, data: new_user });
+                    return true;
+                }
+            })
+        });
 
 
     });
