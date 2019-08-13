@@ -1,4 +1,5 @@
 import { top_ui } from './game_tools/global_ui';
+import { leader_board } from './server';
 
 class leaderboard extends Phaser.Scene {
     constructor() {
@@ -41,10 +42,13 @@ class leaderboard extends Phaser.Scene {
                 370 * this.distance,
                 this.places.offset_navbar + 60 * this.distance,
             )
-
-        for (let i = 0; i < 10; i++) {
-            this.row_ui(i, i + 1, 'جواد قاسمی سسستست سیسیبآبادی', 2000, `avatar${i + 1}`)
-        }
+        leader_board(res => {
+            console.log(res)
+            for (let i = 0; i < 10; i++) {
+                if (typeof res[i] !== 'undefined')
+                    this.row_ui(i, i + 1, res[i].name, res[i].credit, res[i].avatar)
+            }
+        })
     }
 
     // UI
@@ -94,7 +98,7 @@ class leaderboard extends Phaser.Scene {
 
         const xp_icon = this.add.image(
 
-            580 * this.distance,
+            575 * this.distance,
             this.places.offset_navbar + this.places.top_offset + (this.places.row_size * i) + 13 * this.distance,
             'exp_icon'
         )
