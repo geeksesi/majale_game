@@ -10,6 +10,9 @@ class detail extends Phaser.Scene {
     }
 
     create() {
+        console.log(parseInt(localStorage.getItem('rubicka_id')))
+        if (!parseInt(localStorage.getItem('rubicka_id')))
+            localStorage.setItem('rubicka_id', Math.floor((Math.random() * 100) + 1));
         this.scale_value = 0;
         this.scale2_value = 0;
         this.distance = this.sys.game.config.width / 610;
@@ -49,7 +52,7 @@ class detail extends Phaser.Scene {
             .setScale(this.scale2_value)
 
 
-            this.test_katibeh = this.add.text(
+        this.test_katibeh = this.add.text(
             0 * this.distance,
             0 * this.distance,
             'مـــجـــلـــه'
