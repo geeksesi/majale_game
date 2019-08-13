@@ -218,6 +218,20 @@ function splice_word(season_id, word_id) {
     }, 500);
 }
 
+
+function change_user_detail(object, cb) {
+
+    socket.emit("userDetail", object, res => {
+        if (res.ok === true) {
+            console.log(res)
+            cb(true)
+        } else {
+            console.log(res)
+            cb(false);
+        }
+    })
+}
+
 export {
     init,
     get_season,
@@ -233,4 +247,5 @@ export {
     leader_board,
     get_finished_season,
     splice_word,
+    change_user_detail,
 }
