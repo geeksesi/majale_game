@@ -9,7 +9,7 @@ function loading_start(my_this) {
         .setScale(my_this.distance)
 
     my_this.angel_loading = setInterval(() => {
-        my_this.loading_ui.angle -= 2
+        my_this.loading_ui.angle -= 5
     }, 1000 / 30)
 
 }
