@@ -4,8 +4,8 @@ const server = require('http').createServer(app);
 const { my_io } = require('./server/server');
 const mongoos = require('mongoose');
 
-mongoos.connect('mongodb://127.0.0.1:27017/majale', { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false });
-// mongoos.connect('mongodb://root:'+encodeURIComponent('pKm7tTDd9SgSJXX7VxLTAmrY')+'@s7.liara.ir:33330/majale?authSource=admin', { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false });
+// mongoos.connect('mongodb://127.0.0.1:27017/majale', { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false });
+mongoos.connect('mongodb://root:'+encodeURIComponent('s1jReSesLRCvSqDN0jRf5WEX')+'@s7.liara.ir:33453/majale?authSource=admin', { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false });
 
 app.use('/', express.static('public_html'))
 
