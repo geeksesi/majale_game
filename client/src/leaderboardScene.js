@@ -135,7 +135,7 @@ class leaderboard extends Phaser.Scene {
             this.places.offset_navbar + this.places.top_offset + (this.places.row_size * i) + 13 * this.distance,
             'exp_icon'
         )
-            .setScale(this.distance / 3 * this.distance)
+            .setScale(this.distance / 2)
     }
 
 }
