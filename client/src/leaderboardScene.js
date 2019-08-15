@@ -54,6 +54,14 @@ class leaderboard extends Phaser.Scene {
 
     // UI
     row_ui(i, rank, name, xp, avatar, user = null) {
+        if(name === null){
+            name = "نـاشـنـاس"
+        }
+        
+        if(avatar === null){
+            name = "avatar1"
+        }
+        
         if (user !== null) {
             const row_bg = this.add.graphics()
                 .fillStyle(0x6ab615, 0.5)
@@ -84,6 +92,7 @@ class leaderboard extends Phaser.Scene {
             .setColor((i < 5) ? '#1dd1a1' : '#576574')
             .setFontFamily('Roboto')
             .setFontSize(25 * this.distance)
+            .setPadding(0,0,0,5)
 
         const av_bg = this.add.graphics()
             .fillStyle(0xf9ca24, 1.0)
@@ -108,7 +117,7 @@ class leaderboard extends Phaser.Scene {
             .setColor('#222')
             .setFontSize((name.length < 26) ? 25 * this.distance : 20 * this.distance)
             .setFontFamily('Lalezar')
-
+            .setPadding(0,0,0,5)
 
         const xp_text = this.add.text(
             (xp.toString().length < 7) ? 480 * this.distance : 470 * this.distance,
@@ -118,6 +127,7 @@ class leaderboard extends Phaser.Scene {
             .setColor('#222')
             .setFontSize((xp.toString().length < 6) ? 20 * this.distance : 17 * this.distance)
             .setFontFamily('Roboto')
+            .setPadding(0,0,0,5)
 
         const xp_icon = this.add.image(
 
