@@ -72,7 +72,7 @@ async function top_ui(my_this, scene_name) {
             my_this.offset.y + 50 * my_this.distance,
             "back"
         )
-            .setScale(my_this.distance / 1.5 * my_this.distance)
+            .setScale(my_this.distance)
             .setInteractive()
             .on('pointerdown', () => {
                 if (scene_name === "userDetail") {
@@ -102,7 +102,7 @@ async function top_ui(my_this, scene_name) {
         "exp_icon"
     )
         .setScale(
-            my_this.distance / 2 * my_this.distance
+            my_this.distance 
         );
     my_this.exp_text = my_this.add.text(
         exp_places.text.x,
@@ -110,7 +110,7 @@ async function top_ui(my_this, scene_name) {
         my_this.exp_value, {
             fontSize: `${exp_places.text.font_size}px`,
             color: `${exp_places.text.color}`,
-            fontFamily: "Noto Sans"
+            fontFamily: "Lalezar"
         })
         .setPadding(0, 0, 0, 5);
 
@@ -135,7 +135,7 @@ async function top_ui(my_this, scene_name) {
         "coin_icon"
     )
         .setScale(
-            my_this.distance / 2 * my_this.distance
+            my_this.distance 
         );
     my_this.coin_text = my_this.add.text(
         coin_places.text.x,
@@ -143,7 +143,7 @@ async function top_ui(my_this, scene_name) {
         my_this.coin_value, {
             fontSize: `${coin_places.text.font_size}px`,
             color: `${coin_places.text.color}`,
-            fontFamily: "Noto Sans"
+            fontFamily: "Lalezar"
         })
         .setPadding(0, 0, 0, 5);
 
