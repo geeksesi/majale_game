@@ -10,6 +10,17 @@ class detail extends Phaser.Scene {
     }
 
     create() {
+        const tmp_katibeh_text = this.add.text(
+            0,
+            0,
+            'مجله'
+        )
+            .setFontSize(5)
+            .setFontFamily('YekanBoom')
+            .setColor('#fff')
+
+
+
         console.log(parseInt(localStorage.getItem('rubicka_id')))
         if (!parseInt(localStorage.getItem('rubicka_id')))
             localStorage.setItem('rubicka_id', Math.floor((Math.random() * 100) + 1));
