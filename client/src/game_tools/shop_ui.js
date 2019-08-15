@@ -165,7 +165,7 @@ async function shop_ui(my_this, scene) {
         'coin_icon'
     )
         .setDepth(92)
-        .setScale(my_this.distance / 1.5 * my_this.distance)
+        .setScale(my_this.distance)
 
     my_this.pack1_almas_text = my_this.add.text(
         places.pack1.almas_text.x,
@@ -239,7 +239,7 @@ async function shop_ui(my_this, scene) {
         'coin_icon'
     )
         .setDepth(92)
-        .setScale(my_this.distance / 1.5 * my_this.distance)
+        .setScale(my_this.distance)
 
     my_this.pack2_almas_text = my_this.add.text(
         places.pack2.almas_text.x,
@@ -314,7 +314,7 @@ async function shop_ui(my_this, scene) {
         'coin_icon'
     )
         .setDepth(92)
-        .setScale(my_this.distance / 1.5 * my_this.distance)
+        .setScale(my_this.distance)
 
     my_this.pack3_almas_text = my_this.add.text(
         places.pack3.almas_text.x,
