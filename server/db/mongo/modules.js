@@ -113,7 +113,7 @@ const userSchema = mongoos.Schema({
     avatar: {
         type: String,
         required: false,
-        default : 'av1'
+        default : 'avatar1'
     },
     credit: {
         type: Number,
