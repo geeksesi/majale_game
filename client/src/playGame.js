@@ -334,6 +334,7 @@ class playGame extends Phaser.Scene {
             .setFontSize(35 * this.distance)
             .setColor('#222')
             .setAlign("right")
+            .setPadding(0, 0, 0, 5)
 
     }
 
@@ -383,7 +384,7 @@ class playGame extends Phaser.Scene {
                 this.till_bg_intract[i].x + ((this.till_bg_intract[i].width / 2.5)),
                 this.till_bg_intract[i].y + (this.till_bg_intract[i].width / 5),
                 this.words[i])
-                .setFontFamily('Katibeh')
+                .setFontFamily('YekanBoom')
                 .setFontSize(this.till_bg_intract[i].width / 2.5)
                 .setColor('#222')
                 .setAlign("center")
@@ -470,7 +471,7 @@ class playGame extends Phaser.Scene {
             this.till.offset_y + this.till.width + this.sys.game.config.height / 20 - 15 * this.distance,
             "10"
         )
-            .setFontFamily("Noto Sans")
+            .setFontFamily("Lalezar")
             .setColor("#fff")
             .setFontSize(35 * this.distance)
             .setPadding(0, 0, 0, 5)
