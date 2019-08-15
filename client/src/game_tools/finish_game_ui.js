@@ -142,7 +142,7 @@ function level_finish(my_this, value) {
         150 * my_this.distance,
         520 * my_this.distance,
         'exp_icon'
-    ).setScale(my_this.distance / 1.5 * my_this.distance)
+    ).setScale(my_this.distance)
 
     my_this.level_finish_xp_text = my_this.add.text(
         230 * my_this.distance,
@@ -161,7 +161,7 @@ function level_finish(my_this, value) {
         380 * my_this.distance,
         520 * my_this.distance,
         'coin_icon'
-    ).setScale(my_this.distance / 1.3 * my_this.distance)
+    ).setScale(my_this.distance)
 
     my_this.level_finish_coin_text = my_this.add.text(
         455 * my_this.distance,
