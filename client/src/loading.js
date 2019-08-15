@@ -39,7 +39,7 @@ class seasonMenu extends Phaser.Scene {
                     this.hide_progress(res.user.play_time);
                     clearInterval(wait_for_image);
                 }
-                console.log(res);
+                // console.log(res);
             }, 500);
         })
     }
