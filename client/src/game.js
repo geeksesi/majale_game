@@ -65,6 +65,6 @@ function resize() {
 window.onload = async() => {
     // await init();
     resize();
-    window.addEventListener("resize", resize, false);
+    // window.addEventListener("resize", resize, false);
 
 };
