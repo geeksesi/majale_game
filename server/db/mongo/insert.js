@@ -83,7 +83,7 @@ function finish_level(rubicka_id, word_id, prize_value, xp_value, cb) {
     user.findOneAndUpdate({ rubicka_id: rubicka_id }, { $inc: { credit: prize_value, xp_value, xp: xp_value } }, (err, res) => {
         // console.log(res);
         let resault = {};
-        if (err) {
+        if (err || res === null || typeof res === 'undefined') {
             resault.ok = false;
             resault.data = err;
             cb(resault);
