@@ -1,8 +1,9 @@
-import { use_hint, finish_level, play_game_data, check_season_finished } from './server';
+import { use_hint, finish_level, play_game_data } from './server';
 import { make_road } from './game_tools/game_design';
 import { make_table, make_event } from './game_tools/mechanism';
 import { top_ui, credit_change, exp_change } from './game_tools/global_ui';
 import { season_finish, level_finish } from './game_tools/finish_game_ui';
+import { shop_ui } from './game_tools/shop_ui';
 
 class playGame extends Phaser.Scene {
 
@@ -79,8 +80,13 @@ class playGame extends Phaser.Scene {
             this.till.width,
             (this.sys.game.config.height / 10)
         ), Phaser.Geom.Rectangle.Contains);
-        this.hint_area.on('pointerover', function () {
+        this.hint_area.on('pointerdown', () => {
             if (!this.hint_click && !this.is_win) {
+                if (this.again) {
+                    this.again = false;
+                    this.clear_all();
+                    clearTimeout(this.clear_timeout);
+                }
                 this.hint();
             }
         }, this);
@@ -96,7 +102,9 @@ class playGame extends Phaser.Scene {
             await this.hint_arr.push(this.table_data.array[this.table_data.keys[this.hint_arr.length]]);
         } else {
             // Must Open Shop Page
-            console.log("warning on hint")
+            // console.log("warning on hint")
+            shop_ui(this, 'playGame');
+
         }
         setTimeout(() => { this.hint_click = false; }, 500)
 
@@ -403,7 +411,7 @@ class playGame extends Phaser.Scene {
             this.till_bg_intract[key].y + 3 * this.distance,
             this.till_bg_intract[key].width - 6 * this.distance,
             this.till_bg_intract[key].height - 2 - 6 * this.distance,
-            15).lineStyle(2, 0x0984e3, 1).strokeRoundedRect(
+            15).lineStyle(7 * this.distance, 0x0984e3, 1).strokeRoundedRect(
                 this.till_bg_intract[key].x + 1,
                 this.till_bg_intract[key].y + 1,
                 this.till_bg_intract[key].width - 2,
@@ -428,7 +436,7 @@ class playGame extends Phaser.Scene {
             this.till_bg_intract[key].y + 3 * this.distance,
             this.till_bg_intract[key].width - 6 * this.distance,
             this.till_bg_intract[key].height - 2 - 6 * this.distance,
-            15).lineStyle(2, 0xd63031, 1).strokeRoundedRect(
+            15).lineStyle(7 * this.distance, 0xd63031, 1).strokeRoundedRect(
                 this.till_bg_intract[key].x + 1,
                 this.till_bg_intract[key].y + 1,
                 this.till_bg_intract[key].width - 2,
