@@ -74,7 +74,7 @@ async function shop_ui(my_this, scene) {
                 230 * my_this.distance,
                 20 * my_this.distance
             )
-            .lineStyle(2 * this.distance, 0x222222)
+            .lineStyle(2 * my_this.distance, 0x222222)
             .lineBetween(
                 570 * my_this.distance,
                 220 * my_this.distance,
