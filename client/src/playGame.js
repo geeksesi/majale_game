@@ -97,7 +97,7 @@ class playGame extends Phaser.Scene {
         this.hint_click = true;
         if (this.coin_value >= 10 && await use_hint(this.word_data[(this.word_id)].id)) {
             this.coin_value -= 10;
-            credit_change(this, -10);
+            credit_change(this.coin_text, -10);
             await this.hint_key_arr.push(this.table_data.keys[this.hint_arr.length]);
             await this.hint_arr.push(this.table_data.array[this.table_data.keys[this.hint_arr.length]]);
         } else {
@@ -472,7 +472,7 @@ class playGame extends Phaser.Scene {
             this.till.offset_y + this.till.width + this.sys.game.config.height / 20,
             "coin_icon"
         )
-            .setScale(0.5 / 2 * this.distance)
+            .setScale(this.distance / 2)
 
         this.hint_sprite_text = this.add.text(
             50 * this.distance,
