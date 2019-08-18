@@ -10,22 +10,26 @@ function GA_init() {
 }
 
 
-function start_level(season_id, word_id) {
+function GA_start_level(season_id, word_id) {
     gameanalytics.GameAnalytics.addProgressionEvent(gameanalytics.EGAProgressionStatus.Start, season_id, word_id);
 }
 
-function finish_level(season_id, word_id, xp) {
+function GA_finish_level(season_id, word_id, xp) {
     gameanalytics.GameAnalytics.addProgressionEvent(gameanalytics.EGAProgressionStatus.Complete, season_id, word_id, "", xp);
     gameanalytics.GameAnalytics.addResourceEvent(gameanalytics.EGAResourceFlowType.Sink, "coin", (xp * 3), "finish_level", word_id);
 }
+function GA_finish_season(season_id) {
+    gameanalytics.GameAnalytics.addProgressionEvent(gameanalytics.EGAProgressionStatus.Complete, season_id);
+}
 
-function use_hint(word_id) {
+function GA_use_hint(word_id) {
     gameanalytics.GameAnalytics.addResourceEvent(gameanalytics.EGAResourceFlowType.Sink, "coin", -10, "hint", word_id);
 }
 
 export {
     GA_init,
-    start_level,
-    finish_level,
-    use_hint
+    GA_start_level,
+    GA_finish_level,
+    GA_use_hint,
+    GA_finish_season
 }
