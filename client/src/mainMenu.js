@@ -24,15 +24,15 @@ class mainMenu extends Phaser.Scene {
     user_level_ui(data) {
 
         this.season_detail_text = this.add.text(
-            330 * this.distance,
+            320 * this.distance,
             480 * this.distance,
             `فـصـل :   ${data.season_id}`
         )
             .setColor('#fff')
             .setFontFamily("Lalezar")
-            .setFontSize(60 * this.distance)
+            .setFontSize(55 * this.distance)
             .setPadding(0, 0, 0, 5)
-            .initRTL()
+            // .initRTL()
 
         this.season_detail_text = this.add.text(
             110 * this.distance,
@@ -43,7 +43,7 @@ class mainMenu extends Phaser.Scene {
             .setFontFamily("Lalezar")
             .setFontSize(60 * this.distance)
             .setPadding(0, 0, 0, 5)
-            .initRTL()
+            // .initRTL()
 
     }
 
@@ -116,7 +116,7 @@ class mainMenu extends Phaser.Scene {
             }
         }, this);
         this.exp_text = this.add.text(
-            235 * this.distance,
+            240 * this.distance,
             610 * this.distance,
             "Start", {
                 fontSize: `${50 * this.distance}px`,
