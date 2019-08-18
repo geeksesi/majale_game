@@ -1,4 +1,4 @@
-import { init, loaded_finished } from './server';
+import { loading_finished } from './server';
 import { loading_start, loading_stop } from './game_tools/loading_ui';
 class seasonMenu extends Phaser.Scene {
     constructor() {
@@ -7,7 +7,6 @@ class seasonMenu extends Phaser.Scene {
     }
 
     async preload() {
-
         this.load.image('english_flag', 'assets/Eng_flag.png')
         this.load.image('exp_icon', 'assets/xp.png')
         this.load.image('coin_icon', 'assets/coin.png')
@@ -32,23 +31,58 @@ class seasonMenu extends Phaser.Scene {
         this.load.on('complete', function () {
             image_loaded = true;
         });
-        init(res => {
+        loading_finished(res => {
             let wait_for_image = setInterval(async () => {
                 if (image_loaded) {
-                    loaded_finished();
-                    this.hide_progress(res.user.play_time);
+                    this.hide_progress();
                     clearInterval(wait_for_image);
                 }
-                console.log("finish");
             }, 500);
         })
     }
 
     show_progress() {
+        this.scale2_value = 1;
+        this.distance = this.sys.game.config.width / 610;
+        const make_green = this.add.graphics()
+            .fillStyle(0x6ab615)
+            .fillRect(
+                0,
+                0,
+                610 * this.distance,
+                1080 * this.distance
+            )
+        this.logo = this.add.image(
+            310 * this.distance,
+            350 * this.distance,
+            'logo'
+        ).setScale(this.distance)
+
+        this.Majle_text_en = this.add.text(
+            220 * this.distance,
+            750 * this.distance,
+            'Majale'
+        )
+            .setFontSize(55 * this.distance)
+            .setFontFamily('Lalezar')
+            .setColor('#fff')
+            .setScale(this.scale2_value)
+
+        this.Majle_text_fa = this.add.text(
+            220 * this.distance,
+            850 * this.distance,
+            'مـــجـــلـــه'
+        )
+            .setFontSize(45 * this.distance)
+            .setFontFamily('Lalezar')
+            .setColor('#fff')
+            .setScale(this.scale2_value)
+
+
         loading_start(this);
     }
 
-    hide_progress(first_time) {
+    hide_progress() {
         loading_stop(this);
         //No Arabic
         // if (first_time === 1) {
