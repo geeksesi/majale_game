@@ -1,7 +1,6 @@
-// const { init } = require('./server');
-const gameanalytics = require('gameanalytics');
-gameanalytics.GameAnalytics.setEnabledInfoLog(true);
-gameanalytics.GameAnalytics.configureBuild("majale 0.4.0");
+const { connection_check } = require('./server');
+const { GA_init } = require('./GA');
+GA_init();
 const config = {
     type: Phaser.CANVAS,
     canvas: document.getElementById("myCanvas"),
@@ -24,6 +23,7 @@ const config = {
 // console.log(game)
 // my_scale.setGameSize(window.innerWidth, window.innerHeight);
 
+connection_check();
 
 import test from './testui';
 import detail from './detailScene';
@@ -62,7 +62,19 @@ function resize() {
 }
 
 
-window.onload = async() => {
+window.onload = () => {
+    let font_load = false;
+    WebFont.load({
+        // loading: () => { },
+        active: () => {
+            console.log("FontREADY")
+            font_load = true;
+        },
+        google: {
+            families: ['Roboto:900', 'Noto Sans:700', 'Lalezar', 'Katibeh'],
+            text: 'abcdefghijسلام!'
+        }
+    });
     // await init();
     resize();
     // window.addEventListener("resize", resize, false);
