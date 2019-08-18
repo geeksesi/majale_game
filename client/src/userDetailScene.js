@@ -48,7 +48,7 @@ class userDetail extends Phaser.Scene {
             350 * this.distance,
             name
         )
-            .setScale(this.distance / 2 * this.distance)
+            .setScale(this.distance / 2.5 )
         this.av[1].avName = name;
     }
 
@@ -95,7 +95,7 @@ class userDetail extends Phaser.Scene {
             cord[number].y,
             name
         )
-            .setScale(this.distance / (cord[number].scale) * this.distance)
+            .setScale(this.distance / (cord[number].scale))
             .setInteractive()
             .on('pointerdown', () => {
                 if (!this.av_selected) {
