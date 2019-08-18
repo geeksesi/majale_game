@@ -1,4 +1,6 @@
 import io from "socket.io-client";
+import { offline, online } from './game_tools/offline';
+
 const socket = io();
 
 let season_list = {};
@@ -7,11 +9,36 @@ let user = {}
 let finished_word = {};
 let remembers_word = [];
 let finished_season = [];
+let connection_status = false;
+let finish_init = false;
 
-async function basic_events() {
-    await socket.on('connect', () => {
+function connection_check() {
+    socket.on('connect', () => {
+        if (!connection_status) {
+            online();
+            init();
+        }
         console.log("we are connect")
     })
+    socket.on('disconnect', (reason) => {
+        connection_status = false;
+        offline();
+        // console.log(reason);
+    });
+    socket.on('pong', (latency) => {
+        if (latency > 150) {
+            console.log("Slow");
+        }
+    });
+}
+
+function loading_finished(cb) {
+    const wait_for_init = setInterval(() => {
+        if (finish_init) {
+            clearInterval(wait_for_init);
+            cb(true)
+        }
+    }, 500);
 }
 
 function get_season(language_id) {
@@ -105,21 +132,20 @@ function finish_level(word_id, season_id, time, is_hint, status, cb) {
     })
 }
 
-async function init(cb) {
-    await basic_events();
+async function init() {
     await socket.emit("init", parseInt(localStorage.getItem('rubicka_id')), async res => {
+        connection_status = true;
         season_list = res.seasons;
         word_list = res.words;
         user = res.user;
         finished_word = res.finished_word;
         await remembers_word.push(...res.remembers_id)
         await finished_season.push(...res.finished_season)
-        setTimeout(() => { cb(res) }, 500)
-        setTimeout(async () => {
-            // console.log(await play_game_data());
-            // console.log(word_list);
-            // console.log(user);
-        }, 1000)
+        setTimeout(() => {
+            finish_init = true;
+            loaded_finished();
+        }, 500)
+
     })
 }
 
@@ -191,6 +217,7 @@ async function check_season_finished(season_id, cb) {
 
 
 function loaded_finished() {
+    console.log("finish");
     socket.emit("loaded");
 }
 
@@ -235,7 +262,7 @@ function change_user_detail(user_update, cb) {
 }
 
 export {
-    init,
+    loading_finished,
     get_season,
     get_word,
     user_data,
@@ -245,9 +272,9 @@ export {
     season_finish,
     season_finish_data,
     check_season_finished,
-    loaded_finished,
     leader_board,
     get_finished_season,
     splice_word,
     change_user_detail,
+    connection_check,
 }
