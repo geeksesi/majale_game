@@ -68,8 +68,8 @@ async function top_ui(my_this, scene_name) {
 
     } else {
         my_this.back_btn = my_this.add.image(
-            my_this.offset.x + 60 * my_this.distance,
-            my_this.offset.y + 50 * my_this.distance,
+            my_this.offset.x + 40 * my_this.distance,
+            my_this.offset.y + 40 * my_this.distance,
             "back"
         )
             .setScale(my_this.distance)
@@ -181,7 +181,7 @@ function credit_change(object, sureplus) {
     const start = parseInt(object.text);
     const finish = start + sureplus;
     setTimeout(() => {
-        number_animation(object, start, finish, 1000 / 30)
+        number_animation(object, start, finish, 1000 / 30, (sureplus < 0))
     }, 1000)
 }
 
