@@ -72,19 +72,25 @@ class detail extends Phaser.Scene {
             .setFontFamily('Katibeh')
             .setColor('#fff')
             .setScale(this.scale2_value)
+        
+            this.logo_finish = false;
     }
 
     update() {
         if (this.scale_value <= this.distance) {
-            this.scale_value += .005;
+            this.scale_value += .015;
             this.logo.setScale(this.scale_value)
+        }else{
+            this.logo_finish = true;
         }
         if (this.scale2_value <= 1) {
-            this.scale2_value += .01;
+            this.scale2_value += .03;
             this.Majle_text_en.setScale(this.scale2_value)
             this.Majle_text_fa.setScale(this.scale2_value)
 
-        } else {
+        } else if (this.logo_finish) {
+            // this.scale_value += .009;
+            // this.logo.setScale(this.scale_value)
             setTimeout(() => {
                 this.scene.start('loading')
             }, 1000)
