@@ -2,6 +2,12 @@
 <html>
 
 <head>
+    <link
+        href="https://fonts.googleapis.com/css?family=Katibeh|Lalezar|Noto+Sans:700|Roboto:900&display=auto&subset=arabic&text=Helloجواد"
+        rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Katibeh|Lalezar|Noto+Sans:700|Roboto:900&display=auto&subset=arabic&text=Helloجواد');
+    </style>
     <meta charset="utf-8">
     <title>my_game</title>
     <style>
@@ -149,27 +155,120 @@
             transform: translate(-50%, -50%);
         }
     </style>
-    <!-- <link href="assets/font.css" rel="stylesheet"> -->
-    
-<link href="https://fonts.googleapis.com/css?family=Katibeh|Lalezar|Noto+Sans:700|Roboto:900&display=auto&subset=arabic&text=Helloجواد" rel="stylesheet">
 
+    <style>
+        #WIFILOST {
+            width: 150px;
+            height: 150px;
+            z-index: 100;
+            position: absolute;
+            left: 42.5%;
+            top: 30%;
+            display: none;
+        }
+        .WIFIANIM{
+            display: inline !important;
+            animation-name: WIFI;
+            animation-duration: 0.5s;
+            animation-iteration-count: infinite;
+        }
 
-    <!---
-            font-family: 'Roboto', sans-serif;
-            font-family: 'Noto Sans', sans-serif;
-            font-family: 'Lalezar', cursive;
-            font-family: 'Katibeh', cursive;      
-        -->
+        /* Safari 4.0 - 8.0 */
+        @-webkit-keyframes WIFI {
+            0% {
+                left: 42.5%;
+                top: 30%;
+                width: 150px;
+                height: 150px
+            }
+
+            25% {
+                left: 42.0%;
+                top: 29.5%;
+                width: 160px;
+                height: 160px
+            }
+
+            50% {
+                left: 41.5%;
+                top: 29%;
+                width: 170px;
+                height: 170px
+            }
+
+            75% {
+                left: 42.0%;
+                top: 29.5%;
+                width: 160px;
+                height: 160px
+            }
+
+            100% {
+                left: 42.5%;
+                top: 30%;
+                width: 150px;
+                height: 150px
+            }
+        }
+
+        /* Standard syntax */
+        @keyframes WIFI {
+            0% {
+                left: 42.5%;
+                top: 30%;
+                width: 150px;
+                height: 150px
+            }
+
+            15% {
+                left: 42.0%;
+                top: 29.5%;
+                width: 160px;
+                height: 160px
+            }
+
+            25% {
+                left: 41.5%;
+                top: 29%;
+                width: 170px;
+                height: 170px
+            }
+
+            35% {
+                left: 42.0%;
+                top: 29.5%;
+                width: 160px;
+                height: 160px
+            }
+
+            50% {
+                left: 42.5%;
+                top: 30%;
+                width: 150px;
+                height: 150px
+            }
+
+            100% {
+                left: 42.5%;
+                top: 30%;
+                width: 150px;
+                height: 150px
+            }
+        }
+    </style>
+
 </head>
 
 <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
     <script src="assets/phaser.min.js" charset="utf-8"></script>
     <script src="build/game.bundle.js" charset="utf-8"></script>
 
 
     <div id="myGame">
         <center>
-            <input id="inputName" style="display: none;">
+            <input id="inputName" style="display: none; font-family: 'Lalezar'">
+            <img id="WIFILOST" width="150px" height="150px" src="assets/26774-200.png">
         </center>
         <canvas id="myCanvas"></canvas>
 
