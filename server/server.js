@@ -3,7 +3,7 @@ const { user_exist, hint_cost, finish_level, remember_me, finish_again_level, co
 const { user, remember_word, action_history } = require('./db/mongo/modules');
 
 module.exports.my_io = function (server) {
-    const io = require('socket.io')(server);
+    const io = require('socket.io')(server, { pingInterval: 3000 });
     io.on('connection', socket => {
 
         socket.on("init", async (rubicka_id, cb) => {
