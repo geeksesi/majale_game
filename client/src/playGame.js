@@ -103,6 +103,7 @@ class playGame extends Phaser.Scene {
             credit_change(this.coin_text, -10);
             await this.hint_key_arr.push(this.table_data.keys[this.hint_arr.length]);
             await this.hint_arr.push(this.table_data.array[this.table_data.keys[this.hint_arr.length]]);
+            this.pointer_up();
         } else {
             // Must Open Shop Page
             // console.log("warning on hint")
