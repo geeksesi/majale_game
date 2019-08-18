@@ -447,16 +447,27 @@ function make_event(my_this) {
 }
 
 
-function number_animation(object, start, finish, speed) {
+function number_animation(object, start, finish, speed, reverse = false) {
     let value = start;
-    const animat_interval = setInterval(() => {
-        value += (speed > (1000 / 60)) ? 1 : 2;
-        if (value <= finish) {
-            object.setText(value);
-        } else {
-            clearInterval(animat_interval);
-        }
-    }, (speed > (1000 / 60)) ? speed : 1000 / 30);
+    if (reverse) {
+        const animat_interval = setInterval(() => {
+            value -= (speed > (1000 / 60)) ? 1 : 2;
+            if (value >= finish) {
+                object.setText(value);
+            } else {
+                clearInterval(animat_interval);
+            }
+        }, (speed > (1000 / 60)) ? speed : 1000 / 30);
+    } else {
+        const animat_interval = setInterval(() => {
+            value += (speed > (1000 / 60)) ? 1 : 2;
+            if (value <= finish) {
+                object.setText(value);
+            } else {
+                clearInterval(animat_interval);
+            }
+        }, (speed > (1000 / 60)) ? speed : 1000 / 30);
+    }
 }
 
 export {
