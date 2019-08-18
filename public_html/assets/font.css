@@ -2,25 +2,61 @@
   font-family: 'YekanBoom';
   font-style: normal;
   font-weight: 400;
-  src: local('YekanBoom'), url(fonts/Yekan\ Boom.ttf) format('ttf');
+  src: local('YekanBoom'), url(fonts/Yekan\ Boom.ttf) format('truetype');
 }
-@font-face {
+
+/* @font-face {
   font-family: 'Lalezar';
   font-style: normal;
   font-weight: 400;
-  src: local('Lalezar'), local('Lalezar-Regular'), url(fonts/Lalezar-Regular.ttf) format('ttf');
+  src: local('Lalezar'), local('Lalezar-Regular'), url(fonts/Lalezar-Regular.ttf) format('truetype'), url(fonts/Lalezar-Regular.woff) format('woff'), url(fonts/Lalezar-Regular.eot) format('embedded-opentype');
 }
 
 @font-face {
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 900;
-  src: local('Roboto Black'), local('Roboto-Black'), local('sans-serif-black'), url(fonts/Roboto-Regular.ttf) format('ttf');
+  src: local('Roboto Black'), local('Roboto-Black'), local('sans-serif-black'), url(fonts/Roboto-Regular.ttf) format('truetype');
 }
 
 @font-face {
   font-family: 'Noto Sans';
   font-style: normal;
   font-weight: 700;
-  src: local('Noto Sans'), local('Noto-Sans'), url(fonts/NotoSans-Medium.ttf) format('ttf');
+  src: local('Noto Sans'), local('Noto-Sans'), url(fonts/NotoSans-Medium.ttf) format('truetype');
+}
+ */
+
+
+@font-face {
+  font-family: 'lalezarregular';
+  src: url('fonts/lalezar-regular-webfont.woff2') format('woff2'),
+       url('fonts/lalezar-regular-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+
+
+
+@font-face {
+  font-family: 'noto_sansmedium';
+  src: url('fonts/notosans-medium-webfont.woff2') format('woff2'),
+       url('fonts/notosans-medium-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+
+
+
+@font-face {
+  font-family: 'robotoregular';
+  src: url('fonts/roboto-regular-webfont.woff2') format('woff2'),
+       url('fonts/roboto-regular-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+
 }

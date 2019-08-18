@@ -28,3 +28,5 @@ yarn-error.log*
 public_html/assets/tmp_folder/
 
 public_html/assets/fonts/
+
+public_html/assets/font\.css
