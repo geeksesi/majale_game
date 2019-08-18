@@ -24,12 +24,12 @@ function season_finish(my_this, percent) {
         )
 
     my_this.season_finish_precent_text = my_this.add.text(
-        135 * my_this.distance,
+        125 * my_this.distance,
         370 * my_this.distance,
         'شـمـا   ' + 0 + '%  از  زبـان '
     )
         .setFontFamily('Lalezar')
-        .setFontSize(55 * my_this.distance)
+        .setFontSize(40 * my_this.distance)
         .setColor('#FFC312')
         .setPadding(0, 5, 0, 5)
     setTimeout(() => {
@@ -67,7 +67,7 @@ function season_finish(my_this, percent) {
         'را فـرا گـرفـتـه ایـد'
     )
         .setFontFamily('Lalezar')
-        .setFontSize(55 * my_this.distance)
+        .setFontSize(45 * my_this.distance)
         .setColor('#FFC312')
         .setPadding(0, 5, 0, 5)
 
@@ -98,7 +98,7 @@ function season_finish(my_this, percent) {
         'فــصــل بــعــد'
     )
         .setFontFamily('Lalezar')
-        .setFontSize(55 * my_this.distance)
+        .setFontSize(45 * my_this.distance)
         .setColor('#fff')
         .setPadding(0, 5, 0, 5)
 
@@ -139,18 +139,18 @@ function level_finish(my_this, value) {
 
 
     my_this.level_finish_flag_xp = my_this.add.image(
-        150 * my_this.distance,
+        140 * my_this.distance,
         520 * my_this.distance,
         'exp_icon'
     ).setScale(my_this.distance)
 
     my_this.level_finish_xp_text = my_this.add.text(
-        230 * my_this.distance,
+        220 * my_this.distance,
         485 * my_this.distance,
         0
     )
         .setFontFamily('Lalezar')
-        .setFontSize(80 * my_this.distance)
+        .setFontSize(75 * my_this.distance)
         .setColor('#FFC312')
         .setPadding(0, 5, 0, 5)
     setTimeout(() => {
@@ -158,13 +158,13 @@ function level_finish(my_this, value) {
     }, 500)
 
     my_this.level_finish_flag_coin = my_this.add.image(
-        380 * my_this.distance,
+        360 * my_this.distance,
         520 * my_this.distance,
         'coin_icon'
     ).setScale(my_this.distance)
 
     my_this.level_finish_coin_text = my_this.add.text(
-        455 * my_this.distance,
+        445 * my_this.distance,
         485 * my_this.distance,
         0
     )
