@@ -1,5 +1,6 @@
 import io from "socket.io-client";
 import { offline, online } from './game_tools/offline';
+import { set_user_id, GA_init } from './GA';
 
 const socket = io();
 
@@ -142,6 +143,8 @@ async function init() {
         await remembers_word.push(...res.remembers_id)
         await finished_season.push(...res.finished_season)
         setTimeout(() => {
+            set_user_id(user._id);
+            GA_init();
             finish_init = true;
             loaded_finished();
         }, 500)

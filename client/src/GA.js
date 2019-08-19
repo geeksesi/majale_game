@@ -3,9 +3,8 @@ function GA_init() {
     gameanalytics.GameAnalytics.setEnabledInfoLog(true);
     gameanalytics.GameAnalytics.setEnabledVerboseLog(true);
     gameanalytics.GameAnalytics.configureBuild("majale 0.8.0");
-    // gameanalytics.GameAnalytics.configureUserId("user1234567879");
     gameanalytics.GameAnalytics.configureAvailableResourceCurrencies(["coin"]);
-
+    gameanalytics.GameAnalytics.configureAvailableResourceItemTypes(["finish_level", "hint"]);
     gameanalytics.GameAnalytics.initialize("a39c65b50ab7df6c088886f790e89fb9", "8527d736b4ff47fb7370fa4adcf6aae5b846d7ee");
 }
 
@@ -23,7 +22,11 @@ function GA_finish_season(season_id) {
 }
 
 function GA_use_hint(word_id) {
-    gameanalytics.GameAnalytics.addResourceEvent(gameanalytics.EGAResourceFlowType.Sink, "coin", -10, "hint", word_id);
+    gameanalytics.GameAnalytics.addResourceEvent(gameanalytics.EGAResourceFlowType.Sink, "coin", 10, "hint", word_id);
+}
+
+function set_user_id(user_id){
+    gameanalytics.GameAnalytics.configureUserId(user_id);
 }
 
 export {
@@ -31,5 +34,6 @@ export {
     GA_start_level,
     GA_finish_level,
     GA_use_hint,
-    GA_finish_season
+    GA_finish_season,
+    set_user_id,
 }

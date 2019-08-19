@@ -1,5 +1,5 @@
 import { use_hint, finish_level, play_game_data } from './server';
-import { GA_start_level, GA_finish_level, GA_use_hint, GA_finish_season } from './server';
+import { GA_start_level, GA_finish_level, GA_use_hint, GA_finish_season } from './GA';
 import { make_road } from './game_tools/game_design';
 import { make_table, make_event } from './game_tools/mechanism';
 import { top_ui, credit_change, exp_change } from './game_tools/global_ui';
@@ -24,7 +24,6 @@ class playGame extends Phaser.Scene {
         this.make_table = make_table;
         this.word_data = data.word_data;
         this.season_id = data.word_data[data.word_id].season_id;
-        GA_start_level(this.season_id, this.word_data[this.word_id].id);
     }
 
 
@@ -59,7 +58,7 @@ class playGame extends Phaser.Scene {
     }
 
     async create() {
-
+        GA_start_level(this.season_id, this.word_data[this.word_id].id);
         await this.variables();
         this.till_graphic = this.add.graphics({ fillStyle: { color: 0x9e9e9e } });
         await this.table_ui();
@@ -243,7 +242,7 @@ class playGame extends Phaser.Scene {
                 }
                 GA_finish_level(this.season_id, this.word_data[this.word_id].id, res.xp);
                 if (res.season_status) {
-                    GA_finish_season(this.season_ids);
+                    GA_finish_season(this.season_id);
                     season_finish(this, (this.season_id / 30) * 100);
                     credit_change(this.coin_text, res.prize);
                     exp_change(this.exp_text, res.xp);

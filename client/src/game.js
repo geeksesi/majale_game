@@ -1,6 +1,4 @@
 const { connection_check } = require('./server');
-const { GA_init } = require('./GA');
-GA_init();
 const config = {
     type: Phaser.CANVAS,
     canvas: document.getElementById("myCanvas"),
