@@ -15,35 +15,35 @@ class mainMenu extends Phaser.Scene {
         await this.play_ui();
         await this.down_ui();
         this.data = await play_game_data();
-
-        user_level(res => {
-            this.user_level_ui(res);
-        })
+        const season_id = parseInt(localStorage.getItem('current_season_id'));
+        const completed = parseInt(localStorage.getItem('current_completed'));
+        const length = parseInt(localStorage.getItem('current_length'));
+        this.user_level_ui(season_id, completed, length);
     }
 
-    user_level_ui(data) {
+    user_level_ui(season_id, completed, length) {
 
         this.season_detail_text = this.add.text(
             320 * this.distance,
             480 * this.distance,
-            `فـصـل :   ${data.season_id}`
+            `فـصـل :   ${season_id}`
         )
             .setColor('#fff')
             .setFontFamily("Lalezar")
             .setFontSize(55 * this.distance)
             .setPadding(0, 0, 0, 5)
-            // .initRTL()
+        // .initRTL()
 
         this.season_detail_text = this.add.text(
             110 * this.distance,
             480 * this.distance,
-            `${data.completed} / ${data.length}`
+            `${completed} / ${length}`
         )
             .setColor('#fff')
             .setFontFamily("Lalezar")
             .setFontSize(60 * this.distance)
             .setPadding(0, 0, 0, 5)
-            // .initRTL()
+        // .initRTL()
 
     }
 

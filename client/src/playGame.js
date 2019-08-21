@@ -1,6 +1,6 @@
 import { use_hint, finish_level, play_game_data } from './server';
 import { GA_start_level, GA_finish_level, GA_use_hint, GA_finish_season } from './GA';
-import { make_road } from './game_tools/game_design';
+import { make_road, user_level } from './game_tools/game_design';
 import { make_table, make_event } from './game_tools/mechanism';
 import { top_ui, credit_change, exp_change } from './game_tools/global_ui';
 import { season_finish, level_finish } from './game_tools/finish_game_ui';
@@ -246,6 +246,11 @@ class playGame extends Phaser.Scene {
                     return false;
                 }
                 GA_finish_level(this.season_id, this.word_data[this.word_id].id, res.xp);
+                user_level(res => {
+                    localStorage.setItem('current_season_id', res.season_id);
+                    localStorage.setItem('current_completed', res.completed);
+                    localStorage.setItem('current_length', res.length);
+                })
                 if (res.season_status) {
                     GA_finish_season(this.season_id);
                     season_finish(this, (this.season_id / 30) * 100);

@@ -1,5 +1,7 @@
 import { loading_finished } from './server';
 import { loading_start, loading_stop } from './game_tools/loading_ui';
+import { user_level } from './game_tools/game_design';
+
 class seasonMenu extends Phaser.Scene {
     constructor() {
         super({ key: 'loading' });
@@ -43,13 +45,18 @@ class seasonMenu extends Phaser.Scene {
         this.load.on('complete', function () {
             image_loaded = true;
         });
-        loading_finished(res => {
+        loading_finished(res2 => {
+            user_level(res => {
+                localStorage.setItem('current_season_id', res.season_id);
+                localStorage.setItem('current_completed', res.completed);
+                localStorage.setItem('current_length', res.length);
+            })
             let wait_for_image = setInterval(async () => {
                 if (image_loaded) {
                     this.hide_progress();
                     clearInterval(wait_for_image);
                 }
-            }, 500);
+            }, 700);
         })
     }
 
