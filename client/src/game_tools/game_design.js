@@ -128,13 +128,4 @@ function user_level(cb) {
     })
 }
 
-
-function season_info(season_id, season, language_id, cb) {
-    season[language_id].forEach(season => {
-        if (season.id === season_id) {
-            cb(season.name)
-        }
-    })
-}
-
 export { make_road, user_level };

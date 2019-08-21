@@ -72,15 +72,18 @@ class detail extends Phaser.Scene {
             .setFontFamily('Katibeh')
             .setColor('#fff')
             .setScale(this.scale2_value)
-        
-            this.logo_finish = false;
+
+        this.logo_finish = false;
     }
 
     update() {
-        if (this.scale_value <= this.distance) {
+        if (this.scale_value <= this.distance + 0.1) {
             this.scale_value += .015;
             this.logo.setScale(this.scale_value)
-        }else{
+        } else {
+            setTimeout(() => {
+                this.logo.setScale(this.distance)
+            }, 100)
             this.logo_finish = true;
         }
         if (this.scale2_value <= 1) {
