@@ -7,6 +7,18 @@ class seasonMenu extends Phaser.Scene {
     }
 
     async preload() {
+        let font_load = false;
+        WebFont.load({
+            // loading: () => { },
+            active: () => {
+                console.log("FontREADY")
+                font_load = true;
+            },
+            google: {
+                families: ['Roboto:900', 'Noto Sans:700', 'Lalezar', 'Katibeh'],
+                // text: 'abcdefghijسلام!'
+            }
+        });
         this.load.image('english_flag', 'assets/Eng_flag.png')
         this.load.image('exp_icon', 'assets/xp.png')
         this.load.image('coin_icon', 'assets/coin.png')
