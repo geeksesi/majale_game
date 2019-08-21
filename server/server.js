@@ -36,7 +36,7 @@ module.exports.my_io = function (server) {
                     })
                 });
 
-                await remember_word.find({ user_id: socket._id, status: 'wait', timestamp: { $gt: socket.online_timestamp + 64800 } }, (err, remembers) => {
+                await remember_word.find({ user_id: socket._id, status: 'wait', timestamp: { $lt: socket.online_timestamp - 64800 } }, (err, remembers) => {
                     remembers.forEach(remember => {
                         export_object.remembers_id.push(remember.word_id)
                     })
