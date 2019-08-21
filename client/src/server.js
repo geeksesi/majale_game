@@ -147,7 +147,7 @@ async function init() {
             GA_init();
             finish_init = true;
             loaded_finished();
-        }, 500)
+        }, 1000)
 
     })
 }
