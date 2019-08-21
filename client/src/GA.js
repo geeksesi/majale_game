@@ -1,7 +1,7 @@
 const gameanalytics = require('gameanalytics');
 function GA_init() {
-    gameanalytics.GameAnalytics.setEnabledInfoLog(true);
-    gameanalytics.GameAnalytics.setEnabledVerboseLog(true);
+    gameanalytics.GameAnalytics.setEnabledInfoLog(false);
+    gameanalytics.GameAnalytics.setEnabledVerboseLog(false);
     gameanalytics.GameAnalytics.configureBuild("majale 0.8.0");
     gameanalytics.GameAnalytics.configureAvailableResourceCurrencies(["coin"]);
     gameanalytics.GameAnalytics.configureAvailableResourceItemTypes(["finish_level", "hint"]);
