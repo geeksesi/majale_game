@@ -2,6 +2,16 @@ import { number_animation } from './mechanism';
 
 
 function season_finish(my_this, percent) {
+    my_this.make_bg_darked = my_this.add.graphics()
+        .fillStyle(0x222222, 0.3)
+        .fillRect(
+            -10,
+            -10,
+            630 * my_this.distance,
+            1100 * my_this.distance
+        )
+
+
     my_this.season_finish_bg = my_this.add.graphics()
         .fillStyle(0xffffff)
         .fillRoundedRect(
@@ -106,6 +116,15 @@ function season_finish(my_this, percent) {
 
 
 function level_finish(my_this, value) {
+    my_this.make_bg_darked = my_this.add.graphics()
+        .fillStyle(0x222222, 0.3)
+        .fillRect(
+            -10,
+            -10,
+            630 * my_this.distance,
+            1100 * my_this.distance
+        )
+
     my_this.level_finish_bg = my_this.add.graphics()
         .fillStyle(0xffffff)
         .fillRoundedRect(
