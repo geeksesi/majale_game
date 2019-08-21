@@ -61,18 +61,6 @@ function resize() {
 
 
 window.onload = () => {
-    let font_load = false;
-    WebFont.load({
-        // loading: () => { },
-        active: () => {
-            console.log("FontREADY")
-            font_load = true;
-        },
-        google: {
-            families: ['Roboto:900', 'Noto Sans:700', 'Lalezar', 'Katibeh'],
-            text: 'abcdefghijسلام!'
-        }
-    });
     // await init();
     resize();
     // window.addEventListener("resize", resize, false);
