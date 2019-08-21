@@ -95,11 +95,13 @@ class playGame extends Phaser.Scene {
 
 
     async hint() {
+        const hint_cost = (this.hint_key_arr.length + 2) * 5;
+        this.hint_sprite_text.setText(hint_cost);
         this.hint_click = true;
-        if (this.coin_value >= 10 && await use_hint(this.word_data[(this.word_id)].id)) {
+        if (this.coin_value >= hint_cost && await use_hint(this.word_data[(this.word_id)].id)) {
             GA_use_hint(this.word_data[(this.word_id)].id);
-            this.coin_value -= 10;
-            credit_change(this.coin_text, -10);
+            this.coin_value -= hint_cost;
+            credit_change(this.coin_text, -hint_cost);
             await this.hint_key_arr.push(this.table_data.keys[this.hint_arr.length]);
             await this.hint_arr.push(this.table_data.array[this.table_data.keys[this.hint_arr.length]]);
             this.pointer_up();
@@ -109,7 +111,10 @@ class playGame extends Phaser.Scene {
             shop_ui(this, 'playGame');
 
         }
-        setTimeout(() => { this.hint_click = false; }, 300)
+        setTimeout(() => {
+            this.hint_sprite_text.setText((hint_cost + 5));
+            this.hint_click = false;
+        }, 300)
 
     }
 
