@@ -5,6 +5,18 @@ class detail extends Phaser.Scene {
     }
 
     async preload() {
+        let font_load = false;
+        WebFont.load({
+            // loading: () => { },
+            active: () => {
+                console.log("FontREADY")
+                font_load = true;
+            },
+            google: {
+                families: ['Roboto:900', 'Noto Sans:700', 'Lalezar', 'Katibeh'],
+                // text: 'abcdefghijسلام!'
+            }
+        });
         this.load.image('loading', 'assets/Loading.png')
         this.load.image('logo', 'assets/MG.png')
     }
@@ -78,7 +90,7 @@ class detail extends Phaser.Scene {
 
     update() {
         if (this.scale_value <= this.distance + 0.1) {
-            this.scale_value += .015;
+            this.scale_value += .03;
             this.logo.setScale(this.scale_value)
         } else {
             setTimeout(() => {
@@ -87,7 +99,7 @@ class detail extends Phaser.Scene {
             this.logo_finish = true;
         }
         if (this.scale2_value <= 1) {
-            this.scale2_value += .03;
+            this.scale2_value += .06;
             this.Majle_text_en.setScale(this.scale2_value)
             this.Majle_text_fa.setScale(this.scale2_value)
 
