@@ -2,7 +2,7 @@ import { use_hint, finish_level, play_game_data } from './server';
 import { GA_start_level, GA_finish_level, GA_use_hint, GA_finish_season } from './GA';
 import { make_road, user_level } from './game_tools/game_design';
 import { make_table, make_event } from './game_tools/mechanism';
-import { top_ui, credit_change, exp_change } from './game_tools/global_ui';
+import { top_ui, credit_change, exp_change, finish_change } from './game_tools/global_ui';
 import { season_finish, level_finish } from './game_tools/finish_game_ui';
 import { shop_ui } from './game_tools/shop_ui';
 
@@ -101,7 +101,7 @@ class playGame extends Phaser.Scene {
         if (this.coin_value >= hint_cost && await use_hint(this.word_data[(this.word_id)].id)) {
             GA_use_hint(this.word_data[(this.word_id)].id);
             this.coin_value -= hint_cost;
-            credit_change(this.coin_text, -hint_cost);
+            credit_change(this.hint_timeout,this.hint_interval, this.coin_text, -hint_cost);
             await this.hint_key_arr.push(this.table_data.keys[this.hint_arr.length]);
             await this.hint_arr.push(this.table_data.array[this.table_data.keys[this.hint_arr.length]]);
             this.pointer_up();
@@ -179,7 +179,7 @@ class playGame extends Phaser.Scene {
         this.answer_key_arr.splice(index_in_answer + 1);
         this.answer_text.setText(this.answer_arr.join(""));
         this.answer_text.setPosition(
-            350 * this.distance + this.answer_arr.length * 2.3 / this.distance,
+            310 * this.distance + this.answer_arr.length * 2.3 / this.distance,
             250 * this.distance);
     }
 
@@ -214,7 +214,7 @@ class playGame extends Phaser.Scene {
                 this.win();
             }
             this.answer_text.setPosition(
-                350 * this.distance + this.answer_arr.length * 2.3 / this.distance,
+                310 * this.distance + this.answer_arr.length * 2.3 / this.distance,
                 250 * this.distance);
             return true;
         }
@@ -251,15 +251,17 @@ class playGame extends Phaser.Scene {
                     localStorage.setItem('current_completed', res.completed);
                     localStorage.setItem('current_length', res.length);
                 })
+                this.finish_coin = parseInt(this.coin_text.text) + res.prize;
+                this.finish_xp = parseInt(this.exp_text.text) + res.xp;
                 if (res.season_status) {
                     GA_finish_season(this.season_id);
                     season_finish(this, (this.season_id / 30) * 100);
-                    credit_change(this.coin_text, res.prize);
-                    exp_change(this.exp_text, res.xp);
+                    credit_change(this.cr_timeout, this.cr_interval, this.coin_text, res.prize);
+                    exp_change(this.xp_timeout, this.xp_interval, this.exp_text, res.xp);
                 } else {
                     level_finish(this, res.xp);
-                    credit_change(this.coin_text, res.prize);
-                    exp_change(this.exp_text, res.xp);
+                    credit_change(this.cr_timeout, this.cr_interval, this.coin_text, res.prize);
+                    exp_change(this.xp_timeout, this.xp_interval, this.exp_text, res.xp);
                 }
             });
         // console.log(finish_detail);
@@ -284,22 +286,28 @@ class playGame extends Phaser.Scene {
             await make_road(data.word_list, data.finished_word, data.remembers_word, this.language_id, res => {
                 if (res.length < 1) {
                     console.log("i have no lvl")
-                    this.scene.start('mainMenu');
+                    // setTimeout(() => {
+                        this.scene.start('mainMenu');
+                    // }, 500);
                 }
                 this.stop_loading();
-                this.scene.start('playGame', {
-                    word_id: 0,
-                    language_id: this.language_id,
-                    word_data: res
-                });
+                // setTimeout(() => {
+                    this.scene.start('playGame', {
+                        word_id: 0,
+                        language_id: this.language_id,
+                        word_data: res
+                    });
+                // }, 500);
             })
 
         } else {
-            this.scene.start('playGame', {
-                word_id: this.word_id + 1,
-                language_id: this.language_id,
-                word_data: this.word_data
-            });
+            // setTimeout(() => {
+                this.scene.start('playGame', {
+                    word_id: this.word_id + 1,
+                    language_id: this.language_id,
+                    word_data: this.word_data
+                });
+            // }, 500);
         }
 
     }
@@ -350,7 +358,7 @@ class playGame extends Phaser.Scene {
         }
 
         this.answer_text = this.add.text(
-            350 * this.distance,
+            310 * this.distance,
             250 * this.distance,
             "", { rtl: true })
             .setFontFamily('Lalezar')
@@ -475,7 +483,7 @@ class playGame extends Phaser.Scene {
 
         this.hint_text = this.add.text(
             this.till.offset_x + (this.till.width / 2) - 65 * this.distance,
-            this.till.offset_y + this.till.width + this.sys.game.config.height / 20 - 25 * this.distance,
+            this.till.offset_y + this.till.width + this.sys.game.config.height / 20 - 15 * this.distance,
             "راهنمایی")
             .setFontFamily("Lalezar")
             .setColor("#fff")

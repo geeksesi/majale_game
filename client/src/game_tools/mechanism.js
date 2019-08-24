@@ -447,31 +447,37 @@ function make_event(my_this) {
 }
 
 
-function number_animation(object, start, finish, speed, reverse = false) {
+function number_animation(interval, object, start, finish, speed, reverse = false) {
     let value = start;
     if (reverse) {
-        const animat_interval = setInterval(() => {
+        interval = setInterval(() => {
             value -= (speed > (1000 / 60)) ? 1 : 2;
             if (value >= finish) {
                 object.setText(value);
             } else {
-                clearInterval(animat_interval);
+                clearInterval(interval);
             }
         }, (speed > (1000 / 60)) ? speed : 1000 / 30);
     } else {
-        const animat_interval = setInterval(() => {
+        interval = setInterval(() => {
             value += (speed > (1000 / 60)) ? 1 : 2;
             if (value <= finish) {
                 object.setText(value);
             } else {
-                clearInterval(animat_interval);
+                clearInterval(interval);
             }
         }, (speed > (1000 / 60)) ? speed : 1000 / 30);
     }
 }
 
+function finish_number_animation(interval, object, finish){
+    clearInterval(interval);
+    object.setText(finish);
+}
+
 export {
     make_table,
     make_event,
-    number_animation
+    number_animation,
+    finish_number_animation
 }
