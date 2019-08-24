@@ -43,7 +43,7 @@ class leaderboard extends Phaser.Scene {
                 this.places.offset_navbar + 60 * this.distance,
             )
         leader_board(res => {
-            for (let i = 0; i < 9; i++) {
+            for (let i = 0; i < 8; i++) {
                 if (typeof res.data[i] !== 'undefined') {
                     this.row_ui(i, i + 1, res.data[i].name, res.data[i].xp, res.data[i].avatar)
                 }
