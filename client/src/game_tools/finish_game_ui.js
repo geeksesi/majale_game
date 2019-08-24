@@ -1,4 +1,5 @@
-import { number_animation } from './mechanism';
+import { number_animation, finish_number_animation } from './mechanism';
+import { finish_change } from './global_ui';
 
 
 function season_finish(my_this, percent) {
@@ -34,7 +35,7 @@ function season_finish(my_this, percent) {
         )
 
     my_this.season_finish_precent_text = my_this.add.text(
-        125 * my_this.distance,
+        175 * my_this.distance,
         370 * my_this.distance,
         'شـمـا   ' + 0 + '%  از  زبـان '
     )
@@ -55,7 +56,7 @@ function season_finish(my_this, percent) {
     }, 500)
 
     my_this.season_finish_flag_text = my_this.add.text(
-        245 * my_this.distance,
+        255 * my_this.distance,
         445 * my_this.distance,
         'English'
     )
@@ -66,13 +67,13 @@ function season_finish(my_this, percent) {
 
 
     my_this.season_finish_flag_flag = my_this.add.image(
-        300 * my_this.distance,
+        310 * my_this.distance,
         520 * my_this.distance,
         'english_flag'
     ).setScale(my_this.distance)
 
     my_this.season_finish_bot_text = my_this.add.text(
-        150 * my_this.distance,
+        190 * my_this.distance,
         570 * my_this.distance,
         'را فـرا گـرفـتـه ایـد'
     )
@@ -99,12 +100,16 @@ function season_finish(my_this, percent) {
             ),
             Phaser.Geom.Rectangle.Contains
         ).on('pointerdown', () => {
-            my_this.next_level();
+            finish_change(my_this.cr_timeout, my_this.cr_interval, my_this.coin_text, my_this.finish_coin)
+            finish_change(my_this.xp_timeout, my_this.xp_interval, my_this.exp_text, my_this.finish_xp)
+            setTimeout(() => {
+                my_this.next_level();
+            }, 1000)
         })
 
     my_this.season_finish_nex_btn = my_this.add.text(
-        180 * my_this.distance,
-        650 * my_this.distance,
+        205 * my_this.distance,
+        655 * my_this.distance,
         'فــصــل بــعــد'
     )
         .setFontFamily('Lalezar')
@@ -173,7 +178,7 @@ function level_finish(my_this, value) {
         .setColor('#FFC312')
         .setPadding(0, 5, 0, 5)
     setTimeout(() => {
-        number_animation(my_this.level_finish_xp_text, 0, value, 1000 / 6)
+        number_animation(my_this.finish_xp_interval, my_this.level_finish_xp_text, 0, value, 1000 / 6)
     }, 500)
 
     my_this.level_finish_flag_coin = my_this.add.image(
@@ -193,7 +198,7 @@ function level_finish(my_this, value) {
         .setPadding(0, 5, 0, 5)
 
     setTimeout(() => {
-        number_animation(my_this.level_finish_coin_text, 0, value * 5, 1000 / 30)
+        number_animation(my_this.finish_coin_interval, my_this.level_finish_coin_text, 0, value * 5, 1000 / 30)
     }, 600)
 
     my_this.level_finish_nex_btn = my_this.add.graphics()
@@ -213,11 +218,17 @@ function level_finish(my_this, value) {
             ),
             Phaser.Geom.Rectangle.Contains
         ).on('pointerdown', () => {
-            my_this.next_level();
+            finish_number_animation(my_this.finish_coin_interval, my_this.level_finish_coin_text, value * 5)
+            finish_number_animation(my_this.finish_xp_interval, my_this.level_finish_xp_text, value)
+            finish_change(my_this.cr_timeout, my_this.cr_interval, my_this.coin_text, my_this.finish_coin)
+            finish_change(my_this.xp_timeout, my_this.xp_interval, my_this.exp_text, my_this.finish_xp)
+            setTimeout(() => {
+                my_this.next_level();
+            }, 1000)
         })
 
     my_this.level_finish_nex_btn = my_this.add.text(
-        220 * my_this.distance,
+        225 * my_this.distance,
         650 * my_this.distance,
         'بـــعـــدی'
     )
