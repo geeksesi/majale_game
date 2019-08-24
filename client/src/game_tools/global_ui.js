@@ -1,5 +1,5 @@
-import { user_data } from './../server';
-import { number_animation } from './mechanism';
+import { user_data, user_data_restart } from './../server';
+import { number_animation, finish_number_animation } from './mechanism';
 
 
 function set_language(my_this, language_id) {
@@ -96,14 +96,34 @@ async function top_ui(my_this, scene_name) {
             color: '#FFC312'
         }
     }
+    let xp_touch_count = 0;
     my_this.exp_flag = my_this.add.image(
         exp_places.flag.x,
         exp_places.flag.y,
         "exp_icon"
     )
         .setScale(
-            my_this.distance 
-        );
+            my_this.distance
+        )
+        .setInteractive()
+        .on('pointerdown', () => {
+            xp_touch_count++;
+            if (xp_touch_count === 10) {
+                restart_game_data();
+            }
+            else if (xp_touch_count > 10) {
+
+            }
+            else {
+                if (xp_touch_count === 1) {
+                    setTimeout(() => {
+                        xp_touch_count = 0;
+                    }, 3000)
+                }
+            }
+        })
+
+
     my_this.exp_text = my_this.add.text(
         exp_places.text.x,
         exp_places.text.y,
@@ -135,7 +155,7 @@ async function top_ui(my_this, scene_name) {
         "coin_icon"
     )
         .setScale(
-            my_this.distance 
+            my_this.distance
         );
     my_this.coin_text = my_this.add.text(
         coin_places.text.x,
@@ -177,21 +197,35 @@ async function top_ui(my_this, scene_name) {
 
 }
 
-function credit_change(object, sureplus) {
+function credit_change(timeout, interval, object, sureplus) {
     const start = parseInt(object.text);
     const finish = start + sureplus;
     setTimeout(() => {
-        number_animation(object, start, finish, 1000 / 30, (sureplus < 0))
+        number_animation(interval, object, start, finish, 1000 / 30, (sureplus < 0))
     }, 1000)
 }
 
-function exp_change(object, sureplus) {
+function exp_change(timeout, interval, object, sureplus) {
     const start = parseInt(object.text);
     const finish = start + sureplus;
     setTimeout(() => {
-        number_animation(object, start, finish, 1000 / 6)
+        number_animation(interval, object, start, finish, 1000 / 6)
     }, 1000)
     // object.setText(parseInt(my_this.exp_text.text) + value)
 }
 
-export { top_ui, credit_change, exp_change }
+function finish_change(timeout, interval, object, finish) {
+    clearTimeout(timeout);
+    finish_number_animation(interval, object, finish);
+}
+
+
+
+function restart_game_data() {
+    if (confirm('می خواهید اطلاعات شما حذف شود ؟')) {
+        user_data_restart();
+        alert('بازی رو رفرش کنید :) ');
+    } else {
+    }
+}
+export { top_ui, credit_change, exp_change, finish_change }
