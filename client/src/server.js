@@ -264,6 +264,11 @@ function change_user_detail(user_update, cb) {
     })
 }
 
+
+function user_data_restart() {
+    socket.emit('Restart');
+}
+
 export {
     loading_finished,
     get_season,
@@ -280,4 +285,5 @@ export {
     splice_word,
     change_user_detail,
     connection_check,
+    user_data_restart,
 }
