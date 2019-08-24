@@ -215,5 +215,33 @@ module.exports.my_io = function (server) {
         });
 
 
+        socket.on("Restart", () => {
+            user.findByIdAndUpdate(socket._id, {
+                rubicka_id: socket.rubicka_id,
+                credit: 50,
+                xp: 0,
+                timestamp: Math.floor(Date.now() / 1000),
+                play_time: 1
+            }, (err, res) => {
+                // if (!err)
+                //     console.log("user_reset_ok");
+            })
+            // console.log(socket._id);
+            remember_word.deleteMany({ user_id: socket._id }, (err) => {
+                // if (!err)
+                //     "remmember_word_delete_ok"
+                // else
+                //     console.log(err)
+            });
+            action_history.deleteMany({ user_id: socket._id }, (err) => {
+                // if (!err)
+                //     "actions_delete_ok"
+                // else
+                //     console.log(err)
+            });
+
+        })
+
+
     });
 }
