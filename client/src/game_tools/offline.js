@@ -1,9 +1,9 @@
 function offline() {
-    document.getElementById('WIFILOST').className = "WIFIANIM";
+	document.getElementById('WIFILOST').className = 'WIFIANIM';
 }
 
 function online() {
-    document.getElementById('WIFILOST').className = "";
+	document.getElementById('WIFILOST').className = '';
 }
 
-export { offline, online }
+export { offline, online };
