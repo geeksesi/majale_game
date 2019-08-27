@@ -128,7 +128,7 @@ async function init() {
 		finished_word = res.finished_word;
 		console.log(res);
 		setTimeout(() => {
-			set_user_id(user._id);
+			set_user_id(user.rubicka_id);
 			GA_init();
 			finish_init = true;
 			loaded_finished();
