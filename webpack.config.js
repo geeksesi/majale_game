@@ -21,27 +21,27 @@ module.exports = {
 		filename: '[name].bundle.js'
 	},
 
-	module: {
-		rules: [{
-			test: /\.m?js$/,
-			exclude: /(node_modules|bower_components)/,
-			use: {
-				loader: 'babel-loader',
-				options: {
-					presets: [
-						'@babel/preset-env',
-						'@babel/preset-stage-1',
-						'@babel/preset-react',
+	// module: {
+	// 	rules: [{
+	// 		test: /\.m?js$/,
+	// 		exclude: /(node_modules|bower_components)/,
+	// 		use: {
+	// 			loader: 'babel-loader',
+	// 			options: {
+	// 				presets: [
+	// 					'@babel/preset-env',
+	// 					'@babel/preset-stage-1',
+	// 					'@babel/preset-react',
 
-					],
-					plugins: [
-						'@babel/plugin-transform-runtime',
-						'@babel/plugin-proposal-class-properties'
-					],
-				}
-			}
-		}]
-	},
+	// 				],
+	// 				plugins: [
+	// 					'@babel/plugin-transform-runtime',
+	// 					'@babel/plugin-proposal-class-properties'
+	// 				],
+	// 			}
+	// 		}
+	// 	}]
+	// },
 
 	plugins: [
 		new webpack.DefinePlugin({
