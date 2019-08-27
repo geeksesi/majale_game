@@ -57,6 +57,10 @@ function get_finished_season(cb) {
 	cb(finished_season);
 }
 
+function get_finished_word(cb) {
+	cb(finished_word);
+}
+
 function play_game_data() {
 	return new Promise((resolve, _reject) => {
 		resolve({
@@ -137,12 +141,11 @@ async function init() {
 
 }
 
-function season_finish(season_id, cb) {
+function season_finish(season_id) {
 	finished_season.push(season_id);
 	setTimeout(() => {
 		store_finished_season(finished_season);
 	}, 200);
-	cb(season_id);
 }
 
 function season_finish_data(season_id) {
@@ -173,35 +176,46 @@ function season_finish_data(season_id) {
 }
 
 async function check_season_finished(season_id, cb) {
-	let wait_for_it;
-	if (finished_season.indexOf(season_id) !== -1) {
-		cb(false);
-		return false;
-	}
-	let season_data = await season_finish_data(season_id);
-	let ok = [];
-	for (let i = 0; i < season_data.length; i++) {
-		const element = season_data[i];
-		if (element.status === null || typeof element.status === 'undefined' || element.status === 0) {
-			if (typeof wait_for_it !== 'undefined') {
-				clearInterval(wait_for_it);
-			}
+	if (Object.keys(finished_word).length % 8 === 0) {
+		season_finish(parseInt(Object.keys(finished_word).length / 8));
+		setTimeout(() => {
+			cb(true);
+		}, 500);
+	} else {
+		setTimeout(() => {
 			cb(false);
-			return false;
-		} else {
-			ok.push(true);
-		}
+		}, 500);
 	}
 
-	wait_for_it = setInterval(() => {
-		if (ok.length === season_data.length) {
-			clearInterval(wait_for_it);
-			finished_season.push(season_id);
-			season_finish(season_id, _res => {
-				cb(true);
-			});
-		}
-	}, 500);
+	// let wait_for_it;
+	// if (finished_season.indexOf(season_id) !== -1) {
+	// 	cb(false);
+	// 	return false;
+	// }
+	// let season_data = await season_finish_data(season_id);
+	// let ok = [];
+	// for (let i = 0; i < season_data.length; i++) {
+	// 	const element = season_data[i];
+	// 	if (element.status === null || typeof element.status === 'undefined' || element.status === 0) {
+	// 		if (typeof wait_for_it !== 'undefined') {
+	// 			clearInterval(wait_for_it);
+	// 		}
+	// 		cb(false);
+	// 		return false;
+	// 	} else {
+	// 		ok.push(true);
+	// 	}
+	// }
+
+	// wait_for_it = setInterval(() => {
+	// 	if (ok.length === season_data.length) {
+	// 		clearInterval(wait_for_it);
+	// 		finished_season.push(season_id);
+	// 		season_finish(season_id, _res => {
+	// 			cb(true);
+	// 		});
+	// 	}
+	// }, 500);
 }
 
 
@@ -269,4 +283,5 @@ export {
 	change_user_detail,
 	connection_check,
 	user_data_restart,
+	get_finished_word,
 };
