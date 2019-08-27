@@ -1,11 +1,15 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-async-promise-executor */
 /* eslint-disable require-atomic-updates */
-import io from 'socket.io-client';
-import { offline, online } from './game_tools/offline';
 import { set_user_id, GA_init } from './GA';
+import {
+	server_init,
+	store_user,
+	store_finished_season,
+	store_finished_word,
+	store_remembers,
+	restart_data
+} from './server/server';
 
-const socket = io();
 
 let season_list = {};
 let word_list = {};
@@ -17,23 +21,7 @@ let connection_status = false;
 let finish_init = false;
 
 function connection_check() {
-	socket.on('connect', () => {
-		if (!connection_status) {
-			online();
-			init();
-		}
-		console.log('we are connect');
-	});
-	socket.on('disconnect', (_reason) => {
-		connection_status = false;
-		offline();
-		// console.log(reason);
-	});
-	socket.on('pong', (latency) => {
-		if (latency > 150) {
-			console.log('Slow');
-		}
-	});
+	init();
 }
 
 function loading_finished(cb) {
@@ -81,84 +69,80 @@ function play_game_data() {
 
 
 function use_hint(word_id) {
-	// console.log("hello");
+	setTimeout(() => {
+		store_user(user);
+	}, 500);
 	return new Promise((resolve, reject) => {
-
-		socket.emit('user_hint', word_id, (res) => {
-			if (res.ok === true) {
-				user.credit -= 10;
-				resolve(true);
-			} else {
-				reject(false);
-			}
-		});
+		user.credit -= 10;
+		resolve(true);
 	});
 }
 
 function finish_level(word_id, season_id, time, is_hint, status, cb) {
-	socket.emit('finish_level', word_id, time, is_hint, async res => {
-		let xp_value = 0;
-		if (res.ok === true) {
-			if (time <= 5) {
-				xp_value = 3;
-			} else if (time <= 10) {
-				xp_value = 2;
-			} else {
-				xp_value = 1;
-			}
-			let prize_value = await xp_value * 5 * status;
-			user.credit += prize_value;
-			finished_word[word_id] = await xp_value;
-			user.xp += xp_value;
-			if (is_hint) {
-				// remembers_word.push(word_id);
-			} else {
-				if (remembers_word.includes(word_id)) {
-					for (var i = remembers_word.length - 1; ; i--) {
-						if (remembers_word[i] === word_id) {
-							remembers_word.splice(i, 1);
-							break;
-						}
-					}
+	let xp_value = 0;
+	if (time <= 5) {
+		xp_value = 3;
+	} else if (time <= 10) {
+		xp_value = 2;
+	} else {
+		xp_value = 1;
+	}
+	let prize_value = xp_value * 5 * status;
+	user.credit += prize_value;
+	finished_word[word_id] = xp_value;
+	user.xp += xp_value;
+	if (is_hint) {
+		remembers_word.push(word_id);
+	} else {
+		if (remembers_word.includes(word_id)) {
+			for (var i = remembers_word.length - 1; ; i--) {
+				if (remembers_word[i] === word_id) {
+					remembers_word.splice(i, 1);
+					break;
 				}
 			}
-			check_season_finished(season_id, season_status => {
-				cb({
-					ok: true,
-					prize: prize_value,
-					xp: xp_value,
-					season_status: season_status
-				});
-			});
-		} else {
-			cb({ ok: false });
 		}
+	}
+	setTimeout(() => {
+		store_user(user);
+		store_remembers(remembers_word);
+		store_finished_word(finished_word);
+	}, 1000);
+	check_season_finished(season_id, season_status => {
+		cb({
+			ok: true,
+			prize: prize_value,
+			xp: xp_value,
+			season_status: season_status
+		});
 	});
 }
 
 async function init() {
-	await socket.emit('init', parseInt(localStorage.getItem('rubicka_id')), async res => {
-		connection_status = true;
-		season_list = res.seasons;
-		word_list = res.words;
+	server_init((res) => {
+		season_list = res.season_list;
+		word_list = res.word_list;
 		user = res.user;
+		finished_season.push(...res.finished_season);
+		remembers_word.push(...res.remembers_id);
 		finished_word = res.finished_word;
-		await remembers_word.push(...res.remembers_id);
-		await finished_season.push(...res.finished_season);
+		console.log(res);
 		setTimeout(() => {
 			set_user_id(user._id);
 			GA_init();
 			finish_init = true;
 			loaded_finished();
 		}, 1000);
-
 	});
+
 }
 
 function season_finish(season_id, cb) {
-	socket.emit('season_finish', season_id, res => {
-		cb(res.data);
-	});
+	finished_season.push(season_id);
+	setTimeout(() => {
+		store_finished_season(finished_season);
+	}, 200);
+	cb(season_id);
 }
 
 function season_finish_data(season_id) {
@@ -223,20 +207,19 @@ async function check_season_finished(season_id, cb) {
 
 function loaded_finished() {
 	console.log('finish');
-	socket.emit('loaded');
 }
 
 function leader_board(cb) {
 
-	socket.emit('leaderBoard', (res) => {
-		if (res.ok === true) {
-			// console.log(res)
-			cb(res);
-		} else {
-			console.log(res);
-			cb(false);
-		}
-	});
+	// socket.emit('leaderBoard', (res) => {
+	// 	if (res.ok === true) {
+	// 		// console.log(res)
+	// 		cb(res);
+	// 	} else {
+	// 		console.log(res);
+	// 		cb(false);
+	// 	}
+	// });
 }
 
 function splice_word(season_id, word_id) {
@@ -245,30 +228,28 @@ function splice_word(season_id, word_id) {
 			word_list[season_id].splice(i, 1);
 		}
 	}
-	setTimeout(() => {
-		// console.log(word_list[season_id]);
-	}, 500);
 }
 
 
 function change_user_detail(user_update, cb) {
 
-	socket.emit('userDetail', user_update, res => {
-		if (res.ok === true) {
-			user.name = user_update.name;
-			user.avatar = user_update.av_name;
-			// console.log(res)
-			cb(true);
-		} else {
-			// console.log(res)
-			cb(false);
-		}
-	});
+	// socket.emit('userDetail', user_update, res => {
+	// 	if (res.ok === true) {
+	// 		user.name = user_update.name;
+	// 		user.avatar = user_update.av_name;
+	// 		setTimeout(() => {
+	// 			store_user(user);
+	// 		}, 200);
+	// 		cb(true);
+	// 	} else {
+	// 		cb(false);
+	// 	}
+	// });
 }
 
 
 function user_data_restart() {
-	socket.emit('Restart');
+	restart_data();
 }
 
 export {
