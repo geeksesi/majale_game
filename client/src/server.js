@@ -7,17 +7,17 @@ import {
 	store_finished_season,
 	store_finished_word,
 	store_remembers,
-	restart_data
+	restart_data,
+	leaderboard_set
 } from './server/server';
 
-
+let rubicka_id = localStorage.getItem('rubicka_id');
 let season_list = {};
 let word_list = {};
 let user = {};
 let finished_word = {};
 let remembers_word = [];
 let finished_season = [];
-let connection_status = false;
 let finish_init = false;
 
 function connection_check() {
@@ -124,6 +124,7 @@ function finish_level(word_id, season_id, time, is_hint, status, cb) {
 
 async function init() {
 	server_init((res) => {
+		rubicka_id = localStorage.getItem('rubicka_id');
 		season_list = res.season_list;
 		word_list = res.word_list;
 		user = res.user;
@@ -224,7 +225,12 @@ function loaded_finished() {
 }
 
 function leader_board(cb) {
-
+	leaderboard_set(rubicka_id, user.xp, null, null, res => {
+		if (res.ok === true)
+			cb(res);
+		else
+			cb(false);
+	});
 	// socket.emit('leaderBoard', (res) => {
 	// 	if (res.ok === true) {
 	// 		// console.log(res)
@@ -246,19 +252,20 @@ function splice_word(season_id, word_id) {
 
 
 function change_user_detail(user_update, cb) {
-
-	// socket.emit('userDetail', user_update, res => {
-	// 	if (res.ok === true) {
-	// 		user.name = user_update.name;
-	// 		user.avatar = user_update.av_name;
-	// 		setTimeout(() => {
-	// 			store_user(user);
-	// 		}, 200);
-	// 		cb(true);
-	// 	} else {
-	// 		cb(false);
-	// 	}
-	// });
+	leaderboard_set(rubicka_id, user.xp, user_update.name, user_update.av_name, res => {
+		console.log(res);
+		if (res.ok === true) {
+			user.name = user_update.name;
+			user.avatar = user_update.av_name;
+			setTimeout(() => {
+				store_user(user);
+			}, 200);
+			cb(true);
+		}
+		else {
+			cb(false);
+		}
+	});
 }
 
 
