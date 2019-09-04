@@ -8,24 +8,12 @@ const config = {
 	backgroundColor: 0xefefef,
 	width: 610,
 	height: 1080,
-	scene: [detail, loading, userDetail, mainMenu, season_finish, playGame, shop, leaderboard]
-	// scene: [mainMenu,  playGame]
-	// scene: [test],
-	// scene: [loading],
-	// scene: [languageMenu, seasonMenu, wordMenu, playGame],
-	// scene: [shop],
-	// scene: [leaderboard],
-	// scene: [mainMenu],
+	scene: [detail, loading, userDetail, mainMenu, playGame, shop, leaderboard]
 };
-
-// const game = new Phaser.Game(config);
-
-// console.log(game)
-// my_scale.setGameSize(window.innerWidth, window.innerHeight);
 
 connection_check();
 
-// import test from './testui';
+import test from './testui';
 import detail from './detailScene';
 import loading from './loading';
 import mainMenu from './mainMenu';
@@ -33,16 +21,14 @@ import userDetail from './userDetailScene';
 import leaderboard from './leaderboardScene';
 import shop from './shopScene';
 import playGame from './playGame';
-import season_finish from './season_finish';
 
 
 function resize() {
-	// let canvas = document.querySelector("canvas");
-	let canvas = document.getElementById('myCanvas');
-	let width = window.innerWidth;
-	let height = window.innerHeight;
-	let wratio = width / height;
-	let ratio = config.width / config.height;
+	const canvas = document.getElementById('myCanvas');
+	const width = window.innerWidth;
+	const height = window.innerHeight;
+	const wratio = width / height;
+	const ratio = config.width / config.height;
 	if (wratio < ratio) {
 		canvas.style.width = width + 'px';
 		canvas.style.height = (width / ratio) + 'px';
