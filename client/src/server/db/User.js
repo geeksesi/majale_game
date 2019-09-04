@@ -33,19 +33,16 @@ function user_get() {
 function get_user_level() {
 	return new Promise((resolve, reject) => {
 		if (localStorage.getItem('user_level') === null) {
-			resolve(null);
+			resolve(1);
 		} else {
-			const tmp = JSON.parse(localStorage.getItem('user_level'));
+			const tmp = parseInt(localStorage.getItem('user_level'));
 			resolve(parseInt(tmp));
 		}
 	});
 }
 
 function set_user_level(level) {
-	if (typeof level === typeof 1)
-		localStorage.setItem('user_level', level);
-	else
-		return false;
+	localStorage.setItem('user_level', level);
 }
 
 
