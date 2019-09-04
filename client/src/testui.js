@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 import { top_ui } from './game_tools/global_ui';
-import { season_finish, level_finish } from './game_tools/finish_game_ui';
+import { season_finish, level_finish, test_level_finish } from './game_tools/finish_game_ui';
 import { shop_ui} from './game_tools/shop_ui';
 
 class test extends Phaser.Scene {
@@ -31,9 +31,9 @@ class test extends Phaser.Scene {
 
 	create() {
 		this.distance = this.sys.game.config.width / 610;
-
+		test_level_finish(this, 9);
 		top_ui(this, 'test');
-		shop_ui(this, 'test');
+		// shop_ui(this, 'test');
 	}
 }
 
