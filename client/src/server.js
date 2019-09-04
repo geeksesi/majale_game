@@ -8,12 +8,14 @@ import {
 	store_finished_word,
 	store_remembers,
 	restart_data,
-	leaderboard_set
+	leaderboard_set,
+	get_user_level,
+	set_user_level,
 } from './server/server';
 
 let rubicka_id = localStorage.getItem('rubicka_id');
 let season_list = {};
-let word_list = {};
+let word_list = [];
 let user = {};
 let finished_word = {};
 let remembers_word = [];
@@ -125,8 +127,7 @@ function finish_level(word_id, season_id, time, is_hint, status, cb) {
 async function init() {
 	server_init((res) => {
 		rubicka_id = localStorage.getItem('rubicka_id');
-		season_list = res.season_list;
-		word_list = res.word_list;
+		word_list.push(...res.word_list);
 		user = res.user;
 		finished_season.push(...res.finished_season);
 		remembers_word.push(...res.remembers_id);
@@ -187,36 +188,6 @@ async function check_season_finished(season_id, cb) {
 			cb(false);
 		}, 500);
 	}
-
-	// let wait_for_it;
-	// if (finished_season.indexOf(season_id) !== -1) {
-	// 	cb(false);
-	// 	return false;
-	// }
-	// let season_data = await season_finish_data(season_id);
-	// let ok = [];
-	// for (let i = 0; i < season_data.length; i++) {
-	// 	const element = season_data[i];
-	// 	if (element.status === null || typeof element.status === 'undefined' || element.status === 0) {
-	// 		if (typeof wait_for_it !== 'undefined') {
-	// 			clearInterval(wait_for_it);
-	// 		}
-	// 		cb(false);
-	// 		return false;
-	// 	} else {
-	// 		ok.push(true);
-	// 	}
-	// }
-
-	// wait_for_it = setInterval(() => {
-	// 	if (ok.length === season_data.length) {
-	// 		clearInterval(wait_for_it);
-	// 		finished_season.push(season_id);
-	// 		season_finish(season_id, _res => {
-	// 			cb(true);
-	// 		});
-	// 	}
-	// }, 500);
 }
 
 
@@ -231,15 +202,6 @@ function leader_board(cb) {
 		else
 			cb(false);
 	});
-	// socket.emit('leaderBoard', (res) => {
-	// 	if (res.ok === true) {
-	// 		// console.log(res)
-	// 		cb(res);
-	// 	} else {
-	// 		console.log(res);
-	// 		cb(false);
-	// 	}
-	// });
 }
 
 function splice_word(season_id, word_id) {
@@ -291,4 +253,6 @@ export {
 	connection_check,
 	user_data_restart,
 	get_finished_word,
+	get_user_level,
+	set_user_level,
 };
