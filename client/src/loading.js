@@ -1,4 +1,4 @@
-import { loading_finished } from './server';
+import { loading_finished, get_user_level } from './server';
 import { loading_start, loading_stop } from './game_tools/loading_ui';
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
@@ -91,15 +91,13 @@ class seasonMenu extends Phaser.Scene {
 		loading_start(this);
 	}
 
-	hide_progress() {
+	async hide_progress() {
 		loading_stop(this);
-		//No Arabic
-		// if (first_time === 1) {
-		// this.scene.start('languageMenu');
-		// } else {
-		this.scene.start('mainMenu');
-		// }
-
+		const user_level = await get_user_level();
+		if (user_level === null)
+			this.scene.start('mainMenu', { level: 1 });
+		else
+			this.scene.start('mainMenu', { level: user_level });
 	}
 
 }
