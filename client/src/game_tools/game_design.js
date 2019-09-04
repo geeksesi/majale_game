@@ -105,8 +105,8 @@ function user_level(cb) {
 }
 
 
-function make_test(level, word_list, language_id, cb) {
-	let new_words = [];
+function make_test(level, word_list, language_id, cb, old = []) {
+	let new_words = [...old];
 	let check_finish = false;
 	word_list.every(async word => {
 		if (new_words.length > 9) {
@@ -137,7 +137,7 @@ function make_test(level, word_list, language_id, cb) {
 			if (new_words.length < 10)
 				make_test(level, word_list, language_id, res => {
 					cb(res);
-				});
+				}, new_words);
 			else
 				setTimeout(() => {
 					cb(new_words);

@@ -10,6 +10,7 @@ function restart_data() {
 	store_finished_season([]);
 	store_finished_word({});
 	restart_remembers();
+	set_user_level(1);
 }
 
 export {
