@@ -10,8 +10,7 @@ import {
 
 async function server_init(cb) {
 	const update_time = parseInt(localStorage.getItem('update_time')) || 0;
-	console.log(update_time);
-	fetch(`https://majaleleaderboard.liara.run/time/${update_time}`)
+	fetch(`https://majaleleaderboard.liara.run/time/${update_time - 43200}`)
 	// fetch(`http://127.0.0.1:5000/time/${update_time}`)
 		.then(async res => {
 			const data = await res.json();

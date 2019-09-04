@@ -132,7 +132,6 @@ async function init() {
 		finished_season.push(...res.finished_season);
 		remembers_word.push(...res.remembers_id);
 		finished_word = res.finished_word;
-		console.log(res);
 		setTimeout(() => {
 			set_user_id(user.rubicka_id);
 			GA_init();
