@@ -2,10 +2,10 @@
 /* eslint-disable no-undef */
 import { use_hint, finish_level, play_game_data } from './server';
 import { GA_start_level, GA_finish_level, GA_use_hint, GA_finish_season } from './GA';
-import { make_road, user_level } from './game_tools/game_design';
+import { make_road, user_level, lvlup_user } from './game_tools/game_design';
 import { make_table, make_event } from './game_tools/mechanism';
 import { top_ui, credit_change, exp_change, finish_change } from './game_tools/global_ui';
-import { season_finish, level_finish } from './game_tools/finish_game_ui';
+import { season_finish, level_finish, test_level_finish } from './game_tools/finish_game_ui';
 import { shop_ui } from './game_tools/shop_ui';
 
 class playGame extends Phaser.Scene {
@@ -15,6 +15,12 @@ class playGame extends Phaser.Scene {
 	}
 
 	init(data) {
+		this.user_level = data.user_level;
+		if (typeof data.test !== 'undefined' && data.test === true) {
+			this.test = true;
+		} else {
+			this.test = false;
+		}
 		if (typeof data.word_data[data.word_id] === 'undefined') {
 			console.log('i have no lvl for you');
 			this.scene.start('mainMenu');
@@ -71,7 +77,10 @@ class playGame extends Phaser.Scene {
 
 		this.make_event();
 
-		this.input.on('pointerup', this.pointer_up, this);
+		this.input.on('pointerup', () => {
+			this.pointer_is_down = false;
+			this.pointer_up();
+		}, this);
 
 	}
 
@@ -103,7 +112,7 @@ class playGame extends Phaser.Scene {
 		if (this.coin_value >= hint_cost && await use_hint(this.word_data[(this.word_id)].id)) {
 			GA_use_hint(this.word_data[(this.word_id)].id);
 			this.coin_value -= hint_cost;
-			credit_change(this.hint_timeout,this.hint_interval, this.coin_text, -hint_cost);
+			credit_change(this.hint_timeout, this.hint_interval, this.coin_text, -hint_cost);
 			await this.hint_key_arr.push(this.table_data.keys[this.hint_arr.length]);
 			await this.hint_arr.push(this.table_data.array[this.table_data.keys[this.hint_arr.length]]);
 			this.pointer_up();
@@ -136,6 +145,9 @@ class playGame extends Phaser.Scene {
 	}
 
 	pointer_up() {
+		if (this.pointer_is_down) {
+			return;
+		}
 		if (!this.is_win) {
 			this.again = true;
 			this.hint_key_arr.forEach(each => {
@@ -186,6 +198,7 @@ class playGame extends Phaser.Scene {
 	}
 
 	table_content_action(i) {
+		this.pointer_is_down = true;
 		if (this.again) {
 			this.again = false;
 			this.clear_all();
@@ -200,9 +213,9 @@ class playGame extends Phaser.Scene {
 			if (this.answer_key_arr.length !== 0) {
 				if (
 					(this.answer_key_arr[this.answer_key_arr.length - 1] + 1) !== i &&
-                    (this.answer_key_arr[this.answer_key_arr.length - 1] - 1) !== i &&
-                    (this.answer_key_arr[this.answer_key_arr.length - 1] + this.max_y) !== i &&
-                    (this.answer_key_arr[this.answer_key_arr.length - 1] - this.max_y) !== i
+					(this.answer_key_arr[this.answer_key_arr.length - 1] - 1) !== i &&
+					(this.answer_key_arr[this.answer_key_arr.length - 1] + this.max_y) !== i &&
+					(this.answer_key_arr[this.answer_key_arr.length - 1] - this.max_y) !== i
 				) {
 					return false;
 				}
@@ -236,36 +249,43 @@ class playGame extends Phaser.Scene {
 		if (this.hint_arr.length > 0) {
 			is_hint = true;
 		}
-		finish_level(
-			this.word_data[this.word_id].id,
-			this.season_id,
-			(this.finish_time - this.start_time),
-			is_hint,
-			this.word_data[this.word_id].status,
-			res => {
-				if (!res.ok) {
-					this.error_ui();
-					return false;
-				}
-				GA_finish_level(this.season_id, this.word_data[this.word_id].id, res.xp);
-				user_level(res => {
-					localStorage.setItem('current_season_id', res.season_id);
-					localStorage.setItem('current_completed', res.completed);
-					localStorage.setItem('current_length', res.length);
+
+		if (this.test)
+			setTimeout(() => {
+				test_level_finish(this, this.word_id + 1);
+			}, 500);
+		else
+
+			finish_level(
+				this.word_data[this.word_id].id,
+				this.season_id,
+				(this.finish_time - this.start_time),
+				is_hint,
+				this.word_data[this.word_id].status,
+				res => {
+					if (!res.ok) {
+						this.error_ui();
+						return false;
+					}
+					GA_finish_level(this.season_id, this.word_data[this.word_id].id, res.xp);
+					user_level(res => {
+						localStorage.setItem('current_season_id', res.season_id);
+						localStorage.setItem('current_completed', res.completed);
+						localStorage.setItem('current_length', res.length);
+					});
+					this.finish_coin = parseInt(this.coin_text.text) + res.prize;
+					this.finish_xp = parseInt(this.exp_text.text) + res.xp;
+					if (res.season_status) {
+						GA_finish_season(this.season_id);
+						season_finish(this, (this.season_id / 30) * 100);
+						credit_change(this.cr_timeout, this.cr_interval, this.coin_text, res.prize);
+						exp_change(this.xp_timeout, this.xp_interval, this.exp_text, res.xp);
+					} else {
+						level_finish(this, res.xp);
+						credit_change(this.cr_timeout, this.cr_interval, this.coin_text, res.prize);
+						exp_change(this.xp_timeout, this.xp_interval, this.exp_text, res.xp);
+					}
 				});
-				this.finish_coin = parseInt(this.coin_text.text) + res.prize;
-				this.finish_xp = parseInt(this.exp_text.text) + res.xp;
-				if (res.season_status) {
-					GA_finish_season(this.season_id);
-					season_finish(this, (this.season_id / 30) * 100);
-					credit_change(this.cr_timeout, this.cr_interval, this.coin_text, res.prize);
-					exp_change(this.xp_timeout, this.xp_interval, this.exp_text, res.xp);
-				} else {
-					level_finish(this, res.xp);
-					credit_change(this.cr_timeout, this.cr_interval, this.coin_text, res.prize);
-					exp_change(this.xp_timeout, this.xp_interval, this.exp_text, res.xp);
-				}
-			});
 		// console.log(finish_detail);
 
 		// this.win_ui();
@@ -279,37 +299,58 @@ class playGame extends Phaser.Scene {
 		console.log('stop loading');
 	}
 
-	async next_level() {
-		this.is_win = false;
-
-		if (typeof this.word_data[(this.word_id + 1)] === 'undefined') {
-			this.show_loading();
-			let data = await play_game_data();
-			await make_road(data.word_list, data.finished_word, data.remembers_word, this.language_id, res => {
-				if (res.length < 1) {
-					console.log('i have no lvl');
-					// setTimeout(() => {
-					this.scene.start('mainMenu');
-					// }, 500);
-				}
-				this.stop_loading();
-				// setTimeout(() => {
-				this.scene.start('playGame', {
-					word_id: 0,
-					language_id: this.language_id,
-					word_data: res
-				});
-				// }, 500);
-			});
-
-		} else {
-			// setTimeout(() => {
+	test_next_level() {
+		if ((this.word_id + 1) === 10) {
+			lvlup_user();
+			this.scene.start('mainMenu');
+		}
+		else {
 			this.scene.start('playGame', {
+				user_level : this.user_level,
 				word_id: this.word_id + 1,
 				language_id: this.language_id,
-				word_data: this.word_data
+				word_data: this.word_data,
+				test: true
 			});
-			// }, 500);
+		}
+	}
+
+	async next_level() {
+		this.is_win = false;
+		if (this.test) {
+			this.test_next_level();
+		}
+		else {
+			if (typeof this.word_data[(this.word_id + 1)] === 'undefined') {
+				this.show_loading();
+				let data = await play_game_data();
+				await make_road(this.user_level, data.word_list, data.finished_word, data.remembers_word, this.language_id, res => {
+					if (res.length < 1) {
+						console.log('i have no lvl');
+						lvlup_user();
+						// setTimeout(() => {
+						this.scene.start('mainMenu');
+						// }, 500);
+					}
+					this.stop_loading();
+					// setTimeout(() => {
+					this.scene.start('playGame', {
+						user_level : this.user_level,
+						word_id: 0,
+						language_id: this.language_id,
+						word_data: res
+					});
+					// }, 500);
+				});
+
+			} else {
+				this.scene.start('playGame', {
+					user_level : this.user_level,
+					word_id: this.word_id + 1,
+					language_id: this.language_id,
+					word_data: this.word_data
+				});
+			}
 		}
 
 	}
@@ -436,12 +477,14 @@ class playGame extends Phaser.Scene {
 			this.till_bg_intract[key].y + 3 * this.distance,
 			this.till_bg_intract[key].width - 6 * this.distance,
 			this.till_bg_intract[key].height - 2 - 6 * this.distance,
-			15).lineStyle(7 * this.distance, 0x0984e3, 1).strokeRoundedRect(
-			this.till_bg_intract[key].x + 1,
-			this.till_bg_intract[key].y + 1,
-			this.till_bg_intract[key].width - 2,
-			this.till_bg_intract[key].height - 4,
-			15);
+			15).lineStyle(7 * this.distance, 0x0984e3, 1)
+			.strokeRoundedRect(
+				this.till_bg_intract[key].x + 1,
+				this.till_bg_intract[key].y + 1,
+				this.till_bg_intract[key].width - 2,
+				this.till_bg_intract[key].height - 4,
+				15
+			);
 	}
 
 	make_clear(key) {
@@ -461,12 +504,14 @@ class playGame extends Phaser.Scene {
 			this.till_bg_intract[key].y + 3 * this.distance,
 			this.till_bg_intract[key].width - 6 * this.distance,
 			this.till_bg_intract[key].height - 2 - 6 * this.distance,
-			15).lineStyle(7 * this.distance, 0xd63031, 1).strokeRoundedRect(
-			this.till_bg_intract[key].x + 1,
-			this.till_bg_intract[key].y + 1,
-			this.till_bg_intract[key].width - 2,
-			this.till_bg_intract[key].height - 4,
-			15);
+			15).lineStyle(7 * this.distance, 0xd63031, 1)
+			.strokeRoundedRect(
+				this.till_bg_intract[key].x + 1,
+				this.till_bg_intract[key].y + 1,
+				this.till_bg_intract[key].width - 2,
+				this.till_bg_intract[key].height - 4,
+				15
+			);
 	}
 
 	hint_ui() {
