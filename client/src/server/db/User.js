@@ -30,11 +30,29 @@ function user_get() {
 	});
 }
 
+function get_user_level() {
+	return new Promise((resolve, reject) => {
+		if (localStorage.getItem('user_level') === null) {
+			resolve(null);
+		} else {
+			const tmp = JSON.parse(localStorage.getItem('user_level'));
+			resolve(parseInt(tmp));
+		}
+	});
+}
 
+function set_user_level(level) {
+	if (typeof level === typeof 1)
+		localStorage.setItem('user_level', level);
+	else
+		return false;
+}
 
 
 export {
 	user_set,
 	user_get,
-	store_user
+	store_user,
+	get_user_level,
+	set_user_level,
 };
