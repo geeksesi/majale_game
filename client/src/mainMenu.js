@@ -1,23 +1,18 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
-import { make_road, user_level } from './game_tools/game_design';
+import { make_road, user_level, make_test } from './game_tools/game_design';
 import { top_ui } from './game_tools/global_ui';
-import { play_game_data, user_data } from './server';
+import { play_game_data, user_data, get_user_level } from './server';
 class mainMenu extends Phaser.Scene {
 	constructor() {
 		super({ key: 'mainMenu' });
 
 	}
 
-
-	init(data) {
-		this.user_level = data.level;
-	}
-
-
 	async preload() { }
 
 	async create() {
+		this.user_level = await get_user_level();
 		this.data = await play_game_data();
 		this.user_path_season_id = parseInt(localStorage.getItem('current_season_id'));
 		this.user_path_completed = parseInt(localStorage.getItem('current_completed'));
@@ -31,7 +26,7 @@ class mainMenu extends Phaser.Scene {
 			this.play_ui_enabled(280, 500, 250, 'f39c12');
 			this.play_ui_disable(680, 500, 150, 'e74c3c');
 		}
-		else if(this.user_level === 3){
+		else if (this.user_level === 3) {
 			this.red_play_ui(450, 500, 250);
 		}
 		// await this.play_ui();
@@ -64,14 +59,27 @@ class mainMenu extends Phaser.Scene {
 
 	}
 
-	async play_game() {
+	play_game() {
 		this.play_game_check = true;
-		await make_road(this.data.word_list, this.data.finished_word, this.data.remembers_word, this.language_id, res => {
+		make_road(this.user_level, this.data.word_list, this.data.finished_word, this.data.remembers_word, this.language_id, res => {
 			this.play_game_check = false;
 			this.scene.start('playGame', {
 				word_id: 0,
 				language_id: this.language_id,
 				word_data: res
+			});
+		});
+	}
+
+	do_test() {
+		this.play_game_check = true;
+		make_test(this.user_level, this.data.word_list, this.language_id, res => {
+			this.play_game_check = false;
+			this.scene.start('playGame', {
+				word_id: 0,
+				language_id: this.language_id,
+				word_data: res,
+				test: true,
 			});
 		});
 	}
@@ -199,11 +207,7 @@ class mainMenu extends Phaser.Scene {
 		this.play_game_check = false;
 		play_buttom.on('pointerdown', () => {
 			if (!this.play_game_check) {
-				if (this.user_level === 1) {
-					console.log('Test1');
-				} else {
-					console.log('Test1');
-				}
+				this.do_test();
 			}
 		});
 		const exp_text = this.add.text(
@@ -223,7 +227,7 @@ class mainMenu extends Phaser.Scene {
 		this.add.text(
 			100 * this.distance,
 			(y - 110) * this.distance,
-			(this.user_level === 1) ? 'سـطـح 1 مـبـتـدی' : (this.user_level === 2) ?'سـطـح  مـتـوسـط' : 'سـطـح  حـرفـه‌ای'
+			(this.user_level === 1) ? 'سـطـح 1 مـبـتـدی' : (this.user_level === 2) ? 'سـطـح  مـتـوسـط' : 'سـطـح  حـرفـه‌ای'
 		)
 			.setColor(`#${color}`)
 			.setFontFamily('Lalezar')
