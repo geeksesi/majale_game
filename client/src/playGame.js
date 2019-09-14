@@ -66,6 +66,23 @@ class playGame extends Phaser.Scene {
 	}
 
 	async create() {
+		this.audios_1 = [];
+		this.audios_2 = [];
+		this.audios_3 = [];
+		for (let index = 1; index < 11; index++) {
+			const tmp = this.sound.add(`a_${index}`);
+			this.audios_1.push(tmp);
+		}
+		for (let index = 1; index < 13; index++) {
+			const tmp = this.sound.add(`b_${index}`);
+			this.audios_2.push(tmp);
+		}
+		for (let index = 1; index < 27; index++) {
+			const tmp = this.sound.add(`c_${index}`);
+			this.audios_3.push(tmp);
+		}
+
+
 		GA_start_level(this.season_id, this.word_data[this.word_id].id);
 		await this.variables();
 		this.till_graphic = this.add.graphics({ fillStyle: { color: 0x9e9e9e } });
@@ -205,7 +222,6 @@ class playGame extends Phaser.Scene {
 			clearTimeout(this.clear_timeout);
 		}
 		if (!this.is_win) {
-
 			if (this.answer_key_arr.includes(i)) {
 				this.check_pointer_way(i);
 				return false;
@@ -221,6 +237,12 @@ class playGame extends Phaser.Scene {
 				}
 			}
 			// this.till_graphic.fillRectShape(this.till_bg_intract[i]);
+			const tartib = [
+				[2201]
+			];
+			const rand = ~~(Math.random() * 26);
+			console.log(rand);
+			this.audios_3[rand].play();
 			this.make_blue(i);
 			this.answer_arr.push(this.words[i]);
 			this.answer_key_arr.push(i);
@@ -306,7 +328,7 @@ class playGame extends Phaser.Scene {
 		}
 		else {
 			this.scene.start('playGame', {
-				user_level : this.user_level,
+				user_level: this.user_level,
 				word_id: this.word_id + 1,
 				language_id: this.language_id,
 				word_data: this.word_data,
@@ -335,7 +357,7 @@ class playGame extends Phaser.Scene {
 					this.stop_loading();
 					// setTimeout(() => {
 					this.scene.start('playGame', {
-						user_level : this.user_level,
+						user_level: this.user_level,
 						word_id: 0,
 						language_id: this.language_id,
 						word_data: res
@@ -345,7 +367,7 @@ class playGame extends Phaser.Scene {
 
 			} else {
 				this.scene.start('playGame', {
-					user_level : this.user_level,
+					user_level: this.user_level,
 					word_id: this.word_id + 1,
 					language_id: this.language_id,
 					word_data: this.word_data
@@ -375,11 +397,12 @@ class playGame extends Phaser.Scene {
 			130 * this.distance,
 			this.till.width,
 			100 * this.distance, {
-				tl: 30,
-				tr: 30,
-				bl: 0,
-				br: 0
-			});
+			tl: 30,
+			tr: 30,
+			bl: 0,
+			br: 0
+		}
+		);
 
 		this.question_text = this.add.text(
 			270 * this.distance - ((this.question.length < 8) ? this.question.length * 2 : this.question.length * 4),
@@ -522,11 +545,11 @@ class playGame extends Phaser.Scene {
 			this.till.offset_y + this.till.width + 3 * this.distance,
 			this.till.width,
 			(this.sys.game.config.height / 10), {
-				tl: 0,
-				tr: 0,
-				bl: 30,
-				br: 30
-			});
+			tl: 0,
+			tr: 0,
+			bl: 30,
+			br: 30
+		});
 
 		this.hint_text = this.add.text(
 			this.till.offset_x + (this.till.width / 2) - 65 * this.distance,

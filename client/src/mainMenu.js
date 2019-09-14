@@ -12,6 +12,10 @@ class mainMenu extends Phaser.Scene {
 	async preload() { }
 
 	async create() {
+
+		this.bg_audio = this.sound.add('a_bg');
+		this.bg_audio.play();
+		this.bg_audio.setVolume(0.5);
 		this.user_level = await get_user_level();
 		this.data = await play_game_data();
 		this.user_path_season_id = parseInt(localStorage.getItem('current_season_id'));
@@ -62,6 +66,7 @@ class mainMenu extends Phaser.Scene {
 	play_game() {
 		this.play_game_check = true;
 		make_road(this.user_level, this.data.word_list, this.data.finished_word, this.data.remembers_word, this.language_id, res => {
+			this.bg_audio.pause();
 			this.play_game_check = false;
 			this.scene.start('playGame', {
 				word_id: 0,
