@@ -2,7 +2,7 @@ const gameanalytics = require('gameanalytics');
 function GA_init() {
 	gameanalytics.GameAnalytics.setEnabledInfoLog(false);
 	gameanalytics.GameAnalytics.setEnabledVerboseLog(false);
-	gameanalytics.GameAnalytics.configureBuild('majale 0.8.0');
+	gameanalytics.GameAnalytics.configureBuild('majale 0.10.0');
 	gameanalytics.GameAnalytics.configureAvailableResourceCurrencies(['coin']);
 	gameanalytics.GameAnalytics.configureAvailableResourceItemTypes(['finish_level', 'hint']);
 	gameanalytics.GameAnalytics.initialize('a39c65b50ab7df6c088886f790e89fb9', '8527d736b4ff47fb7370fa4adcf6aae5b846d7ee');

@@ -8,12 +8,14 @@ import {
 	store_finished_word,
 	store_remembers,
 	restart_data,
-	leaderboard_set
+	leaderboard_set,
+	get_user_level,
+	set_user_level,
 } from './server/server';
 
 let rubicka_id = localStorage.getItem('rubicka_id');
 let season_list = {};
-let word_list = {};
+let word_list = [];
 let user = {};
 let finished_word = {};
 let remembers_word = [];
@@ -47,9 +49,9 @@ function user_data() {
 	});
 }
 
-function get_word(season_id) {
+function get_word(cach) {
 	return new Promise((res, _rej) => {
-		res(word_list[season_id]);
+		res(word_list);
 	});
 }
 
@@ -125,13 +127,11 @@ function finish_level(word_id, season_id, time, is_hint, status, cb) {
 async function init() {
 	server_init((res) => {
 		rubicka_id = localStorage.getItem('rubicka_id');
-		season_list = res.season_list;
-		word_list = res.word_list;
+		word_list.push(...res.word_list);
 		user = res.user;
 		finished_season.push(...res.finished_season);
 		remembers_word.push(...res.remembers_id);
 		finished_word = res.finished_word;
-		console.log(res);
 		setTimeout(() => {
 			set_user_id(user.rubicka_id);
 			GA_init();
@@ -149,32 +149,6 @@ function season_finish(season_id) {
 	}, 200);
 }
 
-function season_finish_data(season_id) {
-	return new Promise(async (res, _rej) => {
-		let this_words = await word_list[season_id];
-		let usefull_array = [];
-		if (typeof this_words === 'undefined') {
-			this_words = await word_list[season_id];
-		}
-		if (typeof this_words !== 'undefined') {
-			this_words.forEach(async element => {
-				let tmp_obj = await {
-					id: element.id,
-					question: element.word,
-					status: finished_word[element.id]
-				};
-				await usefull_array.push(tmp_obj);
-			});
-		}
-		let wait = setInterval(() => {
-			if (usefull_array.length === this_words.length) {
-				clearInterval(wait);
-				res(usefull_array);
-			}
-		}, 500);
-	});
-
-}
 
 async function check_season_finished(season_id, cb) {
 	if (Object.keys(finished_word).length % 8 === 0) {
@@ -187,36 +161,6 @@ async function check_season_finished(season_id, cb) {
 			cb(false);
 		}, 500);
 	}
-
-	// let wait_for_it;
-	// if (finished_season.indexOf(season_id) !== -1) {
-	// 	cb(false);
-	// 	return false;
-	// }
-	// let season_data = await season_finish_data(season_id);
-	// let ok = [];
-	// for (let i = 0; i < season_data.length; i++) {
-	// 	const element = season_data[i];
-	// 	if (element.status === null || typeof element.status === 'undefined' || element.status === 0) {
-	// 		if (typeof wait_for_it !== 'undefined') {
-	// 			clearInterval(wait_for_it);
-	// 		}
-	// 		cb(false);
-	// 		return false;
-	// 	} else {
-	// 		ok.push(true);
-	// 	}
-	// }
-
-	// wait_for_it = setInterval(() => {
-	// 	if (ok.length === season_data.length) {
-	// 		clearInterval(wait_for_it);
-	// 		finished_season.push(season_id);
-	// 		season_finish(season_id, _res => {
-	// 			cb(true);
-	// 		});
-	// 	}
-	// }, 500);
 }
 
 
@@ -231,21 +175,12 @@ function leader_board(cb) {
 		else
 			cb(false);
 	});
-	// socket.emit('leaderBoard', (res) => {
-	// 	if (res.ok === true) {
-	// 		// console.log(res)
-	// 		cb(res);
-	// 	} else {
-	// 		console.log(res);
-	// 		cb(false);
-	// 	}
-	// });
 }
 
 function splice_word(season_id, word_id) {
-	for (var i = 0; i < word_list[season_id].length; i++) {
-		if (word_list[season_id][i].id === word_id) {
-			word_list[season_id].splice(i, 1);
+	for (var i = 0; i < word_list.length; i++) {
+		if (word_list[i].id === word_id) {
+			word_list.splice(i, 1);
 		}
 	}
 }
@@ -282,7 +217,6 @@ export {
 	finish_level,
 	play_game_data,
 	season_finish,
-	season_finish_data,
 	check_season_finished,
 	leader_board,
 	get_finished_season,
@@ -291,4 +225,8 @@ export {
 	connection_check,
 	user_data_restart,
 	get_finished_word,
+	get_user_level,
+	set_user_level,
+	store_finished_season,
+	store_finished_word
 };

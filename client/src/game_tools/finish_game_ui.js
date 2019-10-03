@@ -240,7 +240,94 @@ function level_finish(my_this, value) {
 }
 
 
+function test_level_finish(my_this, count) {
+	const make_bg_darked = my_this.add.graphics()
+		.fillStyle(0x222222, 0.3)
+		.fillRect(
+			-10,
+			-10,
+			630 * my_this.distance,
+			1100 * my_this.distance
+		);
+
+	const level_finish_bg = my_this.add.graphics()
+		.fillStyle(0xffffff)
+		.fillRoundedRect(
+			80 * my_this.distance,
+			330 * my_this.distance,
+			460 * my_this.distance,
+			350 * my_this.distance,
+			50 * my_this.distance,
+		)
+		.lineStyle(
+			2 * my_this.distance,
+			0x6ab615
+		)
+		.strokeRoundedRect(
+			80 * my_this.distance,
+			330 * my_this.distance,
+			460 * my_this.distance,
+			350 * my_this.distance,
+			50 * my_this.distance,
+		);
+
+	const level_finish_good_text = my_this.add.text(
+		230 * my_this.distance,
+		370 * my_this.distance,
+		'آفــریــن'
+	)
+		.setFontFamily('Lalezar')
+		.setFontSize(55 * my_this.distance)
+		.setColor('#FFC312')
+		.setPadding(0, 5, 0, 5);
+
+
+	const count_ui = my_this.add.text(
+		220 * my_this.distance,
+		500 * my_this.distance,
+		`${count} / 10`
+	)
+		.setFontFamily('Lalezar')
+		.setFontSize(75 * my_this.distance)
+		.setColor('#FFC312')
+		.setPadding(0, 5, 0, 5);
+
+
+	const level_finish_nex_btn = my_this.add.graphics()
+		.fillStyle(0x6ab615)
+		.fillRoundedRect(
+			160 * my_this.distance,
+			645 * my_this.distance,
+			290 * my_this.distance,
+			70 * my_this.distance,
+			30 * my_this.distance
+		).setInteractive(
+			new Phaser.Geom.Rectangle(
+				160 * my_this.distance,
+				645 * my_this.distance,
+				290 * my_this.distance,
+				70 * my_this.distance,
+			),
+			Phaser.Geom.Rectangle.Contains
+		).on('pointerdown', () => {
+			setTimeout(() => {
+				my_this.next_level();
+			}, 1000);
+		});
+
+	my_this.level_finish_nex_btn = my_this.add.text(
+		225 * my_this.distance,
+		640 * my_this.distance,
+		(count < 10) ? 'بـــعـــدی' : 'خــــانــــه'
+	)
+		.setFontFamily('Lalezar')
+		.setFontSize(55 * my_this.distance)
+		.setColor('#fff')
+		.setPadding(0, 5, 0, 5);
+}
+
 export {
 	season_finish,
-	level_finish
+	level_finish,
+	test_level_finish
 };

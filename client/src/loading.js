@@ -1,4 +1,4 @@
-import { loading_finished } from './server';
+import { loading_finished, get_user_level } from './server';
 import { loading_start, loading_stop } from './game_tools/loading_ui';
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
@@ -11,22 +11,35 @@ class seasonMenu extends Phaser.Scene {
 	}
 
 	async preload() {
-		this.load.image('english_flag', 'assets/Eng_flag.png');
-		this.load.image('exp_icon', 'assets/xp.png');
-		this.load.image('coin_icon', 'assets/coin.png');
-		this.load.image('back', 'assets/back.png');
-		this.load.image('avatar1', 'assets/av1.png');
-		this.load.image('avatar2', 'assets/av2.png');
-		this.load.image('avatar3', 'assets/av3.png');
-		this.load.image('avatar4', 'assets/av4.png');
-		this.load.image('avatar5', 'assets/av5.png');
-		this.load.image('avatar6', 'assets/av6.png');
-		this.load.image('avatar7', 'assets/av7.png');
-		this.load.image('avatar8', 'assets/av8.png');
-		this.load.image('avatar9', 'assets/av9.png');
-		this.load.image('avatar10', 'assets/av10.png');
-		this.load.image('best_flag', 'assets/ranking.png');
-		this.load.image('shop_flag', 'assets/shop.png');
+		this.load.setPath('assets');
+		this.load.image('english_flag', 'Eng_flag.png');
+		this.load.image('exp_icon', 'xp.png');
+		this.load.image('coin_icon', 'coin.png');
+		this.load.image('back', 'back.png');
+		this.load.image('avatar1', 'av1.png');
+		this.load.image('avatar2', 'av2.png');
+		this.load.image('avatar3', 'av3.png');
+		this.load.image('avatar4', 'av4.png');
+		this.load.image('avatar5', 'av5.png');
+		this.load.image('avatar6', 'av6.png');
+		this.load.image('avatar7', 'av7.png');
+		this.load.image('avatar8', 'av8.png');
+		this.load.image('avatar9', 'av9.png');
+		this.load.image('avatar10', 'av10.png');
+		this.load.image('best_flag', 'ranking.png');
+		this.load.image('shop_flag', 'shop.png');
+
+		this.load.audio('a_bg', 'bg_music.mp3');
+		for (let index = 1; index < 11; index++) {
+			this.load.audio(`a_${index}`, `musics/one/${index}.wav`);
+		}
+		for (let index = 1; index < 13; index++) {
+			this.load.audio(`b_${index}`, `musics/two/${index}.wav`);
+		}
+		for (let index = 1; index < 27; index++) {
+			this.load.audio(`c_${index}`, `musics/three/${index}.wav`);
+		}
+
 
 		this.show_progress();
 		console.log('loading');
@@ -91,15 +104,13 @@ class seasonMenu extends Phaser.Scene {
 		loading_start(this);
 	}
 
-	hide_progress() {
+	async hide_progress() {
 		loading_stop(this);
-		//No Arabic
-		// if (first_time === 1) {
-		// this.scene.start('languageMenu');
-		// } else {
-		this.scene.start('mainMenu');
-		// }
-
+		const user_level = await get_user_level();
+		if (user_level === null)
+			this.scene.start('mainMenu', { level: 1 });
+		else
+			this.scene.start('mainMenu', { level: user_level });
 	}
 
 }

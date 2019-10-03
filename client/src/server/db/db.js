@@ -1,4 +1,4 @@
-import { store_user, user_set, user_get } from './User';
+import { store_user, user_set, user_get, get_user_level, set_user_level } from './User';
 import { finished_season_get, store_finished_season } from './FinishedSeason';
 import { finished_word_get, store_finished_word } from './FinishedWord';
 import { remembers_get, store_remembers, restart_remembers } from './Remembers';
@@ -10,6 +10,7 @@ function restart_data() {
 	store_finished_season([]);
 	store_finished_word({});
 	restart_remembers();
+	set_user_level(1);
 }
 
 export {
@@ -18,5 +19,6 @@ export {
 	finished_word_get, store_finished_word,
 	remembers_get, store_remembers,
 	restart_data,
-	leaderboard_set
+	leaderboard_set,
+	get_user_level, set_user_level
 };

@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
-import { make_road, user_level } from './game_tools/game_design';
+import { make_road, user_level, make_test } from './game_tools/game_design';
 import { top_ui } from './game_tools/global_ui';
-import { play_game_data, user_data } from './server';
+import { play_game_data, user_data, get_user_level } from './server';
 class mainMenu extends Phaser.Scene {
 	constructor() {
 		super({ key: 'mainMenu' });
@@ -12,21 +12,36 @@ class mainMenu extends Phaser.Scene {
 	async preload() { }
 
 	async create() {
-		await top_ui(this, 'main');
-		await this.play_ui();
-		await this.down_ui();
+
+		this.bg_audio = this.sound.add('a_bg');
+		this.bg_audio.play();
+		this.bg_audio.setVolume(0.5);
+		this.user_level = await get_user_level();
 		this.data = await play_game_data();
-		const season_id = parseInt(localStorage.getItem('current_season_id'));
-		const completed = parseInt(localStorage.getItem('current_completed'));
-		const length = parseInt(localStorage.getItem('current_length'));
-		this.user_level_ui(season_id, completed, length);
+		this.user_path_season_id = parseInt(localStorage.getItem('current_season_id'));
+		this.user_path_completed = parseInt(localStorage.getItem('current_completed'));
+		this.user_path_length = parseInt(localStorage.getItem('current_length'));
+		await top_ui(this, 'main');
+		if (this.user_level === 1) {
+			this.play_ui_enabled(280, 500, 250, '6ab615');
+			this.play_ui_disable(680, 500, 150, 'f39c12');
+		}
+		else if (this.user_level === 2) {
+			this.play_ui_enabled(280, 500, 250, 'f39c12');
+			this.play_ui_disable(680, 500, 150, 'e74c3c');
+		}
+		else if (this.user_level === 3) {
+			this.red_play_ui(450, 500, 250);
+		}
+		// await this.play_ui();
+		await this.down_ui();
 	}
 
-	user_level_ui(season_id, completed, length) {
+	user_level_ui(season_id, completed, length, y) {
 
 		this.season_detail_text = this.add.text(
 			320 * this.distance,
-			480 * this.distance,
+			y * this.distance,
 			`فـصـل :   ${season_id}`
 		)
 			.setColor('#fff')
@@ -37,7 +52,7 @@ class mainMenu extends Phaser.Scene {
 
 		this.season_detail_text = this.add.text(
 			110 * this.distance,
-			480 * this.distance,
+			y * this.distance,
 			`${completed} / ${length}`
 		)
 			.setColor('#fff')
@@ -48,13 +63,10 @@ class mainMenu extends Phaser.Scene {
 
 	}
 
-	progress_event() {
-		this.scene.start('season_finish', { season_id: 1 });
-	}
-
-	async play_game() {
+	play_game() {
 		this.play_game_check = true;
-		await make_road(this.data.word_list, this.data.finished_word, this.data.remembers_word, this.language_id, res => {
+		make_road(this.user_level, this.data.word_list, this.data.finished_word, this.data.remembers_word, this.language_id, res => {
+			this.bg_audio.pause();
 			this.play_game_check = false;
 			this.scene.start('playGame', {
 				word_id: 0,
@@ -64,68 +76,228 @@ class mainMenu extends Phaser.Scene {
 		});
 	}
 
+	do_test() {
+		this.play_game_check = true;
+		make_test(this.user_level, this.data.word_list, this.language_id, res => {
+			this.play_game_check = false;
+			this.scene.start('playGame', {
+				word_id: 0,
+				language_id: this.language_id,
+				word_data: res,
+				test: true,
+			});
+		});
+	}
 
 
-	// loading_ui() {
-	//     this.loading = this.add.graphics();
-	//     this.loading.beginPath();
-	//     this.loading.lineStyle(3, 0x6ab615, 1);
+	red_play_ui(y, width, height) {
+		this.add.text(
+			100 * this.distance,
+			(y - 110) * this.distance,
+			'سـطـح  حـرفـه‌ای'
+		)
+			.setColor('#e74c3c')
+			.setFontFamily('Lalezar')
+			.setFontSize(70 * this.distance)
+			.setPadding(0, 0, 0, 15);
 
-	//     this.loading.strokeRoundedRect(
-	//         50 * this.distance,
-	//         395 * this.distance,
-	//         510 * this.distance,
-	//         310 * this.distance,
-	//         50 * this.distance
-	//     );
-	// }
+		const seprator = new Phaser.Geom.Line(
+			80 * this.distance,
+			(y - 20) * this.distance,
+			530 * this.distance,
+			(y - 20) * this.distance,
+		);
+		this.add.graphics()
+			.lineStyle(1, 0x222222, 0.5)
+			.setDepth(100)
+			.strokeLineShape(seprator);
 
+		const play_area_graphic = this.add.graphics();
+		play_area_graphic.fillStyle(0xe74c3c, 1);
 
-	play_ui() {
-		this.play_area_graphic = this.add.graphics();
-		this.play_area_graphic.fillStyle(0x6ab615, 1);
-
-		this.play_area_graphic.fillRoundedRect(
+		play_area_graphic.fillRoundedRect(
 			55 * this.distance,
-			400 * this.distance,
-			500 * this.distance,
-			300 * this.distance,
-			50 * this.distance
+			y * this.distance,
+			width * this.distance,
+			height * this.distance,
+			45 * this.distance
 		);
 
-		this.play_buttom = this.add.graphics();
-		this.play_buttom.fillStyle(0xffffff, 1);
+		const play_buttom = this.add.graphics();
+		play_buttom.fillStyle(0xffffff, 1);
 
-		this.play_buttom.fillRoundedRect(
+		play_buttom.fillRoundedRect(
 			125 * this.distance,
-			600 * this.distance,
+			(y + 150) * this.distance,
 			355 * this.distance,
 			80 * this.distance,
 			40 * this.distance
 		);
-		this.play_buttom.setInteractive(new Phaser.Geom.Rectangle(
+		play_buttom.setInteractive(new Phaser.Geom.Rectangle(
 			125 * this.distance,
-			600 * this.distance,
+			(y + 150) * this.distance,
 			355 * this.distance,
 			80 * this.distance,
 			40 * this.distance
 		), Phaser.Geom.Rectangle.Contains);
 		this.play_game_check = false;
-		this.play_buttom.on('pointerdown', function () {
+		play_buttom.on('pointerdown', () => {
 			if (!this.play_game_check) {
 				this.play_game();
 			}
-		}, this);
-		this.exp_text = this.add.text(
-			240 * this.distance,
-			610 * this.distance,
-			'Start', {
+		});
+		const exp_text = this.add.text(
+			260 * this.distance,
+			(y + 160) * this.distance,
+			'شـروع', {
 				fontSize: `${50 * this.distance}px`,
-				color: '#6ab615',
-				fontFamily: 'Noto Sans'
+				color: '#e74c3c',
+				fontFamily: 'Lalezar'
 			})
-			.setPadding(0, 0, 0, 5);
+			.setPadding(0, 0, 0, 15);
+
+		this.user_level_ui(this.user_path_season_id, this.user_path_completed, this.user_path_length, (y + 60));
+
 	}
+
+
+	play_ui_disable(y, width, height, color) {
+		this.add.text(
+			100 * this.distance,
+			(y - 110) * this.distance,
+			(this.user_level === 1) ? 'سـطـح  مـتـوسـط' : 'سـطـح  حـرفـه‌ای'
+		)
+			.setColor(`#${color}`)
+			.setFontFamily('Lalezar')
+			.setFontSize(70 * this.distance)
+			.setPadding(0, 0, 0, 15);
+
+		const seprator = new Phaser.Geom.Line(
+			80 * this.distance,
+			(y - 20) * this.distance,
+			530 * this.distance,
+			(y - 20) * this.distance,
+		);
+		this.add.graphics()
+			.lineStyle(1, 0x222222, 0.5)
+			.setDepth(100)
+			.strokeLineShape(seprator);
+		const play_area_graphic = this.add.graphics();
+		play_area_graphic.fillStyle(`0x${color}`, 1);
+		play_area_graphic.fillRoundedRect(
+			55 * this.distance,
+			y * this.distance,
+			width * this.distance,
+			height * this.distance,
+			35 * this.distance
+		);
+
+		const play_buttom = this.add.graphics();
+		play_buttom.fillStyle(0xffffff, 1);
+
+		play_buttom.fillRoundedRect(
+			125 * this.distance,
+			(y + 40) * this.distance,
+			355 * this.distance,
+			80 * this.distance,
+			40 * this.distance
+		);
+		play_buttom.setInteractive(new Phaser.Geom.Rectangle(
+			125 * this.distance,
+			(y + 45) * this.distance,
+			355 * this.distance,
+			80 * this.distance,
+			40 * this.distance
+		), Phaser.Geom.Rectangle.Contains);
+		this.play_game_check = false;
+		play_buttom.on('pointerdown', () => {
+			if (!this.play_game_check) {
+				this.do_test();
+			}
+		});
+		const exp_text = this.add.text(
+			230 * this.distance,
+			(y + 53) * this.distance,
+			'امـتـحـان', {
+				fontSize: `${50 * this.distance}px`,
+				color: `#${color}`,
+				fontFamily: 'Lalezar'
+			})
+			.setPadding(0, 0, 0, 15);
+
+	}
+
+
+	play_ui_enabled(y, width, height, color) {
+		this.add.text(
+			100 * this.distance,
+			(y - 110) * this.distance,
+			(this.user_level === 1) ? 'سـطـح 1 مـبـتـدی' : (this.user_level === 2) ? 'سـطـح  مـتـوسـط' : 'سـطـح  حـرفـه‌ای'
+		)
+			.setColor(`#${color}`)
+			.setFontFamily('Lalezar')
+			.setFontSize(70 * this.distance)
+			.setPadding(0, 0, 0, 15);
+
+		const seprator = new Phaser.Geom.Line(
+			80 * this.distance,
+			(y - 20) * this.distance,
+			530 * this.distance,
+			(y - 20) * this.distance,
+		);
+		this.add.graphics()
+			.lineStyle(1, 0x222222, 0.5)
+			.setDepth(100)
+			.strokeLineShape(seprator);
+
+		const play_area_graphic = this.add.graphics();
+		play_area_graphic.fillStyle(`0x${color}`, 1);
+
+		play_area_graphic.fillRoundedRect(
+			55 * this.distance,
+			y * this.distance,
+			width * this.distance,
+			height * this.distance,
+			45 * this.distance
+		);
+
+		const play_buttom = this.add.graphics();
+		play_buttom.fillStyle(0xffffff, 1);
+
+		play_buttom.fillRoundedRect(
+			125 * this.distance,
+			(y + 150) * this.distance,
+			355 * this.distance,
+			80 * this.distance,
+			40 * this.distance
+		);
+		play_buttom.setInteractive(new Phaser.Geom.Rectangle(
+			125 * this.distance,
+			(y + 150) * this.distance,
+			355 * this.distance,
+			80 * this.distance,
+			40 * this.distance
+		), Phaser.Geom.Rectangle.Contains);
+		this.play_game_check = false;
+		play_buttom.on('pointerdown', () => {
+			if (!this.play_game_check) {
+				this.play_game();
+			}
+		});
+		const exp_text = this.add.text(
+			260 * this.distance,
+			(y + 160) * this.distance,
+			'شـروع', {
+				fontSize: `${50 * this.distance}px`,
+				color: `#${color}`,
+				fontFamily: 'Lalezar'
+			})
+			.setPadding(0, 0, 0, 15);
+
+		this.user_level_ui(this.user_path_season_id, this.user_path_completed, this.user_path_length, (y + 60));
+
+	}
+
 
 	down_ui() {
 		this.down_area_left = this.add.graphics()
@@ -174,7 +346,7 @@ class mainMenu extends Phaser.Scene {
 				this.scene.start('shop');
 			});
 
-        this.seprator_down = new Phaser.Geom.Line(
+		this.seprator_down = new Phaser.Geom.Line(
 			305 * this.distance,
 			960 * this.distance,
 			305 * this.distance,
@@ -213,7 +385,7 @@ class mainMenu extends Phaser.Scene {
 			.setFontSize(best_places.text.font_size)
 			.setColor(best_places.text.color)
 			.setFontFamily('Lalezar')
-			.setPadding(0, 0, 0, 5);
+			.setPadding(0, 0, 0, 15);
 
 
 		// Shop 
